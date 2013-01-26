@@ -66,7 +66,7 @@ class muusla_applicationModelapplication extends JModel
 		$db =& JFactory::getDBO();
 		$user =& JFactory::getUser();
 		$query = "SELECT mc.camperid, mc.hohid, mc.firstname, mc.lastname, mc.sexcd, mc.address1, mc.address2, mc.city, mc.statecd, mc.zipcd, mc.country, ";
-		$query .= "mc.email, DATE_FORMAT(mc.birthdate, '%m/%d/%Y') birthdate, muusa_age_f(DATE_FORMAT(mc.birthdate, '%m/%d/%Y')) age, mc.gradeoffset, ";
+		$query .= "mc.email, DATE_FORMAT(mc.birthdate, '%m/%d/%Y') birthdate, muusa_age_f(mc.birthdate) age, mc.gradeoffset, ";
 		$query .= "mc.roomprefid1, mc.roomprefid2, mc.roomprefid3, mc.matepref1, mc.matepref2, mc.matepref3, mc.sponsor, IF(mc.is_handicap, ' checked', '') is_handicap, IF(mc.is_ymca,' checked', '') is_ymca, IF(mc.is_ecomm,' checked', '') is_ecomm, ";
 		$query .= "mc.foodoptionid, mc.churchid, (SELECT COUNT(*) FROM muusa_campers_v mv WHERE mv.camperid=mc.hohid) not_attending FROM muusa_campers mc WHERE mc.email='$user->email'";
 		$db->setQuery($query);
@@ -76,7 +76,7 @@ class muusla_applicationModelapplication extends JModel
 	function getChildren($hohid) {
 		$db =& JFactory::getDBO();
 		$user =& JFactory::getUser();
-		$query = "SELECT mc.camperid, mc.firstname, mc.lastname, mc.sexcd, mc.email, DATE_FORMAT(mc.birthdate, '%m/%d/%Y') birthdate, mc.gradeoffset, muusa_age_f(DATE_FORMAT(mc.birthdate, '%m/%d/%Y')) age, ";
+		$query = "SELECT mc.camperid, mc.firstname, mc.lastname, mc.sexcd, mc.email, DATE_FORMAT(mc.birthdate, '%m/%d/%Y') birthdate, mc.gradeoffset, muusa_age_f(mc.birthdate) age, ";
 		$query .= "IF(mc.is_handicap, ' checked', '') is_handicap, mc.foodoptionid, IF((SELECT IF(COUNT(*)!=1,0,1) FROM muusa_campers_v mv WHERE mv.camperid=$hohid OR mv.camperid=mc.camperid), ' checked', '') not_attending FROM muusa_campers mc WHERE ";
 		$query .= "mc.hohid=$hohid ORDER BY birthdate DESC";
 		$db->setQuery($query);
@@ -105,8 +105,8 @@ class muusla_applicationModelapplication extends JModel
 	function upsertCamper($obj) {
 		$db =& JFactory::getDBO();
 
-		$obj->gradeoffset = "&&$obj->grade-muusa_age_f('$obj->birthdate')";
-		$obj->programid = "&&muusa_programs_id_f('$obj->birthdate', ($obj->grade-muusa_age_f('$obj->birthdate')))";
+		$obj->gradeoffset = "&&$obj->grade-muusa_age_f(STR_TO_DATE('$obj->birthdate', '%m/%d/%Y')')";
+		$obj->programid = "&&muusa_programs_id_f(STR_TO_DATE('$obj->birthdate', '%m/%d/%Y'), ($obj->grade-muusa_age_f(STR_TO_DATE('$obj->birthdate', '%m/%d/%Y'))))";
 		$obj->birthdate = "&&STR_TO_DATE('$obj->birthdate', '%m/%d/%Y')";
 		unset($obj->grade);
 		if($obj->camperid < 1000) {
@@ -290,7 +290,7 @@ class muusla_applicationModelapplication extends JModel
 	function calculateCharges() {
 		$db =& JFactory::getDBO();
 		$user =& JFactory::getUser();
-		$query = "SELECT mc.camperid, mc.firstname, mc.lastname, mc.hohid, DATE_FORMAT(mc.birthdate, '%m/%d/%Y') birthdate, muusa_age_f(DATE_FORMAT(mc.birthdate, '%m/%d/%Y')) age, mc.gradeoffset, IFNULL(mv.roomid,0) roomid FROM muusa_campers mc LEFT JOIN muusa_campers_v mv ON mc.camperid=mv.camperid WHERE mc.email='$user->email'";
+		$query = "SELECT mc.camperid, mc.firstname, mc.lastname, mc.hohid, DATE_FORMAT(mc.birthdate, '%m/%d/%Y') birthdate, muusa_age_f(mc.birthdate) age, mc.gradeoffset, IFNULL(mv.roomid,0) roomid FROM muusa_campers mc LEFT JOIN muusa_campers_v mv ON mc.camperid=mv.camperid WHERE mc.email='$user->email'";
 		$db->setQuery($query);
 		$camper = $db->loadObject();
 		if($db->getErrorNum()) {
@@ -307,7 +307,7 @@ class muusla_applicationModelapplication extends JModel
 
 			$obj = new stdClass;
 			$obj->camperid = $camper->camperid;
-			$obj->amount = "&&muusa_programs_fee_f('$camper->birthdate', $camper->gradeoffset)";
+			$obj->amount = "&&muusa_programs_fee_f(STR_TO_DATE('$camper->birthdate', '%m/%d/%Y'), $camper->gradeoffset)";
 			$obj->memo = $camper->firstname . " " . $camper->lastname;
 			$obj->chargetypeid = "&&(SELECT chargetypeid FROM muusa_chargetypes WHERE name LIKE 'Registration%')";
 			$obj->timestamp = date("Y-m-d");
@@ -330,7 +330,7 @@ class muusla_applicationModelapplication extends JModel
 			foreach($children as $child) {
 				$obj = new stdClass;
 				$obj->camperid = $child->camperid;
-				$obj->amount = "&&muusa_programs_fee_f('$child->birthdate', $child->gradeoffset)";
+				$obj->amount = "&&muusa_programs_fee_f(STR_TO_DATE('$child->birthdate', '%m/%d/%Y'), $child->gradeoffset)";
 				$obj->memo = $child->firstname . " " . $child->lastname;
 				$obj->chargetypeid = "&&(SELECT chargetypeid FROM muusa_chargetypes WHERE name LIKE 'Registration%')";
 				$obj->timestamp = date("Y-m-d");
