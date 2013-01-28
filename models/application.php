@@ -48,6 +48,13 @@ class muusla_applicationModelapplication extends JModel
 		return $db->loadObjectList();
 	}
 
+	function getSmokingoptions() {
+		$db =& JFactory::getDBO();
+		$query = "SELECT smokingoptionid, name FROM muusa_smokingoptions ORDER BY smokingoptionid";
+		$db->setQuery($query);
+		return $db->loadObjectList();
+	}
+
 	function getChurches() {
 		$db =& JFactory::getDBO();
 		$query = "SELECT churchid, name, city, statecd FROM muusa_churches ORDER BY statecd, city, name";
@@ -236,10 +243,17 @@ class muusla_applicationModelapplication extends JModel
 		}
 		return $campers;
 	}
+	
+   function getTimes() {
+      $db =& JFactory::getDBO();
+      $query = "SELECT timeid, name, TIME_FORMAT(starttime, '%l:%i %p'), TIME_FORMAT(ADDTIME(starttime, CONCAT(REPLACE(TRUNCATE(length, 1), '.', ':'), '0:00')), '%l:%i %p') FROM muusa_times ORDER BY starttime";
+      $db->setQuery($query);
+      return $db->loadAssocList("timeid");
+   }
 
 	function getWorkshops() {
 		$db =& JFactory::getDBO();
-		$query = "SELECT mt.name timename, mt.timeid, CONCAT(IF(me.su,'S',''),IF(me.m,'M',''),IF(me.t,'Tu',''),IF(me.w,'W',''),IF(me.th,'Th',''),IF(me.f,'F',''),IF(me.sa,'S','')) days, me.eventid eventid, me.name shopname FROM muusa_events me, muusa_times mt WHERE me.timeid=mt.timeid AND mt.length > 0 ORDER BY mt.starttime, me.name";
+		$query = "SELECT timeid, CONCAT(IF(su,'S',''),IF(m,'M',''),IF(t,'Tu',''),IF(w,'W',''),IF(th,'Th',''),IF(f,'F',''),IF(sa,'S','')) days, eventid, name FROM muusa_events ORDER BY name";
 		$db->setQuery($query);
 		return $db->loadObjectList();
 	}

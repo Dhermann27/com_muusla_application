@@ -1,3 +1,51 @@
+$(window).load(function() {
+   $("#muusaApp").tabs();
+   $(".info").button( { icons: { primary: "ui-icon-info"}, text: false } ).click(function() { switchNextRow($(this)); return false; } );
+   $(".link").button( { icons: { primary: "ui-icon-link"}, text: false } ).click(function() { openLink($(this)); return false; } );
+   $(".radios").buttonset();
+   $(".add").button( { icons: { primary: "ui-icon-plus"}, text: false } ).click(function() {  addRow($(this)); return false; } );
+   $(".birthday").datepicker({ yearRange: "c-100:c+0", changeMonth: true, changeYear: true });
+   $(".roomtypes").accordion( { collapsible: true, heightStyle: "content", header: "h4", active: false } );
+   $(".roomtypeSave").button().click(function() { $(this).closest("div.roomtypes").accordion({active: false});  return false;} );
+   $(".roomtype-yes, .roomtype-no" ).sortable({ placeholder: "ui-state-highlight", connectWith: ".connectedRoomtype"}).disableSelection();
+   $(".dialog-message").dialog( { modal: true, autoOpen: false, minWidth: 800, buttons: { Ok: function() { $( this ).dialog( "close" ); } } });
+   $(".delete").button( { icons: { primary: "ui-icon-minus"}, text: false } ).click(function() {  hideThisRow($(this)); return false; } );
+   $("#nextCamper").button().click(function() { $("#muusaApp").tabs({active: 1}); return false; });
+   $("#addCamper").button().click(function() { addCamper(); return false; });
+   $("#removeCamper").button().click(function() { removeCamper($(this)); return false; });
+   $("#nextWorkshop").button().click(function() { $("#muusaApp").tabs({active: 2}); return false; });
+   $(".workshopSelection").accordion( { heightStyle: "content", header: "h4" } );
+   $(".workshopTimes").accordion( { heightStyle: "content", header: "h5" } );
+   $(".workshop-yes, .workshop-no" ).sortable({ placeholder: "ui-state-highlight", connectWith: ".connectedWorkshop"}).disableSelection();
+   $("#nextPayment").button().click(function() { $("#muusaApp").tabs({active: 3}); return false; });
+});
+
+function switchNextRow(obj) {
+	obj.parents("tr").next().is(":visible") ? obj.parents("tr").next().hide()
+			: obj.parents("tr").next().show();
+}
+
+function openLink(obj) {
+	eval("$(\"#room-" + obj.parents("li").attr("id") + "\").dialog(\"open\");");
+}
+
+function addRow(obj) {
+	hiddenRow = obj.parents("tr").nextAll("tr.hidden").first();
+	hiddenRow.clone(true).removeClass("hidden").insertBefore(hiddenRow).show();
+}
+
+function addCamper() {
+	$("#camperBody").clone(true).removeAttr("id").insertBefore("#lastrow");
+}
+
+function removeCamper(obj) {
+	obj.parents("tbody").remove();
+}
+
+function hideThisRow(obj) {
+	obj.parents("tr").remove();
+}
+
 function checkForm() {
 	var tbodys = document.getElementsByTagName("tbody");
 	for ( var i = 0; i < tbodys.length; i++) {
