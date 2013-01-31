@@ -51,6 +51,8 @@ class muusla_applicationViewapplication extends JView
  		$this->assignRef('smokingoptions', $model->getSmokingoptions());
  		$this->assignRef('churches', $model->getChurches());
  		$this->assignRef('phonetypes', $model->getPhonetypes());
+ 		$this->assignRef('programs', $model->getPrograms());
+ 		$this->assignRef('year', $model->getYear());
  		$times = $model->getTimes();
  		foreach($model->getWorkshops() as $workshop) {
  			if($workshop->days == 'MTuWThF') {

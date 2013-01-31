@@ -1,10 +1,10 @@
 $(window).load(function() {
-   $("#muusaApp").tabs();
+   $("#muusaApp").tabs({ beforeActivate: function(event, ui) { recalc(event, ui); return true;} });
    $(".info").button( { icons: { primary: "ui-icon-info"}, text: false } ).click(function() { switchNextRow($(this)); return false; } );
    $(".link").button( { icons: { primary: "ui-icon-link"}, text: false } ).click(function() { openLink($(this)); return false; } );
    $(".radios").buttonset();
    $(".add").button( { icons: { primary: "ui-icon-plus"}, text: false } ).click(function() {  addRow($(this)); return false; } );
-   $(".birthday").datepicker({ yearRange: "c-100:c+0", changeMonth: true, changeYear: true });
+   $(".birthday").datepicker({ yearRange: "1913:2013", changeMonth: true, changeYear: true });
    $(".roomtypes").accordion( { collapsible: true, heightStyle: "content", header: "h4", active: false } );
    $(".roomtypeSave").button().click(function() { $(this).closest("div.roomtypes").accordion({active: false});  return false;} );
    $(".roomtype-yes, .roomtype-no" ).sortable({ placeholder: "ui-state-highlight", connectWith: ".connectedRoomtype"}).disableSelection();
@@ -35,7 +35,45 @@ function addRow(obj) {
 }
 
 function addCamper() {
-	$("#camperBody").clone(true).removeAttr("id").insertBefore("#lastrow");
+	//$(".camperBody").clone(true).removeAttr("id").insertBefore("#lastrow"); WRONG
+}
+
+function recalc(event, ui) {
+	if(ui.newPanel.attr("id") == "appPayment") {
+		$("#appPayment tr.dummy").remove();
+		var bodies = $("#appCamper tbody.camperBody");
+		var dummy = $("#paymentDummy");
+		var now = new Date();
+		bodies.each( function(index, obj) {
+			var newrow = dummy.clone(true).removeAttr("id").addClass("dummy").insertBefore(dummy);
+		    $(".chargetype", newrow).text("Registration Fee");
+		    $(".amount", newrow).text(findFee($(".birthday", obj).val(), $(".grade", obj).val()));
+		    $(".date", newrow).text($.datepicker.formatDate('m/dd/yy', now));
+		    $(".memo", newrow).text($(".firstname", obj).val() + " " + $(".lastname", obj).val());
+		    newrow.show();
+		});
+   }
+}
+
+function findFee(birthday, grade) {
+	var age = getAge(birthday);
+	for(var i=0; i<feeTable.fees.length; i++) {
+		alert(age + " < " + feeTable.fees[i].agemax + (age<feeTable.fees[i].agemax));
+		if(age < feeTable.fees[i].agemax && age > feeTable.fees[i].agemin && grade < feeTable.fees[i].grademax && grade > feeTable.fees[i].grademin) {
+			return "$" + feeTable.fees[i].fee.toFixed(2);
+		}
+	}
+	return "$0.00";
+}
+
+function getAge(dateString) {
+    var birthDate = new Date(dateString);
+    var age = campDate.getFullYear() - birthDate.getFullYear();
+    var m = campDate.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && campDate.getDate() < birthDate.getDate())) {
+        age--;
+    }
+    return age;
 }
 
 function removeCamper(obj) {

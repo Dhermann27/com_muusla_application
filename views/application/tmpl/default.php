@@ -1,10 +1,11 @@
 <?php defined('_JEXEC') or die('Restricted access');
 $user =& JFactory::getUser();
+$root = $_SERVER[DOCUMENT_ROOT];
 ?>
 <div id="ja-content">
 	<div class="componentheading">MUUSA Registation Form</div>
 	<link type="text/css"
-		href="/joomla_development/joomla/components/com_muusla_application/css/application.css"
+		href="<?php echo $root; ?>/components/com_muusla_application/css/application.css"
 		rel="stylesheet" />
 	<link type="text/css"
 		href="/joomla_development/joomla/components/com_muusla_application/css/jquery-ui-1.10.0.custom.css"
@@ -110,7 +111,7 @@ $user =& JFactory::getUser();
 			</div>
 			<div id="appCamper">
 				<table>
-					<tbody id="camperBody">
+					<tbody class="camperBody">
 						<tr valign="bottom">
 							<td width="25%"><select name="campers-sexcd-0"
 								class="ui-corner-all">
@@ -121,7 +122,7 @@ $user =& JFactory::getUser();
 							</td>
 							<td colspan="3" width="75%" align="right">
 								<button class="help info">Show Attending Help</button> <select
-								name="campers-attending-0" class="ui-corner-all">
+								name="campers-attending-0" class="attending ui-corner-all">
 									<option value="1" selected="selected">Attending</option>
 									<option value="0">Not Attending</option>
 							</select>
@@ -141,13 +142,13 @@ $user =& JFactory::getUser();
 						<tr>
 							<td>First Name</td>
 							<td colspan="3"><input type="text" name="campers-firstname-0"
-								maxlength="30" class="inputtext ui-corner-all" />
+								maxlength="30" class="inputtext firstname ui-corner-all" />
 							</td>
 						</tr>
 						<tr>
 							<td>Last Name</td>
 							<td colspan="3"><input type="text" name="campers-lastname-0"
-								maxlength="30" class="inputtext ui-corner-all" />
+								maxlength="30" class="inputtext lastname ui-corner-all" />
 							</td>
 						</tr>
 						<tr>
@@ -207,9 +208,9 @@ $user =& JFactory::getUser();
 								class="birthday inputtextshort ui-corner-all" />
 							</td>
 							<td align="right">Grade Entering in Fall 2013</td>
-							<td><select name="campers-grade-0" class="ui-corner-all">
+							<td><select name="campers-grade-0" class="grade ui-corner-all">
 									<?php 						
-									echo "                        <option value='0'>Not Applicable</option>\n";
+									echo "                        <option value='13'>Not Applicable</option>\n";
 									echo "                        <option value='0'>Kindergarten or Earlier</option>\n";
 									for($i=1; $i<13; $i++) {
 										if($grade == $i) {
@@ -405,7 +406,6 @@ $user =& JFactory::getUser();
 							echo "                        <div>\n";
 							echo "                           <h6>Desired Workshops (in order of preference)</h6>\n";
 							echo "                           <ul class='connected connectedWorkshop workshop-yes'>\n";
-							echo "                              <li class='ui-state-default'>No Preference</li>\n";
 							echo "                           </ul>\n";
 							echo "                        </div>\n";
 							echo "                     </div>\n";
@@ -428,9 +428,8 @@ $user =& JFactory::getUser();
 								</ul>
 							</div>
 							<div>
-								<h6>Desired Roles (in order of preference)</h6>
+								<h6>Desired Roles</h6>
 								<ul class="connected connectedWorkshop workshop-yes">
-									<li class="ui-state-default">No Preference</li>
 								</ul>
 							</div>
 						</div>
@@ -441,16 +440,34 @@ $user =& JFactory::getUser();
 				</div>
 			</div>
 			<div id="appPayment">
+				<script>
+				<?php
+				   echo "               var campDate = new Date('$this->year');\n";
+				   echo "				var feeTable = { fees: [\n				";
+				   $fees = array();
+				   foreach($this->programs as $program) {
+				   	  array_push($fees, "{ 'name': '$program->name', 'agemax': $program->agemax, 'agemin': $program->agemin, 'grademax': $program->grademax, 'grademin': $program->grademin, 'fee': $program->registration_fee }");
+				   }
+				   echo implode(",\n				   ", $fees);
+				   echo " ] };\n"; 
+				?>
+				</script>
 				<table width="98%" align="center">
 					<tr align="center">
-						<td>Charge Type</td>
-						<td>Amount</td>
-						<td>Date</td>
-						<td>Memo</td>
+						<td width="20%">Charge Type</td>
+						<td width="15%">Amount</td>
+						<td width="15%">Date</td>
+						<td width="50%">Memo</td>
+					</tr>
+					<tr id="paymentDummy" class="hidden">
+						<td class="chargetype"></td>
+						<td class="amount" align="right"></td>
+						<td class="date" align="right"></td>
+						<td class="memo spaceleft"></td>
 					</tr>
 					<?php
 					$total = 0.0;
-					foreach($this->charges as $charge) {
+					/*foreach($this->charges as $charge) {
 						echo "           <tr>\n";
 						$total += (float)preg_replace("/,/", "",  $charge->amount);
 						echo "                   <td>$charge->name</td>\n";
@@ -467,9 +484,9 @@ $user =& JFactory::getUser();
 						echo "                <td>&nbsp;</td>\n";
 						echo "                <td><i>$credit->name</i></td>\n";
 						echo "           </tr>\n";
-					}
+					}*/
 					echo "           <tr>\n";
-					echo "              <td colspan='3' align='right'>Amount Due From Camper:</td>\n";
+					echo "              <td colspan='3' align='right amountDue'>Amount Due From Camper:</td>\n";
 					echo "              <td><h3>$" . number_format($total, 2, '.', '') . "</h3></td>\n";
 					echo "           </tr>\n";
 					?>

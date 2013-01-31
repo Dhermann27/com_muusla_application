@@ -62,6 +62,20 @@ class muusla_applicationModelapplication extends JModel
 		return $db->loadObjectList();
 	}
 
+	function getPrograms() {
+		$db =& JFactory::getDBO();
+		$query = "SELECT name, agemax, agemin, grademax, grademin, registration_fee FROM muusa_programs";
+		$db->setQuery($query);
+		return $db->loadObjectList();
+	}
+
+	function getYear() {
+		$db =& JFactory::getDBO();
+		$query = "SELECT DATE_FORMAT(date, '%M %d, %Y') date FROM muusa_currentyear";
+		$db->setQuery($query);
+		return $db->loadResult();
+	}
+
 	function getPhonetypes() {
 		$db =& JFactory::getDBO();
 		$query = "SELECT phonetypeid, name FROM muusa_phonetypes";
