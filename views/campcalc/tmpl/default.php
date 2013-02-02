@@ -1,6 +1,5 @@
 <?php defined('_JEXEC') or die('Restricted access'); ?>
-<script type='text/javascript' language='Javascript'
-	src='components/com_muusla_application/js/campcost.js'></script>
+<script type="text/javascript" src="<?php echo JURI::root(true);?>/components/com_muusla_application/js/campcost.js"></script>
 <div id="ja-content">
 <div class="componentheading">MUUSA Camp Cost Calculator</div>
 <table class="blog" cellpadding="0" cellspacing="0">

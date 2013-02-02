@@ -1,23 +1,24 @@
 <?php defined('_JEXEC') or die('Restricted access');
 $user =& JFactory::getUser();
-$root = $_SERVER[DOCUMENT_ROOT];
 ?>
 <div id="ja-content">
 	<div class="componentheading">MUUSA Registation Form</div>
 	<link type="text/css"
-		href="<?php echo $root; ?>/components/com_muusla_application/css/application.css"
+		href="<?php echo JURI::root(true);?>/components/com_muusla_application/css/application.css"
 		rel="stylesheet" />
 	<link type="text/css"
-		href="/joomla_development/joomla/components/com_muusla_application/css/jquery-ui-1.10.0.custom.css"
+		href="<?php echo JURI::root(true);?>/components/com_muusla_application/css/jquery-ui-1.10.0.custom.css"
 		rel="stylesheet" />
 	<script
-		src="/joomla_development/joomla/components/com_muusla_application/js/jquery-1.9.0.js"></script>
+		src="<?php echo JURI::root(true);?>/components/com_muusla_application/js/jquery-1.9.0.js"></script>
 	<script
-		src="/joomla_development/joomla/components/com_muusla_application/js/jquery-ui-1.10.0.custom.js"></script>
+		src="<?php echo JURI::root(true);?>/components/com_muusla_application/js/jquery-ui-1.10.0.custom.js"></script>
 	<script
-		src='/joomla_development/joomla/components/com_muusla_application/js/application.js'></script>
+		src='<?php echo JURI::root(true);?>/components/com_muusla_application/js/application.js'></script>
+	<script>var thisyear = <?php echo substr($this->year, -4)?>;</script>
 	<form action="index.php">
 		<div id="muusaApp">
+		<?php $familyid = $this->family->familyid ? $this->family->familyid : 0;?>
 			<ul>
 				<li><a href="#appFamily">Family Information</a></li>
 				<li><a href="#appCamper">Camper Listing</a></li>
@@ -31,8 +32,8 @@ $root = $_SERVER[DOCUMENT_ROOT];
 							<button class="help info right">Show Family Name Help</button>
 							Family Name
 						</td>
-						<td width="75%"><input type="text" name="family-familyname-0"
-							maxlength="30" class="inputtext ui-corner-all" />
+						<td width="75%"><input type="text" name="family-familyname-<?php echo $familyid;?>"
+							maxlength="30" class="inputtext ui-corner-all" value="<?php echo $this->family->familyname;?>" />
 						</td>
 					</tr>
 					<tr class="hidden" valign="top">
@@ -57,33 +58,29 @@ $root = $_SERVER[DOCUMENT_ROOT];
 					</tr>
 					<tr>
 						<td>Address Line #1</td>
-						<td><input type="text" name="family-address1-0" maxlength="30"
-							class="inputtext ui-corner-all" />
+						<td><input type="text" name="family-address1-<?php echo $familyid;?>" maxlength="30"
+							class="inputtext ui-corner-all" value="<?php echo $this->family->address1?>" />
 						</td>
 					</tr>
 					<tr>
 						<td>Address Line #2</td>
-						<td><input type="text" name="family-address2-0" maxlength="30"
-							class="inputtext ui-corner-all" />
+						<td><input type="text" name="family-address2-<?php echo $familyid;?>" maxlength="30"
+							class="inputtext ui-corner-all" value="<?php echo $this->family->address2?>" />
 						</td>
 					</tr>
 					<tr>
 						<td>City</td>
-						<td><input type="text" name="family-city-0" maxlength="30"
-							class="inputtextshort ui-corner-all" />
+						<td><input type="text" name="family-city-<?php echo $familyid;?>" maxlength="30"
+							class="inputtextshort ui-corner-all" value="<?php echo $this->family->city?>" />
 						</td>
 					</tr>
 					<tr>
 						<td>State</td>
-						<td><select name="family-statecd-0" class="ui-corner-all">
+						<td><select name="family-statecd-<?php echo $familyid;?>" class="ui-corner-all">
 								<option>Choose a State</option>
 								<?php
 								foreach($this->states as $state) {
-									if($camper->statecd == $state->statecd) {
-										$selected = " selected";
-									} else {
-										$selected = "";
-									}
+									$selected = $this->family->statecd == $state->statecd ? " selected" : "";
 									echo "               <option value='$state->statecd'$selected>$state->name</option>\n";
 								}
 								?>
@@ -92,14 +89,14 @@ $root = $_SERVER[DOCUMENT_ROOT];
 					</tr>
 					<tr>
 						<td>Zip Code</td>
-						<td><input type="text" name="family-zipcd-0" maxlength="10"
-							class="inputtextshort ui-corner-all" />
+						<td><input type="text" name="family-zipcd-<?php echo $familyid;?>" maxlength="10"
+							class="inputtextshort ui-corner-all" value="<?php echo $this->family->zipcd?>" />
 						</td>
 					</tr>
 					<tr>
 						<td>Country</td>
-						<td><input type="text" name="family-country-0" maxlength="30"
-							class="inputtextshort ui-corner-all" />
+						<td><input type="text" name="family-country-<?php echo $familyid;?>" maxlength="30"
+							class="inputtextshort ui-corner-all" value="<?php echo $this->family->country?>" />
 						</td>
 					</tr>
 					<tr>
@@ -112,17 +109,18 @@ $root = $_SERVER[DOCUMENT_ROOT];
 			<div id="appCamper">
 				<table>
 					<tbody class="camperBody">
+					<?php $camperid = $this->campers[0] ? $this->campers[0]->camperid : 0;?>
 						<tr valign="bottom">
-							<td width="25%"><select name="campers-sexcd-0"
+							<td width="25%"><select name="campers-sexcd-<?php echo $camperid;?>"
 								class="ui-corner-all">
 									<option value="0">Gender</option>
-									<option value="M">Male</option>
-									<option value="F">Female</option>
+									<option value="M"<?php echo $this->campers[0]->sexcd == "M" ? " selected" : "";?>>Male</option>
+									<option value="F"<?php echo $this->campers[0]->sexcd == "F" ? " selected" : "";?>>Female</option>
 							</select>
 							</td>
 							<td colspan="3" width="75%" align="right">
 								<button class="help info">Show Attending Help</button> <select
-								name="campers-attending-0" class="attending ui-corner-all">
+								name="campers-attending-<?php echo $camperid;?>" class="attending ui-corner-all">
 									<option value="1" selected="selected">Attending</option>
 									<option value="0">Not Attending</option>
 							</select>
@@ -141,14 +139,14 @@ $root = $_SERVER[DOCUMENT_ROOT];
 						</tr>
 						<tr>
 							<td>First Name</td>
-							<td colspan="3"><input type="text" name="campers-firstname-0"
-								maxlength="30" class="inputtext firstname ui-corner-all" />
+							<td colspan="3"><input type="text" name="campers-firstname-<?php echo $camperid;?>"
+								maxlength="30" class="inputtext firstname ui-corner-all" value="<?php echo $this->campers[0]->firstname;?>" />
 							</td>
 						</tr>
 						<tr>
 							<td>Last Name</td>
-							<td colspan="3"><input type="text" name="campers-lastname-0"
-								maxlength="30" class="inputtext lastname ui-corner-all" />
+							<td colspan="3"><input type="text" name="campers-lastname-<?php echo $camperid;?>"
+								maxlength="30" class="inputtext lastname ui-corner-all" value="<?php echo $this->campers[0]->lastname;?>" />
 							</td>
 						</tr>
 						<tr>
@@ -158,7 +156,7 @@ $root = $_SERVER[DOCUMENT_ROOT];
 							</td>
 							<?php 
 							echo "								<td colspan='3'>$user->email\n";
-							echo "								   <input type='hidden' name='campers-email-0' value='$user->email' /></td>\n";
+							echo "								   <input type='hidden' name='campers-email-$camperid' value='$user->email' /></td>\n";
 							?>
 						</tr>
 						<tr class="hidden" valign="top">
@@ -172,31 +170,48 @@ $root = $_SERVER[DOCUMENT_ROOT];
 						<tr>
 							<td>Phone Numbers</td>
 							<td colspan='3'><?php 
-							echo "                  <select name='phonenumbers-phonetypeid-$phonenumber->phonenbrid' class='ui-corner-all'>\n";
+							$phonenbrid = $this->campers[0]->phonenbrs[0] ? $this->campers[0]->phonenbrs[0]->phonenbrid : 0;
+							echo "                  <select name='phonenumbers-phonetypeid-$phonenbrid' class='ui-corner-all'>\n";
 							foreach($this->phonetypes as $phonetype) {
-								if($phonenumber->phonetypeid == $phonetype->phonetypeid) {
-									$selected = " selected";
-								} else {
-									$selected = "";
-								}
-								echo "                     <option value='$phonetype->phonetypeid'$selected>$phonetype->name</option>\n";
+							   $selected = $this->campers[0]->phonenbrs[0]->phonetypeid == $phonetype->phonetypeid ? " selected" : "";
+							   echo "                     <option value='$phonetype->phonetypeid'$selected>$phonetype->name</option>\n";
 							}
 							echo "                     </select>\n";
-							echo "                     <input type='hidden' name='phonenumbers-camperid-$phonenumber->phonenbrid' value='$camper->camperid' />\n";
-							?> <input type="text" name="phonenumbers-phonenbr-0"
-								maxlength="14" class="inputtextshort ui-corner-all" />
+							?> <input type="text"
+								name="phonenumbers-phonenbr-<?php echo $phonenbrid?>"
+								maxlength="14" class="inputtextshort ui-corner-all"
+								value="<?php echo $this->campers[0]->phonenbrs[0]->phonenbr;?>" />
 								<button class="add help">Add Phone Number</button>
 							</td>
 						</tr>
+						<?php
+						if(count($this->campers[0]->phonenbrs) > 1) {
+						   foreach(array_slice($this->campers[0]->phonenbrs, 1) as $phonenbr) {
+						      echo "						<tr>\n";
+						      echo "							<td>&nbsp;</td>\n";
+						      echo "							<td colspan='3'> \n";
+						      echo "                  <select name='phonenumbers-phonetypeid-$phonenbr->phonenbrid' class='ui-corner-all'>\n";
+						      foreach($this->phonetypes as $phonetype) {
+						         $selected = $phonenbr->phonetypeid == $phonetype->phonetypeid ? " selected" : "";
+						         echo "                     <option value='$phonetype->phonetypeid'$selected>$phonetype->name</option>\n";
+						      }
+						      echo "                     </select>\n";
+						      echo "							 <input type='text' maxlength='14' name='phonenumbers-phonenbr-$phonenbr->phonenbrid'\n";
+						      echo "								class='inputtextshort ui-corner-all' value='$phonenbr->phonenbr' />\n";
+						      echo "								<button class='delete help'>Delete Phone Number</button>\n";
+						      echo "							</td>\n";
+						      echo "						</tr>\n";
+						   }
+						}
+						?>
 						<tr class="hidden">
 							<td>&nbsp;</td>
 							<td colspan="3"><?php 
 							echo "                  <select name='phonenumbers-phonetypeid-0' class='ui-corner-all'>\n";
 							foreach($this->phonetypes as $phonetype) {
-								echo "                     <option value='$phonetype->phonetypeid'>$phonetype->name</option>\n";
+							   echo "                     <option value='$phonetype->phonetypeid'>$phonetype->name</option>\n";
 							}
 							echo "                     </select>\n";
-							echo "                     <input type='hidden' name='phonenumbers-camperid-0' value='$camper->camperid' />\n";
 							?> <input type="text" maxlength="14"
 								class="inputtextshort ui-corner-all" />
 								<button class="delete help">Delete Phone Number</button>
@@ -205,19 +220,16 @@ $root = $_SERVER[DOCUMENT_ROOT];
 						<tr>
 							<td>Birthday</td>
 							<td><input type="text" maxlength="10"
-								class="birthday inputtextshort ui-corner-all" />
+								name="campers-birthdate-<?php echo $camperid;?>"
+								class="birthday ui-corner-all" value="<?php echo $this->campers[0]->birthday;?>" />
 							</td>
-							<td align="right">Grade Entering in Fall 2013</td>
-							<td><select name="campers-grade-0" class="grade ui-corner-all">
+							<td align="right">Grade Entering in Fall <?php echo substr($this->year, -4)?></td>
+							<td><select name="campers-grade-<?php echo $camperid;?>" class="grade ui-corner-all">
 									<?php 						
 									echo "                        <option value='13'>Not Applicable</option>\n";
 									echo "                        <option value='0'>Kindergarten or Earlier</option>\n";
 									for($i=1; $i<13; $i++) {
-										if($grade == $i) {
-											$selected = " selected";
-										} else {
-											$selected = "";
-										}
+										$selected = min($this->campers[0]->grade, 13) == $i ? " selected" : "";
 										echo "                        <option value='$i'$selected>$i</option>\n";
 									}
 									?>
@@ -235,12 +247,13 @@ $root = $_SERVER[DOCUMENT_ROOT];
 											<h5>Room Type List</h5>
 											<ul class="connected connectedRoomtype roomtype-no">
 												<?php 
-												foreach($this->buildings as $building) {
-													echo "                  <li class='ui-state-default'>\n";
-													// echo "                     <button class='help link right'>Show $building->name Information</button>\n";
-													echo "                     $building->name\n";
-													echo "                     <input type='hidden' name='campers-roompref-$camper->camperid' value='$building->buildingid' />\n";
-													echo "                  </li>\n";
+												foreach($this->buildings as $buildingid => $building) {
+												   if(!in_array($buildingid, $this->campers[0]->roomtypes)) {
+												      echo "                  <li value='$buildingid' class='ui-state-default'>\n";
+												      // echo "                     <button class='help link right'>Show $building->name Information</button>\n";
+												      echo "                     " . $building["name"] . "\n";
+												      echo "                  </li>\n";
+												   }
 												}
 												?>
 											</ul>
@@ -248,28 +261,49 @@ $root = $_SERVER[DOCUMENT_ROOT];
 										<div>
 											<h5>Desired Room Type</h5>
 											<ul class="connected connectedRoomtype roomtype-yes">
+											<?php
+											foreach($this->campers[0]->roomtypes as $roomtype) {
+												      echo "                  <li value='$roomtype' class='ui-state-default'>\n";
+												      // echo "                     <button class='help link right'>Show " . $this->buildings[$roomtype]->name . " Information</button>\n";
+												      echo "                     " . $this->buildings[$roomtype]["name"] . "\n";
+												      echo "                  </li>\n";
+											}
+											?>
 												<li class="ui-state-default">No Preference</li>
 											</ul>
 										</div>
 										<button class="roomtypeSave clearboth right">Save Preferences</button>
 									</div>
-									<input type="hidden" name="roomtype_preferences-prefs-0" />
 								</div>
 							</td>
 						</tr>
 						<tr>
 							<td>Roommate Preferences</td>
-							<td colspan="3"><input type="text"
-								name="roommate_preferences-name-0" maxlength="50"
-								class="inputtext ui-corner-all" />
+							<td colspan="3"><input type="text" maxlength="50"
+								class="inputtext roommates ui-corner-all"
+								value="<?php echo $this->campers[0]->roommates[0]?>" />
 								<button class="add help">Add Preference</button>
 							</td>
 						</tr>
+						<?php
+						if(count($this->campers[0]->roommates) > 1) {
+						   foreach(array_slice($this->campers[0]->roommates, 1) as $roommate) {
+						      echo "						<tr>\n";
+						      echo "							<td>&nbsp;</td>\n";
+						      echo "							<td colspan='3'><input type='text'\n";
+						      echo "								name='roommate_preferences-name-0' maxlength='50'\n";
+						      echo "								class='inputtext roommates ui-corner-all' value='$roommate' />\n";
+						      echo "								<button class='delete help'>Delete Preference</button>\n";
+						      echo "							</td>\n";
+						      echo "						</tr>\n";
+						   }
+						}
+						?>
 						<tr class="hidden">
 							<td>&nbsp;</td>
 							<td colspan="3"><input type="text"
 								name="roommate_preferences-name-0" maxlength="50"
-								class="inputtext ui-corner-all" />
+								class="inputtext roommates ui-corner-all" />
 								<button class="delete help">Delete Preference</button>
 							</td>
 						</tr>
@@ -277,9 +311,9 @@ $root = $_SERVER[DOCUMENT_ROOT];
 							<td>Accessibility</td>
 							<td colspan="2" valign="middle">Do you require a room accessible
 								by the disabled?</td>
-							<td><select name="campers-is_handicap-0" class="ui-corner-all">
-									<option value="1">Yes</option>
-									<option value="0" selected="selected">No</option>
+							<td><select name="campers-is_handicap-<?php echo $camperid;?>" class="ui-corner-all">
+									<option value="1"<?php echo $this->campers[0]->is_handicap == "1" ? " selected" : "";?>>Yes</option>
+									<option value="0"<?php echo $this->campers[0]->is_handicap == "1" ? "" : " selected";?>>No</option>
 							</select>
 							</td>
 						</tr>
@@ -287,14 +321,10 @@ $root = $_SERVER[DOCUMENT_ROOT];
 							<td>Food Options</td>
 							<td colspan="2" valign="middle">Which option best describes your
 								eating restrictions?</td>
-							<td><select name="campers-foodoptionid-0" class="ui-corner-all">
+							<td><select name="campers-foodoptionid-<?php echo $camperid;?>" class="ui-corner-all">
 									<?php
 									foreach ($this->foodoptions as $foodoption) {
-										if($foodoption->foodoptionid == $camper->foodoptionid) {
-											$selected = " selected";
-										} else {
-											$selected = "";
-										}
+										$selected = $this->campers[0]->foodoptionid == $foodoption->foodoptionid ? " selected" : "";
 										echo "                  <option value='$foodoption->foodoptionid'$selected>$foodoption->name</option>\n";
 									}
 									?>
@@ -305,15 +335,11 @@ $root = $_SERVER[DOCUMENT_ROOT];
 							<td>Smoking Preference</td>
 							<td colspan="2" valign="middle">What is your smoking preference,
 								if assigned a roommate?</td>
-							<td><select name="campers-smokingoptionid-0"
+							<td><select name="campers-smokingoptionid-<?php echo $camperid;?>"
 								class="ui-corner-all">
 									<?php
 									foreach ($this->smokingoptions as $smokingoption) {
-										if($foodoption->smokingoptionid == $camper->smokingoptionid) {
-											$selected = " selected";
-										} else {
-											$selected = "";
-										}
+										$selected = $this->campers[0]->smokingoptionid == $foodoption->smokingoptionid ? " selected" : "";
 										echo "                  <option value='$smokingoption->smokingoptionid'$selected>$smokingoption->name</option>\n";
 									}
 									?>
@@ -326,7 +352,9 @@ $root = $_SERVER[DOCUMENT_ROOT];
 								Sponsor
 							</td>
 							<td colspan="3"><input type="text" maxlength="30"
-								class="ui-corner-all" style="width: 400px" />
+								name="campers-sponsor-<?php echo $camperid;?>"
+								class="inputtext ui-corner-all"
+								value="<?php echo $this->campers[0]->sponsor;?>" />
 							</td>
 						</tr>
 						<tr class="hidden" valign="top">
@@ -348,14 +376,10 @@ $root = $_SERVER[DOCUMENT_ROOT];
 						<tr>
 							<td>Church Affiliation</td>
 							<td colspan="3"><?php
-							echo "                     <select name='campers-churchid-0' class='ui-corner-all'>\n";
+							echo "                     <select name='campers-churchid-$camperid' class='ui-corner-all'>\n";
 							echo "                     <option value='0'>No Affiliation</option>\n;";
 							foreach ($this->churches as $church) {
-								if($church->churchid == $camper->churchid) {
-									$selected = " selected";
-								} else {
-									$selected = "";
-								}
+								$selected = $this->campers[0]->churchid == $church->churchid ? " selected" : "";
 								echo "                  <option value='$church->churchid'$selected>$church->statecd - $church->city: $church->name</option>\n";
 							}
 							echo "                  </select></td>\n";
@@ -387,24 +411,23 @@ $root = $_SERVER[DOCUMENT_ROOT];
 					<div class="workshopTimes">
 						<?php 
 						foreach($this->times as $timeid => $time) {
-							echo "					   <h5>" . $time[name] . "</h5>\n";
+							echo "					   <h5>" . $time["name"] . "</h5>\n";
 							echo "                     <div>\n";
 							echo "                        <div class='right'>\n";
 							echo "                           <h6>Available Workshops</h6>\n";
 							echo "                           <ul class='connected connectedWorkshop workshop-no'>\n";
-							if($time['shops']) {
-								foreach($time['shops'] as $shop) {
-									echo "                              <li class='ui-state-default'>\n";
+							if($time["shops"]) {
+								foreach($time["shops"] as $shop) {
+									echo "                              <li value='$shop->eventid' class='ui-state-default'>\n";
 									// echo "                              <button class='help link right'>Show $building->name Information</button>\n";
 									echo "                                 $shop->name ($shop->days)\n";
-									echo "                                 <input type='hidden' name='attendees-eventid-$camper->camperid' value='$shop->eventid' />\n";
 									echo "                              </li>\n";
 								}
 							}
 							echo "                           </ul>\n";
 							echo "                        </div>\n";
-							echo "                        <div>\n";
-							echo "                           <h6>Desired Workshops (in order of preference)</h6>\n";
+							echo "                        <div class='desired'>\n";
+							echo "                           <h6 class='$timeid'>Desired Workshops (in order of preference)</h6>\n";
 							echo "                           <ul class='connected connectedWorkshop workshop-yes'>\n";
 							echo "                           </ul>\n";
 							echo "                        </div>\n";
@@ -427,7 +450,7 @@ $root = $_SERVER[DOCUMENT_ROOT];
 									?>
 								</ul>
 							</div>
-							<div>
+							<div class="volunteers">
 								<h6>Desired Roles</h6>
 								<ul class="connected connectedWorkshop workshop-yes">
 								</ul>
@@ -452,6 +475,12 @@ $root = $_SERVER[DOCUMENT_ROOT];
 				   echo " ] };\n"; 
 				?>
 				</script>
+				<div id="noattending" class="padtop ui-state-error ui-corner-all hidden spaceleft">
+					<p>
+						<span class="space left ui-icon ui-icon-alert"></span>
+						No campers of age are marked as "Attending" in the Camper Listing tab. 
+					</p>
+				</div>
 				<table width="98%" align="center">
 					<tr align="center">
 						<td width="20%">Charge Type</td>
@@ -459,45 +488,69 @@ $root = $_SERVER[DOCUMENT_ROOT];
 						<td width="15%">Date</td>
 						<td width="50%">Memo</td>
 					</tr>
+					<?php
+					$total = 0.0;
+					foreach($this->charges as $charge) {
+					   echo "           <tr>\n";
+					   $total += (float)preg_replace("/,/", "",  $charge->amount);
+					   echo "                   <td class='chargetype'>$charge->name</td>\n";
+					   echo "                   <td class='amount' align='right'>\$" . $charge->amount . "</td>\n";
+					   echo "                   <td class='date' align='center'>$charge->timestamp</td>\n";
+					   echo "                   <td class='memo'>$charge->memo</td>\n";
+					   echo "                </tr>\n";
+					}
+					foreach($this->credits as $credit) {
+					   echo "           <tr>\n";
+					   echo "               <td class='chargetype'>Credit</td>\n";
+					   $total -= (float)preg_replace("/,/", "",  $credit->housing_amount+$credit->registration_amount);
+					   echo "                <td class='amount' align='right'>\$-" . number_format($credit->housing_amount+$credit->registration_amount, 2) . "</td>\n";
+					   echo "                <td>&nbsp;</td>\n";
+					   echo "                <td class='memo'><i>$credit->name</i></td>\n";
+					   echo "           </tr>\n";
+					}
+					?>
 					<tr id="paymentDummy" class="hidden">
 						<td class="chargetype"></td>
 						<td class="amount" align="right"></td>
-						<td class="date" align="right"></td>
-						<td class="memo spaceleft"></td>
+						<td class="date" align="center"></td>
+						<td class="memo padleft"></td>
+					</tr>
+					<tr>
+						<td class="chargetype">Donation</td>
+						<td align="right"><input type="text" id="donation" name="charges-amount-0"
+							maxlength="9" class="inputtexttiny ui-corner-all" /></td>
+						<td colspan='2' class="memo padleft">Please consider at least a $10.00
+							donation to the MUUSA Scholarship fund.</td>
 					</tr>
 					<?php
-					$total = 0.0;
-					/*foreach($this->charges as $charge) {
-						echo "           <tr>\n";
-						$total += (float)preg_replace("/,/", "",  $charge->amount);
-						echo "                   <td>$charge->name</td>\n";
-						echo "                   <td align='right'>\$" . $charge->amount . "</td>\n";
-						echo "                   <td align='center'>$charge->timestamp</td>\n";
-						echo "                   <td><i>$charge->memo</i></td>\n";
-						echo "                </tr>\n";
-					}
-					foreach($this->credits as $credit) {
-						echo "           <tr>\n";
-						echo "               <td>Credit</td>\n";
-						$total -= (float)preg_replace("/,/", "",  $credit->housing_amount+$credit->registration_amount);
-						echo "                <td align='right'>\$-" . number_format($credit->housing_amount+$credit->registration_amount, 2) . "</td>\n";
-						echo "                <td>&nbsp;</td>\n";
-						echo "                <td><i>$credit->name</i></td>\n";
-						echo "           </tr>\n";
-					}*/
-					echo "           <tr>\n";
-					echo "              <td colspan='3' align='right amountDue'>Amount Due From Camper:</td>\n";
-					echo "              <td><h3>$" . number_format($total, 2, '.', '') . "</h3></td>\n";
+					echo "           <tr align='right'>\n";
+					echo "              <td><strong>Amount Due Now:</strong></td>\n";
+					echo "              <td id='amountNow'>$" . number_format($total, 2, '.', '') . "</td>\n";
+					echo "              <td colspan='2'>&nbsp;</td>\n";
 					echo "           </tr>\n";
+					if($this->room != 0) {
+						echo "           <tr align='right'>\n";
+						echo "              <td><strong>Amount Due Upon Arrival:</strong></td>\n";
+						echo "              <td id='amountArrival'>$" . number_format($total, 2, '.', '') . "</td>\n";
+					echo "              <td colspan='2'>&nbsp;</td>\n";
+						echo "           </tr>\n";
+					}
 					?>
 					<tr>
-						<td colspan="4" align="center"><i>If you paid a pre-registration
-								deposit or are expecting a staff position credit but do not see
-								it here, it has been associated with a different name or e-mail
-								address. Please contact the registrar by phone or using the
-								Contact Us link above</i>.</td>
+						<td colspan="4" align="right">
+							<button id="nextFinish">Complete Registration</button>
+						</td>
 					</tr>
 				</table>
+				<div class="padtop ui-state-highlight ui-corner-all">
+					<p>
+						<span class="space left ui-icon ui-icon-info"></span> If you paid a
+						pre-registration deposit or are expecting a staff position credit
+						but do not see it here, it has been associated with a different
+						name or e-mail address. Please contact the registrar by phone or
+						using the Contact Us link above.
+					</p>
+				</div>
 			</div>
 		</div>
 		<div id="room-guest" class="dialog-message" title="Guest Room">
@@ -531,8 +584,8 @@ $root = $_SERVER[DOCUMENT_ROOT];
 		</div>
 	</form>
 	<!-- <div id='nastygram' -->
-<!-- 	style='position: absolute; display: none; top: 25px; left: 33%; width: -->
-<!-- 	33%; border: 2px dashed black; background: white; padding: 10px;'> -->
+	<!-- 	style='position: absolute; display: none; top: 25px; left: 33%; width: -->
+	<!-- 	33%; border: 2px dashed black; background: white; padding: 10px;'> -->
 	<!-- <h4><i>All returning campers should have their information prepopulated -->
 	<!-- into this form. If you do not see this, please login using the username -->
 	<!-- found on the bottom of the mailing label of your paper brochure, Logout -->
@@ -540,8 +593,8 @@ $root = $_SERVER[DOCUMENT_ROOT];
 	<!-- Contact Us tool above to send the webmaster an e-mail about the -->
 	<!-- discrepancy. Thank you.</i></h4> -->
 	<!-- <p align="center"><input type="button" -->
-<!-- 	onclick='document.getElementById("nastygram").style.display = "none";' -->
-<!-- 	value='Close' /> -->
+	<!-- 	onclick='document.getElementById("nastygram").style.display = "none";' -->
+	<!-- 	value='Close' /> -->
 	<!-- </div> -->
 	<!-- <form name='application' -->
 	<!-- 	action="index.php?option=com_muusla_application&task=detail&view=application&Itemid=72" -->
@@ -934,4 +987,4 @@ $root = $_SERVER[DOCUMENT_ROOT];
 // echo "      </tr>\n";
 // ?>
 	<!-- </table> -->
-	</div>
+</div>

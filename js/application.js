@@ -4,7 +4,7 @@ $(window).load(function() {
    $(".link").button( { icons: { primary: "ui-icon-link"}, text: false } ).click(function() { openLink($(this)); return false; } );
    $(".radios").buttonset();
    $(".add").button( { icons: { primary: "ui-icon-plus"}, text: false } ).click(function() {  addRow($(this)); return false; } );
-   $(".birthday").datepicker({ yearRange: "1913:2013", changeMonth: true, changeYear: true });
+   $(".birthday").datepicker({ yearRange: (thisyear-100) + ":" + thisyear, changeMonth: true, changeYear: true });
    $(".roomtypes").accordion( { collapsible: true, heightStyle: "content", header: "h4", active: false } );
    $(".roomtypeSave").button().click(function() { $(this).closest("div.roomtypes").accordion({active: false});  return false;} );
    $(".roomtype-yes, .roomtype-no" ).sortable({ placeholder: "ui-state-highlight", connectWith: ".connectedRoomtype"}).disableSelection();
@@ -18,6 +18,8 @@ $(window).load(function() {
    $(".workshopTimes").accordion( { heightStyle: "content", header: "h5" } );
    $(".workshop-yes, .workshop-no" ).sortable({ placeholder: "ui-state-highlight", connectWith: ".connectedWorkshop"}).disableSelection();
    $("#nextPayment").button().click(function() { $("#muusaApp").tabs({active: 3}); return false; });
+   $("#donation").blur(function () { donationCalc(); });
+   $("#nextFinish").button().click(function() { submit(); return false; });
 });
 
 function switchNextRow(obj) {
@@ -41,29 +43,96 @@ function addCamper() {
 function recalc(event, ui) {
 	if(ui.newPanel.attr("id") == "appPayment") {
 		$("#appPayment tr.dummy").remove();
-		var bodies = $("#appCamper tbody.camperBody");
+		$("#noattending").hide();
 		var dummy = $("#paymentDummy");
-		var now = new Date();
-		bodies.each( function(index, obj) {
-			var newrow = dummy.clone(true).removeAttr("id").addClass("dummy").insertBefore(dummy);
-		    $(".chargetype", newrow).text("Registration Fee");
-		    $(".amount", newrow).text(findFee($(".birthday", obj).val(), $(".grade", obj).val()));
-		    $(".date", newrow).text($.datepicker.formatDate('m/dd/yy', now));
-		    $(".memo", newrow).text($(".firstname", obj).val() + " " + $(".lastname", obj).val());
-		    newrow.show();
+		var now = $.datepicker.formatDate('m/dd/yy', new Date());
+		var deposit = 0.0;
+		var total = 0.0;
+		$("#appCamper tbody.camperBody").each( function() {
+			if($(".attending", $(this)).val() == 1) {
+				var newrow = dummy.clone(true).removeAttr("id").addClass("dummy").insertBefore(dummy);
+				$(".chargetype", newrow).text("Registration Fee");
+				var grade = pInt($(".grade", $(this)).val());
+				var fee = findFee($(".birthday", $(this)).val(), grade);
+				total += fee;
+				$(".amount", newrow).text("$" + fee.toFixed(2));
+				if(grade > 5) {
+					deposit += 50.0;
+				}
+				$(".date", newrow).text(now);
+				$(".memo", newrow).text($(".firstname", $(this)).val() + " " + $(".lastname", $(this)).val());
+				newrow.show();
+			}
 		});
-   }
+		if(deposit == 0.0) { 
+			$("#noattending").show();
+		} else {
+			total += deposit;
+			alert(total);
+			total += pFloat($("#donation").val());
+			alert(total);
+			$("#amountNow").text("$" + total.toFixed(2));
+			var newrow = dummy.clone(true).removeAttr("id").addClass("dummy").insertBefore(dummy);
+			$(".chargetype", newrow).text("Housing Deposit");
+			$(".amount", newrow).text("$" + deposit.toFixed(2));
+			$(".date", newrow).text(now);
+			$(".memo", newrow).text("HOUSING DEPOSIT MSG");
+			newrow.show();
+		}
+	}
+}
+
+function donationCalc() {
+	var total = 0.0;
+	$("#appPayment td.amount:visible").each( function () {
+		total += pFloat($(this).text());
+	});
+	var donation = pFloat($("#donation").val());
+	total += donation;
+	$("#donation").val("$" + donation.toFixed(2));
+	$("#amountNow").text("$" + total.toFixed(2));
+}
+
+function submit() {
+	$("#appCamper tbody.camperBody").each( function() {
+		if ($(".attending", $(this)).val() == 1) {
+			addHidden("roomtype_preferences-buildingids-0", $(".roomtype-yes li", $(this)));
+			addHidden("roommate_preferences-names-0", $("input.roommates", $(this)));
+		}
+	});
+	$("#appWorkshop div.desired").each(function() {
+		addHidden("attendees-eventids-" + $("h6", $(this)).attr("class"), $(".workshop-yes li", $(this)));
+	});
+	addHidden("volunteers-positionids-0", $("#appWorkshop .volunteers li", $(this)));
+	// $("#muusaApp").submit();
+	return false;
+}
+
+function addHidden(fieldname, selector) {
+	var arr = new Array();
+	selector.each(function() {
+		var str = $(this).val();
+		if (str != "" && str != 0) {
+			arr.push(escape(str));
+		}
+	});
+	if (arr.length > 0) {
+		$("<input>").attr({
+			type : "hidden",
+			name : fieldname,
+			value : arr.join(",")
+		}).appendTo("#muusaApp");
+	}
 }
 
 function findFee(birthday, grade) {
 	var age = getAge(birthday);
 	for(var i=0; i<feeTable.fees.length; i++) {
-		alert(age + " < " + feeTable.fees[i].agemax + (age<feeTable.fees[i].agemax));
 		if(age < feeTable.fees[i].agemax && age > feeTable.fees[i].agemin && grade < feeTable.fees[i].grademax && grade > feeTable.fees[i].grademin) {
-			return "$" + feeTable.fees[i].fee.toFixed(2);
+			return feeTable.fees[i].fee;
 		}
 	}
-	return "$0.00";
+	return 0.0;
 }
 
 function getAge(dateString) {
@@ -193,79 +262,10 @@ function checkPhone(obj, msg) {
 	return false;
 }
 
-function listbox_up(id) {
-	listbox_move("selected-" + id + "[]", "up");
+function pInt(val) {
+	return val != "" ? parseInt(val.replace(/[^0-9\.-]+/g, ""), 10) : 0;
 }
 
-function listbox_down(id) {
-	listbox_move("selected-" + id + "[]", "down");
-}
-
-function listbox_move(listID, direction) {
-	var listbox = document.getElementsByName(listID)[0];
-	var selIndex = listbox.selectedIndex;
-	var increment = direction == 'up' ? -1 : 1;
-	if (-1 == selIndex
-			|| (selIndex + increment) < 0
-			|| (selIndex + increment) > (listbox.options.length - 1)
-			|| listbox.options[selIndex].text.indexOf("(Leader)") != -1
-			|| listbox.options[selIndex + increment].text.indexOf("(Leader)") != -1) {
-		return;
-	}
-
-	var selValue = listbox.options[selIndex].value;
-	var selText = listbox.options[selIndex].text;
-	listbox.options[selIndex].value = listbox.options[selIndex + increment].value
-	listbox.options[selIndex].text = listbox.options[selIndex + increment].text
-	listbox.options[selIndex + increment].value = selValue;
-	listbox.options[selIndex + increment].text = selText;
-	listbox.selectedIndex = selIndex + increment;
-}
-
-function listbox_movefrom(id) {
-	listbox_moveacross("selected-" + id + "[]", "available-" + id + "[]");
-}
-
-function listbox_moveto(id) {
-	listbox_moveacross("available-" + id + "[]", "selected-" + id + "[]");
-}
-
-function listbox_moveacross(sourceID, destID) {
-	var src = document.getElementsByName(sourceID)[0];
-	var dest = document.getElementsByName(destID)[0];
-	for ( var count = 0; count < src.options.length; count++) {
-		if (src.options[count].selected == true
-				&& src.options[count].text.indexOf("(Leader)") == -1) {
-			var option = src.options[count];
-			var newOption = document.createElement("option");
-			newOption.value = option.value;
-			newOption.text = option.text;
-			newOption.selected = true;
-			try {
-				dest.add(newOption, null); // Standard
-				src.remove(count, null);
-			} catch (error) {
-				dest.add(newOption); // IE only
-				src.remove(count);
-			}
-			count--;
-		}
-	}
-}
-
-function selectSubmit() {
-	var selects = document.application.getElementsByTagName("select");
-	for ( var i = 0; i < selects.length; i++) {
-		if (selects[i].name.match(/^available-/)) {
-			for ( var j = 0; j < selects[i].options.length; j++) {
-				selects[i].options[j].selected = false;
-			}
-		}
-		if (selects[i].name.match(/^selected-/)) {
-			for ( var j = 0; j < selects[i].options.length; j++) {
-				selects[i].options[j].selected = true;
-			}
-		}
-	}
-	document.getElementsByName('application')[0].submit();
+function pFloat(val) {
+	return val != "" ? parseFloat(val.replace(/[^0-9\.-]+/g, "")) : 0.0;
 }

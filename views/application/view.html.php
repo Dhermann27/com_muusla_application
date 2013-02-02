@@ -17,33 +17,21 @@ class muusla_applicationViewapplication extends JView
 	function display($tpl = null) {
 // 		$phonenbrcount = 0;
  		$model =& $this->getModel();
-// 		$camper = $model->getCamper();
-// 		$camper->phonenbrs = $model->getPhonenumbers($camper->camperid);
-// 		for($i=count($camper->phonenbrs);$i<3;$i++) {
-// 			$emptyNbr = new stdClass;
-// 			$emptyNbr->phonenbrid = $phonenbrcount++;
-// 			$emptyNbr->phonetypeid = 0;
-// 			$emptyNbr->phonenbr = "";
-// 			array_push($camper->phonenbrs, $emptyNbr);
-// 		}
-// 		$this->assignRef('camper', $camper);
-// 		if($camper->camperid) {
-// 			$children = $model->getChildren($camper->camperid);
-// 			if(count($children) > 0) {
-// 				foreach($children as $child) {
-// 					$child->phonenbrs = $model->getPhonenumbers($child->camperid);
-// 					for($i=count($child->phonenbrs);$i<3;$i++) {
-// 						$emptyNbr = new stdClass;
-// 						$emptyNbr->phonenbrid = $phonenbrcount++;
-// 						$emptyNbr->phonetypeid = 0;
-// 						$emptyNbr->phonenbr = "";
-// 						array_push($child->phonenbrs, $emptyNbr);
-// 					}
-// 				}
-// 			}
-// 			$this->assignRef('children', $children);
-// 		}
- 		$this->assignRef('positions', $model->getPositions());;
+ 		$family = $model->getFamily();
+ 		$this->assignRef('family', $family);
+ 		$campers = $model->getCampers($family->familyid);
+ 		foreach($campers as $camper) {
+ 			$camper->phonenbrs = $model->getPhonenumbers($camper->camperid);
+ 			$camper->fiscalyearid = $model->getFiscalyear($camper->camperid);
+ 			if($camper->fiscalyearid) {
+ 			   $camper->roomtypes = $model->getRoomtypepreferences($camper->fiscalyearid);
+ 			   $camper->roommates = $model->getRoommatepreferences($camper->fiscalyearid);
+ 			}
+ 		}
+ 		$this->assignRef('charges', $model->getCharges($family->familyid));
+ 		$this->assignRef('credits', $model->getCredits($family->familyid));
+ 		$this->assignRef('campers', $campers);
+ 		$this->assignRef('positions', $model->getPositions());
  		$this->assignRef('buildings', $model->getBuildings());
  		$this->assignRef('states', $model->getStates());
 // 		$this->assignRef('volunteers', $model->getVolunteers());
@@ -67,6 +55,10 @@ class muusla_applicationViewapplication extends JView
  		$this->assignRef('times', $times);
  		$this->assignRef('workshops', $workshops);
  			
+		parent::display($tpl);
+	}
+	
+	function save($tpl = null) {
 		parent::display($tpl);
 	}
 

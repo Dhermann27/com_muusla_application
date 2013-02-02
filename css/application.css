@@ -23,6 +23,7 @@
    #muusaApp .clearboth {
       clear: both;
    }
+   
  
    #muusaApp button.help {
       width: 1.75em;
@@ -33,9 +34,22 @@
    #muusaApp .hidden {
       display: none;
    }
+   
+   #muusaApp .space {
+      margin: 1em;
+   }
  
    #muusaApp .spaceleft {
       margin-left: 1.75em;
+   }
+ 
+   #muusaApp .padtop {
+      padding-top: 1em;
+   }
+   
+ 
+   #muusaApp .padleft {
+      padding-left: 1.75em;
    }
    
    #muusaApp input, #muusaApp select {
@@ -49,6 +63,10 @@
    
    #muusaApp .inputtextshort {
       width: 15em;
+   }
+   
+   #muusaApp .inputtexttiny {
+      width: 5em;
    }
  
  
@@ -78,7 +96,7 @@
    }
  
    #muusaApp .connectedRoomtype {
-      width: 19em;
+      width: 18.5em;
       min-height: 20em;
    }
  

@@ -1,9 +1,8 @@
 <?php
-/**
- * @package		muusla_application
- * @license		GNU/GPL, see LICENSE.php
- */
-
+// No direct access to this file
+defined('_JEXEC') or die('Restricted access');
+ 
+// import Joomla controller library
 jimport('joomla.application.component.controller');
 
 /**
@@ -20,7 +19,7 @@ class muusla_applicationController extends JController
       $viewType = $document->getType();
       $viewName = JRequest::getCmd( 'view', $this->getName() );
       $viewLayout = JRequest::getCmd( 'layout', $myLayout );
-
+      
       $view =& $this->getView($viewName, $viewType, '', array( 'base_path'=>$this->_basePath));
 
       // Get/Create the model
