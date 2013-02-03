@@ -119,6 +119,13 @@ class muusla_applicationModelapplication extends JModel
 	   return $db->loadColumn(0);
 	}
 
+	function getAttendees($fiscalyearid) {
+	   $db =& JFactory::getDBO();
+	   $query = "SELECT eventid FROM muusa_attendees WHERE fiscalyearid=$fiscalyearid ORDER BY choicenbr";
+	   $db->setQuery($query);
+	   return $db->loadColumn(0);
+	}
+
 	function getVolunteers() {
 		$db =& JFactory::getDBO();
 		$user =& JFactory::getUser();
@@ -127,69 +134,81 @@ class muusla_applicationModelapplication extends JModel
 		return $db->loadObjectList();
 	}
 
+	function upsertFamily($obj) {
+		$db =& JFactory::getDBO();
+		if($obj->familyid < 1000) {
+			unset($obj->familyid);
+			$db->insertObject("muusa_family", $obj, "familyid");
+		} else {
+			$db->updateObject("muusa_family", $obj, "familyid");
+		}
+	}
+
 	function upsertCamper($obj) {
 		$db =& JFactory::getDBO();
-
-		$obj->gradeoffset = "&&$obj->grade-muusa_age_f(STR_TO_DATE('$obj->birthdate', '%m/%d/%Y')')";
-		$obj->programid = "&&muusa_programs_id_f(STR_TO_DATE('$obj->birthdate', '%m/%d/%Y'), ($obj->grade-muusa_age_f(STR_TO_DATE('$obj->birthdate', '%m/%d/%Y'))))";
-		$obj->birthdate = "&&STR_TO_DATE('$obj->birthdate', '%m/%d/%Y')";
+		unset($obj->attending);
+		$obj->gradeoffset = $obj->grade < 13 ? "&&$obj->grade-muusa_age_f(STR_TO_DATE('$obj->birthdate', '%m/%d/%Y')')" : "-5";
 		unset($obj->grade);
+		$obj->birthdate = "&&STR_TO_DATE('$obj->birthdate', '%m/%d/%Y')";
 		if($obj->camperid < 1000) {
 			unset($obj->camperid);
 			$db->insertObject("muusa_campers", $obj, "camperid");
+			return $db->insertid();
 		} else {
 			$db->updateObject("muusa_campers", $obj, "camperid");
+			return $obj->camperid;
 		}
-
-		if(!$obj->notattending) {
-			$query = "SELECT COUNT(*) FROM muusa_campers_v WHERE camperid=$obj->camperid";
+	}
+	
+	function upsertFiscalyear($camperid, $attending) {
+		$db =& JFactory::getDBO();
+		$user =& JFactory::getUser();
+		if($attending > 0) {
+			$query = "SELECT mf.fiscalyearid FROM muusa_fiscalyear mf, muusa_currentyear my WHERE mf.fiscalyear=my.year AND mf.camperid=$camperid";
 			$db->setQuery($query);
-			if($db->loadResult() == 0) {
+			$fiscalyearid = $db->loadResult();
+			if(!$fiscalyearid) {
 				$fyobj = new stdClass;
-				$fyobj->camperid = $obj->camperid;
+				$fyobj->camperid = $camperid;
 				$fyobj->fiscalyear = "&&(SELECT year FROM muusa_currentyear)";
 				$fyobj->days = 6;
 				$fyobj->postmark = "&&CURRENT_TIMESTAMP";
-				if($obj->created_by) {
-					$fyobj->created_by = $obj->created_by;
-					$fyobj->created_at = $obj->created_at;
-				} else {
-					$fyobj->created_by = $obj->modified_by;
-					$fyobj->created_at = $obj->modified_at;
-				}
+				$fyobj->created_by = $user->username;
+				$fyobj->created_at = "&&CURRENT_TIMESTAMP";
 				$db->insertObject("muusa_fiscalyear", $fyobj);
+				$fiscalyearid = $db->insertid();
 			}
-		} else {
-			$query = "DELETE FROM muusa_fiscalyear WHERE camperid=$obj->camperid AND fiscalyear=(SELECT year FROM muusa_currentyear)";
+			return $fiscalyearid;
+		/*} else {
+			$query = "DELETE FROM muusa_fiscalyear WHERE camperid=$camperid AND fiscalyear=(SELECT year FROM muusa_currentyear)";
 			$db->setQuery($query);
 			$db->query();
 			if($db->getErrorNum()) {
 				JError::raiseError(500, $db->stderr());
 			}
 
-			$query = "DELETE FROM muusa_charges WHERE camperid=$obj->camperid AND fiscalyear=(SELECT year FROM muusa_currentyear)";
+			$query = "DELETE FROM muusa_charges WHERE camperid=$camperid AND fiscalyear=(SELECT year FROM muusa_currentyear)";
 			$db->setQuery($query);
 			$db->query();
 			if($db->getErrorNum()) {
 				JError::raiseError(500, $db->stderr());
 			}
 
-			$query = "DELETE FROM muusa_volunteers WHERE camperid=$obj->camperid AND fiscalyear=(SELECT year FROM muusa_currentyear)";
+			$query = "DELETE FROM muusa_volunteers WHERE camperid=$camperid AND fiscalyear=(SELECT year FROM muusa_currentyear)";
 			$db->setQuery($query);
 			$db->query();
 			if($db->getErrorNum()) {
 				JError::raiseError(500, $db->stderr());
 			}
 
-			$query = "DELETE FROM muusa_attendees WHERE camperid=$obj->camperid";
+			$query = "DELETE FROM muusa_attendees WHERE camperid=$camperid";
 			$db->setQuery($query);
 			$db->query();
 			if($db->getErrorNum()) {
 				JError::raiseError(500, $db->stderr());
 			}
+			return 0;*/
 		}
-
-		return $obj->camperid;
 	}
 
 	function deletePhonenumber($id) {

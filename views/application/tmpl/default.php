@@ -16,7 +16,7 @@ $user =& JFactory::getUser();
 	<script
 		src='<?php echo JURI::root(true);?>/components/com_muusla_application/js/application.js'></script>
 	<script>var thisyear = <?php echo substr($this->year, -4)?>;</script>
-	<form action="index.php">
+	<form action="<? echo $_SERVER['PHP_SELF'];?>" method="post">
 		<div id="muusaApp">
 		<?php $familyid = $this->family->familyid ? $this->family->familyid : 0;?>
 			<ul>
@@ -30,10 +30,14 @@ $user =& JFactory::getUser();
 					<tr>
 						<td width="25%">
 							<button class="help info right">Show Family Name Help</button>
-							Family Name
+							Family Name <input type="hidden"
+							name="family-familyid-<?php echo $familyid?>"
+							value="<?php echo $familyid?>" />
 						</td>
-						<td width="75%"><input type="text" name="family-familyname-<?php echo $familyid;?>"
-							maxlength="30" class="inputtext ui-corner-all" value="<?php echo $this->family->familyname;?>" />
+						<td width="75%"><input type="text"
+							name="family-familyname-<?php echo $familyid;?>" maxlength="30"
+							class="inputtext ui-corner-all"
+							value="<?php echo $this->family->familyname;?>" />
 						</td>
 					</tr>
 					<tr class="hidden" valign="top">
@@ -108,20 +112,26 @@ $user =& JFactory::getUser();
 			</div>
 			<div id="appCamper">
 				<table>
-					<tbody class="camperBody">
 					<?php $camperid = $this->campers[0] ? $this->campers[0]->camperid : 0;?>
+					<tbody <?php if($camperid != 0) echo "id='$camperid' "?>class="camperBody">
 						<tr valign="bottom">
-							<td width="25%"><select name="campers-sexcd-<?php echo $camperid;?>"
+							<td width="25%"><select
+								name="campers-sexcd-<?php echo $camperid;?>"
 								class="ui-corner-all">
 									<option value="0">Gender</option>
-									<option value="M"<?php echo $this->campers[0]->sexcd == "M" ? " selected" : "";?>>Male</option>
-									<option value="F"<?php echo $this->campers[0]->sexcd == "F" ? " selected" : "";?>>Female</option>
-							</select>
+									<option value="M"
+									<?php echo $this->campers[0]->sexcd == "M" ? " selected" : "";?>>Male</option>
+									<option value="F"
+									<?php echo $this->campers[0]->sexcd == "F" ? " selected" : "";?>>Female</option>
+							</select> <input type="hidden"
+								name="campers-camperid-<?php echo $camperid;?>"
+								value="<?php echo $camperid;?>" />
 							</td>
 							<td colspan="3" width="75%" align="right">
 								<button class="help info">Show Attending Help</button> <select
-								name="campers-attending-<?php echo $camperid;?>" class="attending ui-corner-all">
-									<option value="1" selected="selected">Attending</option>
+								name="campers-attending-<?php echo $camperid;?>"
+								class="attending ui-corner-all">
+									<option value="7" selected="selected">Attending</option>
 									<option value="0">Not Attending</option>
 							</select>
 							</td>
@@ -155,8 +165,7 @@ $user =& JFactory::getUser();
 								Email Address
 							</td>
 							<?php 
-							echo "								<td colspan='3'>$user->email\n";
-							echo "								   <input type='hidden' name='campers-email-$camperid' value='$user->email' /></td>\n";
+							echo "								<td colspan='3'>$user->email</td>\n";
 							?>
 						</tr>
 						<tr class="hidden" valign="top">
@@ -167,7 +176,7 @@ $user =& JFactory::getUser();
 									database.</p>
 							</td>
 						</tr>
-						<tr>
+						<tr class="phonenbrs">
 							<td>Phone Numbers</td>
 							<td colspan='3'><?php 
 							$phonenbrid = $this->campers[0]->phonenbrs[0] ? $this->campers[0]->phonenbrs[0]->phonenbrid : 0;
@@ -181,6 +190,9 @@ $user =& JFactory::getUser();
 								name="phonenumbers-phonenbr-<?php echo $phonenbrid?>"
 								maxlength="14" class="inputtextshort ui-corner-all"
 								value="<?php echo $this->campers[0]->phonenbrs[0]->phonenbr;?>" />
+								<input type="hidden"
+								name="phonenumbers-camperid-<?php echo $phonenbrid;?>"
+								value="<?php echo $camperid?>" />
 								<button class="add help">Add Phone Number</button>
 							</td>
 						</tr>
@@ -198,13 +210,14 @@ $user =& JFactory::getUser();
 						      echo "                     </select>\n";
 						      echo "							 <input type='text' maxlength='14' name='phonenumbers-phonenbr-$phonenbr->phonenbrid'\n";
 						      echo "								class='inputtextshort ui-corner-all' value='$phonenbr->phonenbr' />\n";
+						      echo "                             <input type='hidden' name='phonenumbers-camperid-$phonenbr->phonenbrid' value='$camperid' />\n";
 						      echo "								<button class='delete help'>Delete Phone Number</button>\n";
 						      echo "							</td>\n";
 						      echo "						</tr>\n";
 						   }
 						}
 						?>
-						<tr class="hidden">
+						<tr class="phonenbrs hidden">
 							<td>&nbsp;</td>
 							<td colspan="3"><?php 
 							echo "                  <select name='phonenumbers-phonetypeid-0' class='ui-corner-all'>\n";
@@ -213,7 +226,8 @@ $user =& JFactory::getUser();
 							}
 							echo "                     </select>\n";
 							?> <input type="text" maxlength="14"
-								class="inputtextshort ui-corner-all" />
+								class="inputtextshort ui-corner-all" /> <input type="hidden"
+								name="phonenumbers-camperid-0" value="0" />
 								<button class="delete help">Delete Phone Number</button>
 							</td>
 						</tr>
@@ -221,10 +235,13 @@ $user =& JFactory::getUser();
 							<td>Birthday</td>
 							<td><input type="text" maxlength="10"
 								name="campers-birthdate-<?php echo $camperid;?>"
-								class="birthday ui-corner-all" value="<?php echo $this->campers[0]->birthday;?>" />
+								class="birthday ui-corner-all"
+								value="<?php echo $this->campers[0]->birthday;?>" />
 							</td>
-							<td align="right">Grade Entering in Fall <?php echo substr($this->year, -4)?></td>
-							<td><select name="campers-grade-<?php echo $camperid;?>" class="grade ui-corner-all">
+							<td align="right">Grade Entering in Fall <?php echo substr($this->year, -4)?>
+							</td>
+							<td><select name="campers-grade-<?php echo $camperid;?>"
+								class="grade ui-corner-all">
 									<?php 						
 									echo "                        <option value='13'>Not Applicable</option>\n";
 									echo "                        <option value='0'>Kindergarten or Earlier</option>\n";
@@ -290,8 +307,7 @@ $user =& JFactory::getUser();
 						   foreach(array_slice($this->campers[0]->roommates, 1) as $roommate) {
 						      echo "						<tr>\n";
 						      echo "							<td>&nbsp;</td>\n";
-						      echo "							<td colspan='3'><input type='text'\n";
-						      echo "								name='roommate_preferences-name-0' maxlength='50'\n";
+						      echo "							<td colspan='3'><input type='text maxlength='50'\n";
 						      echo "								class='inputtext roommates ui-corner-all' value='$roommate' />\n";
 						      echo "								<button class='delete help'>Delete Preference</button>\n";
 						      echo "							</td>\n";
@@ -301,8 +317,7 @@ $user =& JFactory::getUser();
 						?>
 						<tr class="hidden">
 							<td>&nbsp;</td>
-							<td colspan="3"><input type="text"
-								name="roommate_preferences-name-0" maxlength="50"
+							<td colspan="3"><input type="text" maxlength="50"
 								class="inputtext roommates ui-corner-all" />
 								<button class="delete help">Delete Preference</button>
 							</td>
@@ -478,7 +493,7 @@ $user =& JFactory::getUser();
 				<div id="noattending" class="padtop ui-state-error ui-corner-all hidden spaceleft">
 					<p>
 						<span class="space left ui-icon ui-icon-alert"></span>
-						No campers of age are marked as "Attending" in the Camper Listing tab. 
+						No campers of age are marked as "Attending" in the Camper Listing tab. Please return to that tab and choose "Attending" from the drop-down in the upper-right.
 					</p>
 				</div>
 				<table width="98%" align="center">
@@ -490,23 +505,27 @@ $user =& JFactory::getUser();
 					</tr>
 					<?php
 					$total = 0.0;
-					foreach($this->charges as $charge) {
-					   echo "           <tr>\n";
-					   $total += (float)preg_replace("/,/", "",  $charge->amount);
-					   echo "                   <td class='chargetype'>$charge->name</td>\n";
-					   echo "                   <td class='amount' align='right'>\$" . $charge->amount . "</td>\n";
-					   echo "                   <td class='date' align='center'>$charge->timestamp</td>\n";
-					   echo "                   <td class='memo'>$charge->memo</td>\n";
-					   echo "                </tr>\n";
+					if($this->charges) {
+					   foreach($this->charges as $charge) {
+					      echo "           <tr>\n";
+					      $total += (float)preg_replace("/,/", "",  $charge->amount);
+					      echo "                   <td class='chargetype'>$charge->name</td>\n";
+					      echo "                   <td class='amount' align='right'>\$" . $charge->amount . "</td>\n";
+					      echo "                   <td class='date' align='center'>$charge->timestamp</td>\n";
+					      echo "                   <td class='memo'>$charge->memo</td>\n";
+					      echo "                </tr>\n";
+					   }
 					}
-					foreach($this->credits as $credit) {
-					   echo "           <tr>\n";
-					   echo "               <td class='chargetype'>Credit</td>\n";
-					   $total -= (float)preg_replace("/,/", "",  $credit->housing_amount+$credit->registration_amount);
-					   echo "                <td class='amount' align='right'>\$-" . number_format($credit->housing_amount+$credit->registration_amount, 2) . "</td>\n";
-					   echo "                <td>&nbsp;</td>\n";
-					   echo "                <td class='memo'><i>$credit->name</i></td>\n";
-					   echo "           </tr>\n";
+					if($this->credits) {
+					   foreach($this->credits as $credit) {
+					      echo "           <tr>\n";
+					      echo "               <td class='chargetype'>Credit</td>\n";
+					      $total -= (float)preg_replace("/,/", "",  $credit->housing_amount+$credit->registration_amount);
+					      echo "                <td class='amount' align='right'>\$-" . number_format($credit->housing_amount+$credit->registration_amount, 2) . "</td>\n";
+					      echo "                <td>&nbsp;</td>\n";
+					      echo "                <td class='memo'><i>$credit->name</i></td>\n";
+					      echo "           </tr>\n";
+					   }
 					}
 					?>
 					<tr id="paymentDummy" class="hidden">

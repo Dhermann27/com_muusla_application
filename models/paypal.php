@@ -33,5 +33,5 @@ class muusla_applicationModelpaypal extends JModel
 //		if($db->getErrorNum()) {
 //			JError::raiseError(500, $db->stderr());
 //		}
-//	}
+	}
 }

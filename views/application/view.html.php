@@ -14,88 +14,91 @@ jimport( 'joomla.application.component.view');
 class muusla_applicationViewapplication extends JView
 {
 
-	function display($tpl = null) {
-// 		$phonenbrcount = 0;
- 		$model =& $this->getModel();
- 		$family = $model->getFamily();
- 		$this->assignRef('family', $family);
- 		$campers = $model->getCampers($family->familyid);
- 		foreach($campers as $camper) {
- 			$camper->phonenbrs = $model->getPhonenumbers($camper->camperid);
- 			$camper->fiscalyearid = $model->getFiscalyear($camper->camperid);
- 			if($camper->fiscalyearid) {
- 			   $camper->roomtypes = $model->getRoomtypepreferences($camper->fiscalyearid);
- 			   $camper->roommates = $model->getRoommatepreferences($camper->fiscalyearid);
- 			}
- 		}
- 		$this->assignRef('charges', $model->getCharges($family->familyid));
- 		$this->assignRef('credits', $model->getCredits($family->familyid));
- 		$this->assignRef('campers', $campers);
- 		$this->assignRef('positions', $model->getPositions());
- 		$this->assignRef('buildings', $model->getBuildings());
- 		$this->assignRef('states', $model->getStates());
-// 		$this->assignRef('volunteers', $model->getVolunteers());
- 		$this->assignRef('foodoptions', $model->getFoodoptions());
- 		$this->assignRef('smokingoptions', $model->getSmokingoptions());
- 		$this->assignRef('churches', $model->getChurches());
- 		$this->assignRef('phonetypes', $model->getPhonetypes());
- 		$this->assignRef('programs', $model->getPrograms());
- 		$this->assignRef('year', $model->getYear());
- 		$times = $model->getTimes();
- 		foreach($model->getWorkshops() as $workshop) {
- 			if($workshop->days == 'MTuWThF') {
- 				$workshop->days = '5 days';
- 			}
- 			if($times[$workshop->timeid]["shops"] == null) {
- 				$times[$workshop->timeid]["shops"] = array($workshop);
- 			} else {
- 				array_push($times[$workshop->timeid]["shops"], $workshop);
- 			}
- 		}
- 		$this->assignRef('times', $times);
- 		$this->assignRef('workshops', $workshops);
- 			
-		parent::display($tpl);
-	}
-	
-	function save($tpl = null) {
-		parent::display($tpl);
-	}
+   function display($tpl = null) {
+      $model =& $this->getModel();
+      $user =& JFactory::getUser();
+      $calls[][] = array();
+      foreach(JRequest::get() as $key=>$value) {
+         if(preg_match('/^(\w+)-(\w+)-(\d+)$/', $key, $objects)) {
+            $table = $this->getSafe($objects[1]);
+            $column = $this->getSafe($objects[2]);
+            $id = $this->getSafe($objects[3]); 
+            if($calls[$table][$id] == null) {
+               $obj = new stdClass;
+               if($id < 1000) {
+                  $obj->created_by = $user->username;
+                  $obj->created_at = date("Y-m-d H:i:s");
+               } else {
+                  $obj->modified_by = $user->username;
+                  $obj->modified_at = date("Y-m-d H:i:s");
+               }
+               $calls[$table][$id] = $obj;
+            }
+            $calls[$table][$id]->$column = $this->getSafe($value);
+         }
+      }
+      $fiscalyearids[] = array();
+      if(count($calls["family"]) > 0) {
+         foreach($calls["family"] as $id => $family) {
+            $familyid = $model->upsertFamily($family);
+         }
+      }
+      if(count($calls["campers"]) > 0) {
+         foreach($calls["campers"] as $id => $camper) {
+            $attending = $camper->attending;
+            $camper->familyid = $familyid;
+            $camperid = $model->upsertCamper($camper);
+            $fiscalyearids[$camperid] = $model->upsertFiscalyear($camperid, $attending);
+         }
+      }
+      $family = $model->getFamily();
+      $this->assignRef('family', $family);
+      if($family->familyid) {
+         $campers = $model->getCampers($family->familyid);
+         foreach($campers as $camper) {
+            $camper->phonenbrs = $model->getPhonenumbers($camper->camperid);
+            $camper->fiscalyearid = $model->getFiscalyear($camper->camperid);
+            if($camper->fiscalyearid) {
+               $camper->roomtypes = $model->getRoomtypepreferences($camper->fiscalyearid);
+               $camper->roommates = $model->getRoommatepreferences($camper->fiscalyearid);
+               $camper->attendees = $model->getAttendees($camper->fiscalyearid);
+            }
+         }
+         $this->assignRef('charges', $model->getCharges($family->familyid));
+         $this->assignRef('credits', $model->getCredits($family->familyid));
+      }
+      $this->assignRef('campers', $campers);
+      $this->assignRef('positions', $model->getPositions());
+      $this->assignRef('buildings', $model->getBuildings());
+      $this->assignRef('states', $model->getStates());
+      $this->assignRef('foodoptions', $model->getFoodoptions());
+      $this->assignRef('smokingoptions', $model->getSmokingoptions());
+      $this->assignRef('churches', $model->getChurches());
+      $this->assignRef('phonetypes', $model->getPhonetypes());
+      $this->assignRef('programs', $model->getPrograms());
+      $this->assignRef('year', $model->getYear());
+      $times = $model->getTimes();
+      foreach($model->getWorkshops() as $workshop) {
+         if($workshop->days == 'MTuWThF') {
+            $workshop->days = '5 days';
+         }
+         if($times[$workshop->timeid]["shops"] == null) {
+            $times[$workshop->timeid]["shops"] = array($workshop);
+         } else {
+            array_push($times[$workshop->timeid]["shops"], $workshop);
+         }
+      }
+      $this->assignRef('times', $times);
+      $this->assignRef('workshops', $workshops);
+
+      parent::display($tpl);
+   }
 
 	function detail($tpl = null) {
 // 		$model =& $this->getModel();
 // 		$user =& JFactory::getUser();
 // 		$calls[][] = array();
 // 		$phonenumbers[] = array();
-// 		foreach(JRequest::get() as $key=>$value) {
-// 			if(preg_match('/^(\w+)-(\w+)-(\d+)$/', $key, $objects)) {
-// 				if(!is_array($value)) {
-// 					if($calls[$objects[1]][$objects[3]] == null) {
-// 						$obj = new stdClass;
-// 						if($objects[1] == "campers") {
-// 							$obj->is_ecomm = 0;
-// 							$obj->is_handicap = 0;
-// 							$obj->is_ymca = 0;
-// 							$obj->is_ecomm = 0;
-// 						}
-// 						if($objects[3] < 1000) {
-// 							$obj->created_by = $user->username;
-// 							$obj->created_at = date("Y-m-d H:i:s");
-// 						} else {
-// 							$obj->modified_by = $user->username;
-// 							$obj->modified_at = date("Y-m-d H:i:s");
-// 						}
-// 						$calls[$objects[1]][$objects[3]] = $obj;
-// 					}
-// 					$calls[$objects[1]][$objects[3]]->$objects[2] = $this->getSafe($value);
-// 				} else {
-// 					$obj = new stdClass;
-// 					$obj->created_by = $user->username;
-// 					$obj->created_at = date("Y-m-d H:i:s");
-// 					$calls[$objects[1]][$objects[3]] = $value;
-// 				}
-// 			}
-// 		}
 // 		if($calls["campers"][0]) {
 // 			$hohid = $model->upsertCamper($calls["campers"][0]);
 // 			foreach($calls[phonenumbers] as $id => $number) {

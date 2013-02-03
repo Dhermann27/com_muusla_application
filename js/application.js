@@ -1,25 +1,124 @@
 $(window).load(function() {
-   $("#muusaApp").tabs({ beforeActivate: function(event, ui) { recalc(event, ui); return true;} });
-   $(".info").button( { icons: { primary: "ui-icon-info"}, text: false } ).click(function() { switchNextRow($(this)); return false; } );
-   $(".link").button( { icons: { primary: "ui-icon-link"}, text: false } ).click(function() { openLink($(this)); return false; } );
-   $(".radios").buttonset();
-   $(".add").button( { icons: { primary: "ui-icon-plus"}, text: false } ).click(function() {  addRow($(this)); return false; } );
-   $(".birthday").datepicker({ yearRange: (thisyear-100) + ":" + thisyear, changeMonth: true, changeYear: true });
-   $(".roomtypes").accordion( { collapsible: true, heightStyle: "content", header: "h4", active: false } );
-   $(".roomtypeSave").button().click(function() { $(this).closest("div.roomtypes").accordion({active: false});  return false;} );
-   $(".roomtype-yes, .roomtype-no" ).sortable({ placeholder: "ui-state-highlight", connectWith: ".connectedRoomtype"}).disableSelection();
-   $(".dialog-message").dialog( { modal: true, autoOpen: false, minWidth: 800, buttons: { Ok: function() { $( this ).dialog( "close" ); } } });
-   $(".delete").button( { icons: { primary: "ui-icon-minus"}, text: false } ).click(function() {  hideThisRow($(this)); return false; } );
-   $("#nextCamper").button().click(function() { $("#muusaApp").tabs({active: 1}); return false; });
-   $("#addCamper").button().click(function() { addCamper(); return false; });
-   $("#removeCamper").button().click(function() { removeCamper($(this)); return false; });
-   $("#nextWorkshop").button().click(function() { $("#muusaApp").tabs({active: 2}); return false; });
-   $(".workshopSelection").accordion( { heightStyle: "content", header: "h4" } );
-   $(".workshopTimes").accordion( { heightStyle: "content", header: "h5" } );
-   $(".workshop-yes, .workshop-no" ).sortable({ placeholder: "ui-state-highlight", connectWith: ".connectedWorkshop"}).disableSelection();
-   $("#nextPayment").button().click(function() { $("#muusaApp").tabs({active: 3}); return false; });
-   $("#donation").blur(function () { donationCalc(); });
-   $("#nextFinish").button().click(function() { submit(); return false; });
+	$("#muusaApp").tabs({
+		active : 0,
+		beforeActivate : function(event, ui) {
+			recalc(event, ui);
+			return true;
+		}
+	});
+	$(".info").button({
+		icons : {
+			primary : "ui-icon-info"
+		},
+		text : false
+	}).click(function() {
+		switchNextRow($(this));
+		return false;
+	});
+	$(".link").button({
+		icons : {
+			primary : "ui-icon-link"
+		},
+		text : false
+	}).click(function() {
+		openLink($(this));
+		return false;
+	});
+	$(".radios").buttonset();
+	$(".add").button({
+		icons : {
+			primary : "ui-icon-plus"
+		},
+		text : false
+	}).click(function() {
+		addRow($(this));
+		return false;
+	});
+	$(".birthday").datepicker({
+		yearRange : (thisyear - 100) + ":" + thisyear,
+		changeMonth : true,
+		changeYear : true
+	});
+	$(".roomtypes").accordion({
+		collapsible : true,
+		heightStyle : "content",
+		header : "h4",
+		active : false
+	});
+	$(".roomtypeSave").button().click(function() {
+		$(this).closest("div.roomtypes").accordion({
+			active : false
+		});
+		return false;
+	});
+	$(".roomtype-yes, .roomtype-no").sortable({
+		placeholder : "ui-state-highlight",
+		connectWith : ".connectedRoomtype"
+	}).disableSelection();
+	$(".dialog-message").dialog({
+		modal : true,
+		autoOpen : false,
+		minWidth : 800,
+		buttons : {
+			Ok : function() {
+				$(this).dialog("close");
+			}
+		}
+	});
+	$(".delete").button({
+		icons : {
+			primary : "ui-icon-minus"
+		},
+		text : false
+	}).click(function() {
+		hideThisRow($(this));
+		return false;
+	});
+	$("#nextCamper").button().click(function() {
+		$("#muusaApp").tabs({
+			active : 1
+		});
+		return false;
+	});
+	$("#addCamper").button().click(function() {
+		addCamper();
+		return false;
+	});
+	$("#removeCamper").button().click(function() {
+		removeCamper($(this));
+		return false;
+	});
+	$("#nextWorkshop").button().click(function() {
+		$("#muusaApp").tabs({
+			active : 2
+		});
+		return false;
+	});
+	$(".workshopSelection").accordion({
+		heightStyle : "content",
+		header : "h4"
+	});
+	$(".workshopTimes").accordion({
+		heightStyle : "content",
+		header : "h5"
+	});
+	$(".workshop-yes, .workshop-no").sortable({
+		placeholder : "ui-state-highlight",
+		connectWith : ".connectedWorkshop"
+	}).disableSelection();
+	$("#nextPayment").button().click(function() {
+		$("#muusaApp").tabs({
+			active : 3
+		});
+		return false;
+	});
+	$("#donation").blur(function() {
+		donationCalc();
+	});
+	$("#nextFinish").button().click(function() {
+		submit();
+		return false;
+	});
 });
 
 function switchNextRow(obj) {
@@ -37,75 +136,109 @@ function addRow(obj) {
 }
 
 function addCamper() {
-	//$(".camperBody").clone(true).removeAttr("id").insertBefore("#lastrow"); WRONG
+	// $(".camperBody").clone(true).removeAttr("id").insertBefore("#lastrow");
+	// WRONG
 }
 
 function recalc(event, ui) {
-	if(ui.newPanel.attr("id") == "appPayment") {
+	if (ui.newPanel.attr("id") == "appPayment") {
 		$("#appPayment tr.dummy").remove();
 		$("#noattending").hide();
-		var dummy = $("#paymentDummy");
-		var now = $.datepicker.formatDate('m/dd/yy', new Date());
-		var deposit = 0.0;
-		var total = 0.0;
-		$("#appCamper tbody.camperBody").each( function() {
-			if($(".attending", $(this)).val() == 1) {
-				var newrow = dummy.clone(true).removeAttr("id").addClass("dummy").insertBefore(dummy);
-				$(".chargetype", newrow).text("Registration Fee");
-				var grade = pInt($(".grade", $(this)).val());
-				var fee = findFee($(".birthday", $(this)).val(), grade);
-				total += fee;
-				$(".amount", newrow).text("$" + fee.toFixed(2));
-				if(grade > 5) {
-					deposit += 50.0;
-				}
+		if ($("#appPayment td.amount").size() == 1) {
+			var dummy = $("#paymentDummy");
+			var now = $.datepicker.formatDate('m/dd/yy', new Date());
+			var deposit = 0.0;
+			var total = 0.0;
+			$("#appCamper tbody.camperBody").each(
+					function() {
+						if ($(".attending", $(this)).val() > 0) {
+							var newrow = dummy.clone(true).removeAttr("id")
+									.addClass("dummy").insertBefore(dummy);
+							$(".chargetype", newrow).text("Registration Fee");
+							var grade = pInt($(".grade", $(this)).val());
+							var fee = findFee($(".birthday", $(this)).val(),
+									grade);
+							total += fee;
+							$(".amount", newrow).text("$" + fee.toFixed(2));
+							if (grade > 5) {
+								deposit += 50.0;
+							}
+							$(".date", newrow).text(now);
+							$(".memo", newrow).text(
+									$(".firstname", $(this)).val() + " "
+											+ $(".lastname", $(this)).val());
+							newrow.show();
+						}
+					});
+			if (deposit == 0.0) {
+				$("#noattending").show();
+			} else {
+				total += deposit;
+				total += Math.abs(pFloat($("#donation").val()));
+				$("#amountNow").text("$" + total.toFixed(2));
+				var newrow = dummy.clone(true).removeAttr("id").addClass(
+						"dummy").insertBefore(dummy);
+				$(".chargetype", newrow).text("Housing Deposit");
+				$(".amount", newrow).text("$" + deposit.toFixed(2));
 				$(".date", newrow).text(now);
-				$(".memo", newrow).text($(".firstname", $(this)).val() + " " + $(".lastname", $(this)).val());
+				$(".memo", newrow).text("HOUSING DEPOSIT MSG");
 				newrow.show();
 			}
-		});
-		if(deposit == 0.0) { 
-			$("#noattending").show();
-		} else {
-			total += deposit;
-			alert(total);
-			total += pFloat($("#donation").val());
-			alert(total);
-			$("#amountNow").text("$" + total.toFixed(2));
-			var newrow = dummy.clone(true).removeAttr("id").addClass("dummy").insertBefore(dummy);
-			$(".chargetype", newrow).text("Housing Deposit");
-			$(".amount", newrow).text("$" + deposit.toFixed(2));
-			$(".date", newrow).text(now);
-			$(".memo", newrow).text("HOUSING DEPOSIT MSG");
-			newrow.show();
 		}
 	}
 }
 
 function donationCalc() {
 	var total = 0.0;
-	$("#appPayment td.amount:visible").each( function () {
+	$("#appPayment td.amount:visible").each(function() {
 		total += pFloat($(this).text());
 	});
-	var donation = pFloat($("#donation").val());
+	var donation = Math.abs(pFloat($("#donation").val()));
 	total += donation;
 	$("#donation").val("$" + donation.toFixed(2));
 	$("#amountNow").text("$" + total.toFixed(2));
 }
 
 function submit() {
-	$("#appCamper tbody.camperBody").each( function() {
-		if ($(".attending", $(this)).val() == 1) {
-			addHidden("roomtype_preferences-buildingids-0", $(".roomtype-yes li", $(this)));
-			addHidden("roommate_preferences-names-0", $("input.roommates", $(this)));
-		}
-	});
-	$("#appWorkshop div.desired").each(function() {
-		addHidden("attendees-eventids-" + $("h6", $(this)).attr("class"), $(".workshop-yes li", $(this)));
-	});
-	addHidden("volunteers-positionids-0", $("#appWorkshop .volunteers li", $(this)));
-	// $("#muusaApp").submit();
-	return false;
+	$("#appCamper tbody.camperBody").each(
+			function() {
+				if ($(".attending", $(this)).val() > 0) {
+					var camperid = $(this).attr("id");
+					addHidden("roomtype_preferences-buildingids-" + camperid,
+							$(".roomtype-yes li", $(this)));
+					addHidden("roommate_preferences-names-" + camperid, $(
+							"input.roommates", $(this)));
+					var phonecount = 1;
+					$(".phonenbrs", $(this))
+							.each(
+									function() {
+										incName($("select", $(this)),
+												"phonenumbers-phonetypeid",
+												phonecount);
+										incName($("input[type=text]", $(this)),
+												"phonenumbers-phonenbr",
+												phonecount++);
+										incName($("input[type=hidden]", $(this)),
+												"phonenumbers-camperid",
+												phonecount++);
+									});
+				}
+			});
+	$("#appWorkshop div.desired").each(
+			function() {
+				addHidden("attendees-eventids-"
+						+ $("h6", $(this)).attr("class"), $(".workshop-yes li",
+						$(this)));
+			});
+	addHidden("volunteers-positionids-0", $("#appWorkshop .volunteers li",
+			$(this)));
+	$("#muusaApp").closest("form").submit();
+}
+
+function incName(obj, name, count) {
+	if (obj.attr("name") == name + "-0") {
+		obj.attr("name", name + "-" + count);
+	}
 }
 
 function addHidden(fieldname, selector) {
@@ -127,8 +260,10 @@ function addHidden(fieldname, selector) {
 
 function findFee(birthday, grade) {
 	var age = getAge(birthday);
-	for(var i=0; i<feeTable.fees.length; i++) {
-		if(age < feeTable.fees[i].agemax && age > feeTable.fees[i].agemin && grade < feeTable.fees[i].grademax && grade > feeTable.fees[i].grademin) {
+	for ( var i = 0; i < feeTable.fees.length; i++) {
+		if (age < feeTable.fees[i].agemax && age > feeTable.fees[i].agemin
+				&& grade < feeTable.fees[i].grademax
+				&& grade > feeTable.fees[i].grademin) {
 			return feeTable.fees[i].fee;
 		}
 	}
@@ -136,13 +271,13 @@ function findFee(birthday, grade) {
 }
 
 function getAge(dateString) {
-    var birthDate = new Date(dateString);
-    var age = campDate.getFullYear() - birthDate.getFullYear();
-    var m = campDate.getMonth() - birthDate.getMonth();
-    if (m < 0 || (m === 0 && campDate.getDate() < birthDate.getDate())) {
-        age--;
-    }
-    return age;
+	var birthDate = new Date(dateString);
+	var age = campDate.getFullYear() - birthDate.getFullYear();
+	var m = campDate.getMonth() - birthDate.getMonth();
+	if (m < 0 || (m === 0 && campDate.getDate() < birthDate.getDate())) {
+		age--;
+	}
+	return age;
 }
 
 function removeCamper(obj) {
