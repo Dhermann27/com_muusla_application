@@ -209,19 +209,11 @@ function submit() {
 					addHidden("roommate_preferences-names-" + camperid, $(
 							"input.roommates", $(this)));
 					var phonecount = 1;
-					$(".phonenbrs", $(this))
-							.each(
-									function() {
-										incName($("select", $(this)),
-												"phonenumbers-phonetypeid",
-												phonecount);
-										incName($("input[type=text]", $(this)),
-												"phonenumbers-phonenbr",
-												phonecount++);
-										incName($("input[type=hidden]", $(this)),
-												"phonenumbers-camperid",
-												phonecount++);
-									});
+					$(".phonenbrs:not(.hidden)", $(this)).each(function() {
+						if ($("input[type=text]", $(this)).val() != "") {
+							incName($("select,input", $(this)), phonecount++);
+						}
+					});
 				}
 			});
 	$("#appWorkshop div.desired").each(
@@ -235,9 +227,9 @@ function submit() {
 	$("#muusaApp").closest("form").submit();
 }
 
-function incName(obj, name, count) {
-	if (obj.attr("name") == name + "-0") {
-		obj.attr("name", name + "-" + count);
+function incName(obj, count) {
+	if (!obj.attr("name").match(/-\d+$/)) {
+		obj.attr("name", obj.attr("name") + "-" + count);
 	}
 }
 

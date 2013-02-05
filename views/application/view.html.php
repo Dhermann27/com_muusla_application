@@ -37,20 +37,32 @@ class muusla_applicationViewapplication extends JView
             $calls[$table][$id]->$column = $this->getSafe($value);
          }
       }
-      $fiscalyearids[] = array();
       if(count($calls["family"]) > 0) {
          foreach($calls["family"] as $id => $family) {
             $familyid = $model->upsertFamily($family);
          }
       }
       if(count($calls["campers"]) > 0) {
-         foreach($calls["campers"] as $id => $camper) {
+         foreach($calls["campers"] as $oldcamperid => $camper) {
             $attending = $camper->attending;
             $camper->familyid = $familyid;
-            $camperid = $model->upsertCamper($camper);
-            $fiscalyearids[$camperid] = $model->upsertFiscalyear($camperid, $attending);
+            $newcamperid = $model->upsertCamper($camper);
+            foreach($calls["phonenumbers"] as $phonenumber) {
+               if($phonenumber->camperid == $oldcamperid) {
+                  $phonenumber->camperid = $newcamperid;
+               }
+            }
+            $fiscalyearid = $model->upsertFiscalyear($newcamperid, $attending);
          }
       }
+      if(count($calls["phonenumbers"]) > 0) {
+         foreach($calls["phonenumbers"] as $phonenumber) {
+            $model->upsertPhonenumber($phonenumber);
+         }
+      }
+      
+      // DATA SAVED, GET NEW DATA
+      
       $family = $model->getFamily();
       $this->assignRef('family', $family);
       if($family->familyid) {
@@ -90,6 +102,11 @@ class muusla_applicationViewapplication extends JView
       }
       $this->assignRef('times', $times);
       $this->assignRef('workshops', $workshops);
+      
+      $emptyPhonenumber = new stdClass;
+      $emptyPhonenumber->phonenbrid = 0;
+      $emptyPhonenumber->phonetypeid = 0;
+      $this->assignRef('emptyPhonenumber', $emptyPhonenumber);
 
       parent::display($tpl);
    }

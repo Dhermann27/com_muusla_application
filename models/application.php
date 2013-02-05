@@ -139,9 +139,11 @@ class muusla_applicationModelapplication extends JModel
 		if($obj->familyid < 1000) {
 			unset($obj->familyid);
 			$db->insertObject("muusa_family", $obj, "familyid");
+			return $db->insertid();
 		} else {
 			$db->updateObject("muusa_family", $obj, "familyid");
-		}
+			return $obj->familyid;
+		} 
 	}
 
 	function upsertCamper($obj) {
