@@ -14,7 +14,6 @@
       class="inputtext roommates ui-corner-all"
       value="<?php echo $name?>" />
       <button class="<?php echo $index == 0 ? "add" :"delete";?> help">
-         <?php echo $index == 0 ? "Add" : "Delete";?>
-         Phone Number
+         <?php echo $index == 0 ? "Add Roommate" : "Delete Roommate";?>
       </button></td>
 </tr>

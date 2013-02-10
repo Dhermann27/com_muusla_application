@@ -56,6 +56,7 @@ class muusla_applicationViewapplication extends JView
          }
       }
       if(count($calls["phonenumbers"]) > 0) {
+         $model->deleteOldPhonenumbers(implode(",", array_keys($calls["campers"])), implode(",", array_keys($calls["phonenumbers"])));
          foreach($calls["phonenumbers"] as $phonenumber) {
             $model->upsertPhonenumber($phonenumber);
          }
