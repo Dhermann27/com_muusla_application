@@ -255,7 +255,7 @@ $user =& JFactory::getUser();
                                     class="connected connectedRoomtype roomtype-no">
                                     <?php 
                                     foreach($this->buildings as $buildingid => $building) {
-                                       if(!in_array($buildingid, $this->campers[0]->roomtypes)) {
+                                       if(!$this->campers[0]->roomtypes || !in_array($buildingid, $this->campers[0]->roomtypes)) {
                                           echo "                  <li value='$buildingid' class='ui-state-default'>\n";
                                           // echo "                     <button class='help link right'>Show $building->name Information</button>\n";
                                           echo "                     " . $building["name"] . "\n";
@@ -270,11 +270,13 @@ $user =& JFactory::getUser();
                                  <ul
                                     class="connected connectedRoomtype roomtype-yes">
                                     <?php
-                                    foreach($this->campers[0]->roomtypes as $roomtype) {
-                                       echo "                  <li value='$roomtype' class='ui-state-default'>\n";
-                                       // echo "                     <button class='help link right'>Show " . $this->buildings[$roomtype]->name . " Information</button>\n";
-                                       echo "                     " . $this->buildings[$roomtype]["name"] . "\n";
-                                       echo "                  </li>\n";
+                                    if($this->campers[0]->roomtypes) {
+                                       foreach($this->campers[0]->roomtypes as $roomtype) {
+                                          echo "                  <li value='$roomtype' class='ui-state-default'>\n";
+                                          // echo "                     <button class='help link right'>Show " . $this->buildings[$roomtype]->name . " Information</button>\n";
+                                          echo "                     " . $this->buildings[$roomtype]["name"] . "\n";
+                                          echo "                  </li>\n";
+                                       }
                                     }
                                     ?>
                                     <li class="ui-state-default">No
@@ -375,7 +377,7 @@ $user =& JFactory::getUser();
                         <p>If you are having difficulty finding a
                            sponsor, please let us know using the Contact
                            Us form above. Oftentimes, we have adults in
-                           the area who are willing to volunteer, and
+                           your area who are willing to volunteer, and
                            may also be willing to offer transportation.</p>
                      </td>
                   </tr>
@@ -428,7 +430,7 @@ $user =& JFactory::getUser();
                      echo "                           <ul class='connected connectedWorkshop workshop-no'>\n";
                      if(count($time["shops"]) > 0) {
                         foreach($time["shops"] as $eventid => $shop) {
-                           if(!in_array($eventid, $this->campers[0]->attendees)) {
+                           if(!$this->campers[0]->attendees || !in_array($eventid, $this->campers[0]->attendees)) {
                               echo "                              <li value='$eventid' class='ui-state-default'>\n";
                               // echo "                              <button class='help link right'>Show $building->name Information</button>\n";
                               echo "                                 " . $shop["name"] . " (" . $shop["days"] . ")\n";
@@ -464,7 +466,7 @@ $user =& JFactory::getUser();
                            class="connected connectedWorkshop workshop-no">
                            <?php
                            foreach($this->positions as $positionid => $position) {
-                              if(!in_array($positionid, $this->campers[0]->volunteers)) {
+                              if(!$this->campers[0]->volunteers || !in_array($positionid, $this->campers[0]->volunteers)) {
                                  echo "                              <li value='$positionid' class='ui-state-default'>\n";
                                  echo "                                 " . $position["name"] . "\n";
                                  echo "                              </li>\n";
@@ -478,10 +480,12 @@ $user =& JFactory::getUser();
                         <ul
                            class="connected connectedWorkshop workshop-yes">
                            <?php
-                           foreach($this->campers[0]->volunteers as $positionid) {
-                              echo "                              <li value='$positionid' class='ui-state-default'>\n";
-                              echo "                                 " . $this->positions[$positionid]["name"] . "\n";
-                              echo "                              </li>\n";
+                           if($this->campers[0]->volunteers) {
+                              foreach($this->campers[0]->volunteers as $positionid) {
+                                 echo "                              <li value='$positionid' class='ui-state-default'>\n";
+                                 echo "                                 " . $this->positions[$positionid]["name"] . "\n";
+                                 echo "                              </li>\n";
+                              }
                            }
                            ?>
                         </ul>
@@ -589,7 +593,7 @@ $user =& JFactory::getUser();
                   If you paid a pre-registration deposit or are
                   expecting a staff position credit but do not see it
                   here, it has been associated with a different name or
-                  e-mail address. Please contact the registrar by phone
+                  e-mail address. Please contact the Registrar by phone
                   or using the Contact Us link above.
                </p>
             </div>
