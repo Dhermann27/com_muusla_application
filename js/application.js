@@ -181,7 +181,7 @@ function recalc(event, ui) {
 				$(".chargetype", newrow).text("Housing Deposit");
 				$(".amount", newrow).text("$" + deposit.toFixed(2));
 				$(".date", newrow).text(now);
-				$(".memo", newrow).text("HOUSING DEPOSIT MSG");
+				//$(".memo", newrow).text("HOUSING DEPOSIT MSG");
 				newrow.show();
 			}
 		}
@@ -222,8 +222,7 @@ function submit() {
 						+ $("h6", $(this)).attr("class"), $(".workshop-yes li",
 						$(this)));
 			});
-	addHidden("volunteers-positionids-0", $("#appWorkshop .volunteers li",
-			$(this)));
+	addHidden("volunteers-positionids-0", $("#appWorkshop .volunteers li"));
 	$("#muusaApp").closest("form").submit();
 }
 

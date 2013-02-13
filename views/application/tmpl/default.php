@@ -417,17 +417,23 @@ $user =& JFactory::getUser();
                <div class="workshopTimes">
                   <?php 
                   foreach($this->times as $timeid => $time) {
-                     echo "					   <h5>" . $time["name"] . "</h5>\n";
+                     echo "					   <h5>" . $time["name"];
+                     if($timeid != 1020) {
+                        echo " (" . $time["start"] . " - " . $time["end"] . ")";
+                     }
+                     echo "</h5>\n";
                      echo "                     <div>\n";
                      echo "                        <div class='right'>\n";
                      echo "                           <h6>Available Workshops</h6>\n";
                      echo "                           <ul class='connected connectedWorkshop workshop-no'>\n";
-                     if($time["shops"]) {
-                        foreach($time["shops"] as $shop) {
-                           echo "                              <li value='$shop->eventid' class='ui-state-default'>\n";
-                           // echo "                              <button class='help link right'>Show $building->name Information</button>\n";
-                           echo "                                 $shop->name ($shop->days)\n";
-                           echo "                              </li>\n";
+                     if(count($time["shops"]) > 0) {
+                        foreach($time["shops"] as $eventid => $shop) {
+                           if(!in_array($eventid, $this->campers[0]->attendees)) {
+                              echo "                              <li value='$eventid' class='ui-state-default'>\n";
+                              // echo "                              <button class='help link right'>Show $building->name Information</button>\n";
+                              echo "                                 " . $shop["name"] . " (" . $shop["days"] . ")\n";
+                              echo "                              </li>\n";
+                           }
                         }
                      }
                      echo "                           </ul>\n";
@@ -435,6 +441,16 @@ $user =& JFactory::getUser();
                      echo "                        <div class='desired'>\n";
                      echo "                           <h6 class='$timeid'>Desired Workshops (in order of preference)</h6>\n";
                      echo "                           <ul class='connected connectedWorkshop workshop-yes'>\n";
+                     if(count($this->campers[0]->attendees) > 0) {
+                        foreach($this->campers[0]->attendees as $eventid) {
+                           if(array_key_exists($eventid, $time["shops"])) {
+                              echo "                              <li value='$eventid' class='ui-state-default'>\n";
+                              // echo "                              <button class='help link right'>Show $building->name Information</button>\n";
+                              echo "                                 " . $time["shops"][$eventid]["name"] . " (" . $time["shops"][$eventid]["days"] . ")\n";
+                              echo "                              </li>\n";
+                           }
+                        }
+                     }
                      echo "                           </ul>\n";
                      echo "                        </div>\n";
                      echo "                     </div>\n";
@@ -447,12 +463,12 @@ $user =& JFactory::getUser();
                         <ul
                            class="connected connectedWorkshop workshop-no">
                            <?php
-                           foreach($this->positions as $position) {
-                              echo "                              <li class='ui-state-default'>\n";
-                              // echo "                              <button class='help link right'>Show $building->name Information</button>\n";
-                              echo "                                 $position->name\n";
-                              echo "                                 <input type='hidden' name='volunteers-eventids-$camper->camperid' value='$position->positionid' />\n";
-                              echo "                              </li>\n";
+                           foreach($this->positions as $positionid => $position) {
+                              if(!in_array($positionid, $this->campers[0]->volunteers)) {
+                                 echo "                              <li value='$positionid' class='ui-state-default'>\n";
+                                 echo "                                 " . $position["name"] . "\n";
+                                 echo "                              </li>\n";
+                              }
                            }
                            ?>
                         </ul>
@@ -461,6 +477,13 @@ $user =& JFactory::getUser();
                         <h6>Desired Roles</h6>
                         <ul
                            class="connected connectedWorkshop workshop-yes">
+                           <?php
+                           foreach($this->campers[0]->volunteers as $positionid) {
+                              echo "                              <li value='$positionid' class='ui-state-default'>\n";
+                              echo "                                 " . $this->positions[$positionid]["name"] . "\n";
+                              echo "                              </li>\n";
+                           }
+                           ?>
                         </ul>
                      </div>
                   </div>
