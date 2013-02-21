@@ -2,6 +2,9 @@ $(window).load(function() {
 	$("#muusaApp").tabs({
 		active : 0,
 		beforeActivate : function(event, ui) {
+			if (!trap(event, ui)) {
+				event.stopPropagation();
+			}
 			recalc(event, ui);
 			return true;
 		}
@@ -31,7 +34,7 @@ $(window).load(function() {
 		},
 		text : false
 	}).click(function() {
-		addRow($(this));
+		addRow($(this), "tr");
 		return false;
 	});
 	$(".birthday").datepicker({
@@ -71,7 +74,7 @@ $(window).load(function() {
 		},
 		text : false
 	}).click(function() {
-		hideThisRow($(this));
+		hideThis($(this).parents("tr"));
 		return false;
 	});
 	$("#nextCamper").button().click(function() {
@@ -81,11 +84,11 @@ $(window).load(function() {
 		return false;
 	});
 	$("#addCamper").button().click(function() {
-		addCamper();
+		addRow($(this), "tbody");
 		return false;
 	});
-	$("#removeCamper").button().click(function() {
-		removeCamper($(this));
+	$(".removeCamper").button().click(function() {
+		hideThis($(this).parents("tbody"));
 		return false;
 	});
 	$("#nextWorkshop").button().click(function() {
@@ -130,26 +133,40 @@ function openLink(obj) {
 	eval("$(\"#room-" + obj.parents("li").attr("id") + "\").dialog(\"open\");");
 }
 
-function addRow(obj) {
-	hiddenRow = obj.parents("tr").nextAll("tr.hidden").first();
+function addRow(obj, type) {
+	hiddenRow = obj.parents(type).nextAll(type + ".hidden").first();
 	hiddenRow.clone(true).removeClass("hidden").insertBefore(hiddenRow).show();
 }
 
-function addCamper() {
-	// $(".camperBody").clone(true).removeAttr("id").insertBefore("#lastrow");
-	// WRONG
+function trap(event, ui) {
+	var panel = $("#" + ui.oldPanel.attr("id"));
+	$(".notempty", panel).each(function() {
+		if ($(this).val() == "") {
+			$(this).addClass("ui-state-error");
+			$(this).tooltip({
+				content : "Field cannot be empty"
+			});
+			$(this).tooltip("open");
+
+			return false;
+		} else {
+			$(this).removeClass("ui-state-error").tooltip("destroy");
+		}
+	});
 }
 
 function recalc(event, ui) {
-	if (ui.newPanel.attr("id") == "appPayment") {
+	if (ui.newPanel.attr("id") == "appWorkshop") {
+
+	} else if (ui.newPanel.attr("id") == "appPayment") {
 		$("#appPayment tr.dummy").remove();
 		$("#noattending").hide();
-		if ($("#appPayment td.amount").size() == 1) {
+		if ($("#appPayment td.amount:visible").size() < 2) {
 			var dummy = $("#paymentDummy");
 			var now = $.datepicker.formatDate('m/dd/yy', new Date());
 			var deposit = 0.0;
 			var total = 0.0;
-			$("#appCamper tbody.camperBody").each(
+			$("#appCamper tbody.camperBody:visible").each(
 					function() {
 						if ($(".attending", $(this)).val() > 0) {
 							var newrow = dummy.clone(true).removeAttr("id")
@@ -181,7 +198,7 @@ function recalc(event, ui) {
 				$(".chargetype", newrow).text("Housing Deposit");
 				$(".amount", newrow).text("$" + deposit.toFixed(2));
 				$(".date", newrow).text(now);
-				//$(".memo", newrow).text("HOUSING DEPOSIT MSG");
+				// $(".memo", newrow).text("HOUSING DEPOSIT MSG");
 				newrow.show();
 			}
 		}
@@ -271,76 +288,8 @@ function getAge(dateString) {
 	return age;
 }
 
-function removeCamper(obj) {
-	obj.parents("tbody").remove();
-}
-
-function hideThisRow(obj) {
-	obj.parents("tr").remove();
-}
-
-function checkForm() {
-	var tbodys = document.getElementsByTagName("tbody");
-	for ( var i = 0; i < tbodys.length; i++) {
-		var inputs = tbodys[i].getElementsByTagName("input");
-		if (tbodys[i].className == "camper"
-				&& inputs[0].name.match(/^campers-firstname/)
-				&& inputs[0].value != "") {
-			for ( var j = 0; j < inputs.length; j++) {
-				if (inputs[j].name.match(/firstname/)
-						&& checkNotEmpty(inputs[j], "first name"))
-					return false;
-				if (inputs[j].name.match(/lastname/)
-						&& checkNotEmpty(inputs[j], "last name"))
-					return false;
-				if (inputs[j].name.match(/address1/)
-						&& checkNotEmpty(inputs[j], "address"))
-					return false;
-				if (inputs[j].name.match(/city/)
-						&& checkNotEmpty(inputs[j], "city"))
-					return false;
-				if (inputs[j].name.match(/zipcd/)
-						&& (checkNotEmpty(inputs[j], "zip code") || checkZip(inputs[j])))
-					return false;
-				if (inputs[j].name.match(/birthdate/)
-						&& (checkNotEmpty(inputs[j], "birth date") || checkDate(
-								inputs[j], "birth date")))
-					return false;
-				if (inputs[j].name.match(/phonenbr-/) && inputs[j].value != ""
-						&& checkPhone(inputs[j], "phone number"))
-					return false;
-			}
-			var selects = tbodys[i].getElementsByTagName("select");
-			for ( var j = 0; j < selects.length; j++) {
-				if (selects[j].name.match(/sexcd/)
-						&& checkNotZero(selects[j], "gender"))
-					return false;
-				if (selects[j].name.match(/statecd/)
-						&& checkNotEmpty(selects[j], "state"))
-					return false;
-			}
-		}
-	}
-	document.getElementsByName('application')[0].submit();
-	return true;
-}
-
-function checkNotEmpty(obj, msg) {
-	if (obj.value == "") {
-		obj.focus();
-		alert("Your " + msg + " cannot be empty.");
-		return true;
-	}
-	return false;
-}
-
-function checkNotZero(obj, msg) {
-	if (obj.options[obj.selectedIndex].value == "0") {
-		obj.focus();
-		alert("Please select " + msg + ".");
-		return true;
-	}
-	return false;
+function hideThis(obj) {
+	obj.remove();
 }
 
 function checkZip(obj) {

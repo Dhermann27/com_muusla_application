@@ -11,8 +11,8 @@
    src="<?php echo JURI::root(true);?>/components/com_muusla_application/js/campcost.js"></script>
 <style>
 input.spinner {
-   width: 2em;
-   text-align: center;
+	width: 2em;
+	text-align: center;
 }
 </style>
 <div id="ja-content">
@@ -41,7 +41,7 @@ input.spinner {
                      <td align="center"><input id="muusa_adults_num"
                         class="spinner" /></td>
                      <td><select id="muusa_adults_hou"
-                        onchange="muusaCalc();">
+                        class="ui-corner-all" onchange="muusaCalc();">
                            <option value="0" selected>Select one</option>
                            <option value="1">Guestroom, Cabin, or Loft
                               ($520+)</option>
@@ -56,7 +56,7 @@ input.spinner {
                      <td><b>Young Adults</b> (18-20 years old)</td>
                      <td align="center"><input id="muusa_ya_num"
                         class="spinner" /></td>
-                     <td><select id="muusa_ya_hou"
+                     <td><select id="muusa_ya_hou" class="ui-corner-all"
                         onchange="muusaCalc();">
                            <option value="0" selected>Select one</option>
                            <option value="1">YA Cabin ($355)</option>
@@ -82,8 +82,7 @@ input.spinner {
                      <td align="right" id="muusa_child_feehouse">$0.00</td>
                   </tr>
                   <tr>
-                     <td><b>Nursery</b> (4 years old and
-                        younger)</td>
+                     <td><b>Children</b> (4 years old and younger)</td>
                      <td align="center"><input id="muusa_infant_num"
                         class="spinner" /></td>
                      <td>Must room with parents (FREE)</td>
