@@ -15,7 +15,7 @@ $user =& JFactory::getUser();
    class="camperBody<?php echo $index == -1 ? " hidden" : "";?>">
    <tr valign="bottom">
       <td width="25%"><select name="campers-sexcd<?php echo $cprid;?>"
-         class="ui-corner-all">
+         class="notzero ui-corner-all">
             <option value="0">Gender</option>
             <option value="M"
             <?php echo $camper->sexcd == "M" ? " selected" : "";?>>Male</option>
@@ -49,7 +49,7 @@ $user =& JFactory::getUser();
       <td>First Name</td>
       <td colspan="3"><input type="text"
          name="campers-firstname<?php echo $cprid;?>" maxlength="30"
-         class="inputtext firstname ui-corner-all"
+         class="inputtext firstname notempty ui-corner-all"
          value="<?php echo $camper->firstname;?>" />
       </td>
    </tr>
@@ -57,7 +57,7 @@ $user =& JFactory::getUser();
       <td>Last Name</td>
       <td colspan="3"><input type="text"
          name="campers-lastname<?php echo $cprid;?>" maxlength="30"
-         class="inputtext lastname ui-corner-all"
+         class="inputtext lastname notempty ui-corner-all"
          value="<?php echo $camper->lastname;?>" />
       </td>
    </tr>
@@ -112,7 +112,7 @@ $user =& JFactory::getUser();
       <td>Birthday</td>
       <td><input type="text" maxlength="10"
          name="campers-birthdate<?php echo $cprid;?>"
-         class="birthday ui-corner-all"
+         class="birthday validday ui-corner-all"
          value="<?php echo $camper->birthday;?>" />
       </td>
       <td align="right">Grade Entering in Fall <?php echo substr($this->year, -4)?>
@@ -121,7 +121,8 @@ $user =& JFactory::getUser();
          class="grade ui-corner-all">
             <?php 						
             echo "                        <option value='13'>Not Applicable</option>\n";
-            echo "                        <option value='0'>Kindergarten or Earlier</option>\n";
+            $selected = isset($camper->grade) && $camper->grade <= 0 ? " selected" : "";
+            echo "                        <option value='0'$selected>Kindergarten or Earlier</option>\n";
             for($i=1; $i<13; $i++) {
                $selected = min($camper->grade, 13) == $i ? " selected" : "";
                echo "                        <option value='$i'$selected>$i</option>\n";
@@ -272,7 +273,7 @@ $user =& JFactory::getUser();
       </td>
    </tr>
    <?php
-   if($index != 0) {
+   if($index == -1) {
       ?>
    <tr>
       <td colspan="4" align="right">

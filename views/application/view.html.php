@@ -20,6 +20,7 @@ class muusla_applicationViewapplication extends JView
       $calls[][] = array();
       foreach(JRequest::get() as $key=>$value) {
          if(preg_match('/^(\w+)-(\w+)-(\d+)$/', $key, $objects)) {
+            echo($key . " => " . $value . "<br/>");
             $table = $this->getSafe($objects[1]);
             $column = $this->getSafe($objects[2]);
             $id = $this->getSafe($objects[3]);
@@ -37,7 +38,7 @@ class muusla_applicationViewapplication extends JView
             $calls[$table][$id]->$column = $this->getSafe($value);
          }
       }
-      if(count($calls["family"]) > 0) {
+     /* if(count($calls["family"]) > 0) {
          foreach($calls["family"] as $id => $family) {
             $familyid = $model->upsertFamily($family);
          }
@@ -78,7 +79,7 @@ class muusla_applicationViewapplication extends JView
          foreach($calls["phonenumbers"] as $phonenumber) {
             $model->upsertPhonenumber($phonenumber);
          }
-      }
+      }*/
 
       // DATA SAVED, GET NEW DATA
 

@@ -86,7 +86,7 @@ class muusla_applicationModelapplication extends JModel
    function getCampers($familyid) {
       $db =& JFactory::getDBO();
       $user =& JFactory::getUser();
-      $query = "SELECT camperid, firstname, lastname, sexcd, email, DATE_FORMAT(birthdate, '%m/%d/%Y') birthday, (muusa_age_f(birthdate)+gradeoffset) grade, sponsor, is_handicap, smokingoptionid, foodoptionid, churchid FROM muusa_campers WHERE familyid=$familyid ORDER BY birthdate";
+      $query = "SELECT mc.camperid, mc.firstname, mc.lastname, mc.sexcd, mc.email, DATE_FORMAT(mc.birthdate, '%m/%d/%Y') birthday, (muusa_age_f(mc.birthdate)+gradeoffset) grade, mc.sponsor, mc.is_handicap, mc.smokingoptionid, mc.foodoptionid, mc.churchid, mp.name programname FROM muusa_campers mc LEFT JOIN muusa_programs mp ON muusa_age_f(mc.birthdate)<mp.agemax AND muusa_age_f(mc.birthdate)>mp.agemin AND muusa_age_f(mc.birthdate)+mc.gradeoffset<mp.grademax AND muusa_age_f(mc.birthdate)+mc.gradeoffset>mp.grademin WHERE mc.familyid=$familyid ORDER BY mc.birthdate";
       $db->setQuery($query);
       return $db->loadObjectList();
    }

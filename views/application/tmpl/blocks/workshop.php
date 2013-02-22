@@ -10,15 +10,24 @@
 $cprid = $camper->camperid > 0 ? "-" . $camper->camperid : "";
 $user =& JFactory::getUser();
 if($index == -1) {
-   echo "<span id='workshopDummy' class='hidden'>";
-}?>
+   echo "<span id='workshopDummy' class='hidden'>\n";
+} elseif ($index == -2) {
+   echo "<span id='childDummy' class='hidden'>\n";
+}
+?>
+
 <h4>
    <?php echo $camper->firstname . " " . $camper->lastname;?>
 </h4>
 <div class="workshopTimes">
    <?php 
-   foreach($this->times as $timeid => $time) {
-      echo "					   <h5>$camper->age" . $time["name"];
+   $validtimes = $this->times;
+   if((isset($camper->grade) && $camper->grade < 13) || $index == -2) {
+      $validtimes = array(1020 => $validtimes[1020]);
+      echo "					   <p><strong>Automatically enrolled in $camper->programname programming.</strong></p>\n";
+   }
+   foreach($validtimes as $timeid => $time) {
+      echo "					   <h5>" . $time["name"];
       if($timeid != 1020) {
          echo " (" . $time["start"] . " - " . $time["end"] . ")";
       }
@@ -29,7 +38,7 @@ if($index == -1) {
       echo "                           <ul class='connected connectedWorkshop workshop-no'>\n";
       if(count($time["shops"]) > 0) {
          foreach($time["shops"] as $eventid => $shop) {
-            if(!$campers->attendees || !in_array($eventid, $camper->attendees)) {
+            if(!$camper->attendees || !in_array($eventid, $camper->attendees)) {
                echo "                              <li value='$eventid' class='ui-state-default'>\n";
                // echo "                              <button class='help link right'>Show $building->name Information</button>\n";
                echo "                                 " . $shop["name"] . " (" . $shop["days"] . ")\n";
@@ -40,7 +49,7 @@ if($index == -1) {
       echo "                           </ul>\n";
       echo "                        </div>\n";
       echo "                        <div class='desired'>\n";
-      echo "                           <h6 class='$timeid'>Desired Workshops (in order of preference)</h6>\n";
+      echo "                           <h6 class='$cprid-$timeid'>Desired Workshops (in order of preference)</h6>\n";
       echo "                           <ul class='connected connectedWorkshop workshop-yes'>\n";
       if(count($camper->attendees) > 0) {
          foreach($camper->attendees as $eventid) {
@@ -64,7 +73,7 @@ if($index == -1) {
          <ul class="connected connectedWorkshop workshop-no">
             <?php
             foreach($this->positions as $positionid => $position) {
-               if(!$camper->volunteers || !in_array($positionid, $campers->volunteers)) {
+               if(!$camper->volunteers || !in_array($positionid, $camper->volunteers)) {
                   echo "                              <li value='$positionid' class='ui-state-default'>\n";
                   echo "                                 " . $position["name"] . "\n";
                   echo "                              </li>\n";
@@ -74,7 +83,7 @@ if($index == -1) {
          </ul>
       </div>
       <div class="volunteers">
-         <h6>Desired Roles</h6>
+         <h6 class="<?php echo $cprid?>-0">Desired Roles</h6>
          <ul class="connected connectedWorkshop workshop-yes">
             <?php
             if($camper->volunteers) {
@@ -90,7 +99,7 @@ if($index == -1) {
    </div>
 </div>
 <?php
-if($index == -1) {
-   echo "</span>";
+if($index < 0) {
+   echo "</span>\n";
 }
 ?>

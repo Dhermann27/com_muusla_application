@@ -22,7 +22,7 @@ $nbrid = $phonenumber->phonenbrid > 0 ? "-" . $phonenumber->phonenbrid : "";
          ?>
    </select> <input type="text"
       name="phonenumbers-phonenbr<?php echo $nbrid; ?>" maxlength="14"
-      class="inputtextshort ui-corner-all"
+      class="inputtextshort validphone ui-corner-all"
       value="<?php echo $phonenumber->phonenbr;?>" /> <input
       type="hidden" name="phonenumbers-phonenbrid<?php echo $nbrid; ?>"
       value="<?php echo $phonenumber->phonenbrid?>" /><input

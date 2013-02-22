@@ -10,9 +10,13 @@ $user =& JFactory::getUser();
       href="<?php echo JURI::root(true);?>/components/com_muusla_application/css/jquery-ui-1.10.0.custom.css"
       rel="stylesheet" />
    <script
-      src="<?php echo JURI::root(true);?>/components/com_muusla_application/js/jquery-1.9.0.js"></script>
+      src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
    <script
-      src="<?php echo JURI::root(true);?>/components/com_muusla_application/js/jquery-ui-1.10.0.custom.js"></script>
+      src="http://code.jquery.com/jquery-migrate-1.1.1.min.js"></script>
+   <script
+      src="<?php echo JURI::root(true);?>/components/com_muusla_application/js/jquery-ui-1.10.0.custom.min.js"></script>
+   <script
+      src="<?php echo JURI::root(true);?>/components/com_muusla_application/js/jquery.scrollTo-1.4.3.1-min.js"></script>
    <script
       src='<?php echo JURI::root(true);?>/components/com_muusla_application/js/application.js'></script>
    <script>var thisyear = <?php echo substr($this->year, -4)?>;</script>
@@ -160,15 +164,15 @@ $user =& JFactory::getUser();
          <div id="appWorkshop">
             <div class="workshopSelection">
                <?php
-               if(count($this->campers)== 0) {
-                  $index = 0;
-                  include 'blocks/workshop.php';
-               } else {
+               if(count($this->campers) > 0) {
                   foreach($this->campers as $index => $camper) {
                      include 'blocks/workshop.php';
                   }
                }
                $index = -1;
+               $camper = new stdClass;
+               include 'blocks/workshop.php';
+               $index = -2;
                $camper = new stdClass;
                include 'blocks/workshop.php';
                ?>
@@ -227,7 +231,7 @@ $user =& JFactory::getUser();
                      $total -= (float)preg_replace("/,/", "",  $credit->housing_amount+$credit->registration_amount);
                      echo "                <td class='amount' align='right'>\$-" . number_format($credit->housing_amount+$credit->registration_amount, 2) . "</td>\n";
                      echo "                <td>&nbsp;</td>\n";
-                     echo "                <td class='memo'><i>$credit->name</i></td>\n";
+                     echo "                <td class='memo'><i>$credit->positionname</i></td>\n";
                      echo "           </tr>\n";
                   }
                }
