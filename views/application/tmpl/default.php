@@ -2,17 +2,14 @@
 $user =& JFactory::getUser();
 ?>
 <div id="ja-content">
-   <div class="componentheading">MUUSA Registation Form</div>
    <link type="text/css"
       href="<?php echo JURI::root(true);?>/components/com_muusla_application/css/application.css"
       rel="stylesheet" />
    <link type="text/css"
       href="<?php echo JURI::root(true);?>/components/com_muusla_application/css/jquery-ui-1.10.0.custom.css"
       rel="stylesheet" />
-   <script
-      src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
-   <script
-      src="http://code.jquery.com/jquery-migrate-1.1.1.min.js"></script>
+   <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+   <script src="http://code.jquery.com/jquery-migrate-1.1.1.min.js"></script>
    <script
       src="<?php echo JURI::root(true);?>/components/com_muusla_application/js/jquery-ui-1.10.0.custom.min.js"></script>
    <script
@@ -26,7 +23,6 @@ $user =& JFactory::getUser();
          <ul>
             <li><a href="#appFamily">Family Information</a></li>
             <li><a href="#appCamper">Camper Listing</a></li>
-            <li><a href="#appWorkshop">Workshop Selection</a></li>
             <li><a href="#appPayment">Statement &amp; Payment</a></li>
          </ul>
          <div id="appFamily">
@@ -137,7 +133,8 @@ $user =& JFactory::getUser();
             <table>
                <?php
                if(count($this->campers)== 0) {
-                  $index = 0;
+                  $camper = new stdClass;
+                  $camper->camperid = 100;
                   //$phonenumber = $this->emptyPhonenumber;
                   include 'blocks/camper.php';
                } else {
@@ -145,9 +142,11 @@ $user =& JFactory::getUser();
                      include 'blocks/camper.php';
                   }
                }
-               $index = -1;
                $camper = new stdClass;
-               include 'blocks/camper.php';
+               for($index=101; $index<111; $index++) {
+                  $camper->camperid = $index;
+                  include 'blocks/camper.php';
+               }
                ?>
                <tfoot>
                   <tr>
@@ -160,26 +159,6 @@ $user =& JFactory::getUser();
                   </tr>
                </tfoot>
             </table>
-         </div>
-         <div id="appWorkshop">
-            <div class="workshopSelection">
-               <?php
-               if(count($this->campers) > 0) {
-                  foreach($this->campers as $index => $camper) {
-                     include 'blocks/workshop.php';
-                  }
-               }
-               $index = -1;
-               $camper = new stdClass;
-               include 'blocks/workshop.php';
-               $index = -2;
-               $camper = new stdClass;
-               include 'blocks/workshop.php';
-               ?>
-            </div>
-            <div align="right">
-               <button id="nextPayment">Next Page</button>
-            </div>
          </div>
          <div id="appPayment">
             <script>

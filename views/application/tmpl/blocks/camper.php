@@ -3,18 +3,15 @@
  * camper.php
  * XHTML Block containing the camper information block
  *
- * @param   int     $index   If it's not row of the form, output a Delete control, -1 for hidden row
- * @param   object  $camper  The database camper object if the camper exists
+ * @param   object  $camper  The database camper object
  *
  */
-$cprid = $camper->camperid > 0 ? "-" . $camper->camperid : "";
 $user =& JFactory::getUser();
 ?>
-<tbody
-<?php echo $camper->camperid > 0 ? " id='$camper->camperid' " : "";?>
-   class="camperBody<?php echo $index == -1 ? " hidden" : "";?>">
+<tbody id="$camper->camperid" class="camperBody<?php echo $camper->camperid > 100 && $camper->camperid < 1000 ? " hidden" : "";?>">
    <tr valign="bottom">
-      <td width="25%"><select name="campers-sexcd<?php echo $cprid;?>"
+      <td width="25%"><select
+         name="campers-sexcd-<?php echo $camper->camperid;?>"
          class="notzero ui-corner-all">
             <option value="0">Gender</option>
             <option value="M"
@@ -22,12 +19,12 @@ $user =& JFactory::getUser();
             <option value="F"
             <?php echo $camper->sexcd == "F" ? " selected" : "";?>>Female</option>
       </select> <input type="hidden"
-         name="campers-camperid<?php echo $cprid;?>"
+         name="campers-camperid-<?php echo $camper->camperid;?>"
          value="<?php echo $camperid;?>" />
       </td>
       <td colspan="3" width="75%" align="right">
          <button class="help info">Show Attending Help</button> <select
-         name="campers-attending<?php echo $cprid;?>"
+         name="campers-attending-<?php echo $camper->camperid;?>"
          class="attending ui-corner-all">
             <option value="7" selected="selected">Attending</option>
             <option value="0">Not Attending</option>
@@ -48,7 +45,8 @@ $user =& JFactory::getUser();
    <tr>
       <td>First Name</td>
       <td colspan="3"><input type="text"
-         name="campers-firstname<?php echo $cprid;?>" maxlength="30"
+         name="campers-firstname-<?php echo $camper->camperid;?>"
+         maxlength="30"
          class="inputtext firstname notempty ui-corner-all"
          value="<?php echo $camper->firstname;?>" />
       </td>
@@ -56,13 +54,14 @@ $user =& JFactory::getUser();
    <tr>
       <td>Last Name</td>
       <td colspan="3"><input type="text"
-         name="campers-lastname<?php echo $cprid;?>" maxlength="30"
+         name="campers-lastname-<?php echo $camper->camperid;?>"
+         maxlength="30"
          class="inputtext lastname notempty ui-corner-all"
          value="<?php echo $camper->lastname;?>" />
       </td>
    </tr>
    <?php
-   if($index == 0) {
+   if($camper->camperid == 100 || $camper->camperid >= 1000) {
       ?>
    <tr>
       <td>
@@ -71,7 +70,7 @@ $user =& JFactory::getUser();
       </td>
       <?php 
       echo "								<td colspan='3'>$user->email\n";
-      echo "                                 <input type='hidden' name='campers-email$cprid' value='$user->email' />\n";
+      echo "                                 <input type='hidden' name='campers-email-$camper->camperid' value='$user->email' />\n";
       echo "                              </td>\n";
       ?>
    </tr>
@@ -89,7 +88,7 @@ $user =& JFactory::getUser();
    <tr>
       <td>Email Address</td>
       <td colspan="3"><input type="text"
-         name="campers-email<?php echo $cprid;?>"
+         name="campers-email-<?php echo $camper->camperid;?>"
          value="<?php echo $camper->email;?>"
          class="inputtextshort ui-corner-all" /></td>
    </tr>
@@ -111,13 +110,13 @@ $user =& JFactory::getUser();
    <tr>
       <td>Birthday</td>
       <td><input type="text" maxlength="10"
-         name="campers-birthdate<?php echo $cprid;?>"
+         name="campers-birthdate-<?php echo $camper->camperid;?>"
          class="birthday validday ui-corner-all"
          value="<?php echo $camper->birthday;?>" />
       </td>
       <td align="right">Grade Entering in Fall <?php echo substr($this->year, -4)?>
       </td>
-      <td><select name="campers-grade<?php echo $cprid;?>"
+      <td><select name="campers-grade-<?php echo $camper->camperid;?>"
          class="grade ui-corner-all">
             <?php 						
             echo "                        <option value='13'>Not Applicable</option>\n";
@@ -193,7 +192,8 @@ $user =& JFactory::getUser();
       <td>Accessibility</td>
       <td colspan="2" valign="middle">Do you require a room accessible
          by the disabled?</td>
-      <td><select name="campers-is_handicap<?php echo $cprid;?>"
+      <td><select
+         name="campers-is_handicap-<?php echo $camper->camperid;?>"
          class="ui-corner-all">
             <option value="1"
             <?php echo $camper->is_handicap == "1" ? " selected" : "";?>>Yes</option>
@@ -206,7 +206,8 @@ $user =& JFactory::getUser();
       <td>Food Options</td>
       <td colspan="2" valign="middle">Which option best describes your
          eating restrictions?</td>
-      <td><select name="campers-foodoptionid<?php echo $cprid;?>"
+      <td><select
+         name="campers-foodoptionid-<?php echo $camper->camperid;?>"
          class="ui-corner-all">
             <?php
             foreach ($this->foodoptions as $foodoption) {
@@ -221,7 +222,8 @@ $user =& JFactory::getUser();
       <td>Smoking Preference</td>
       <td colspan="2" valign="middle">What is your smoking preference,
          if assigned a roommate?</td>
-      <td><select name="campers-smokingoptionid<?php echo $cprid;?>"
+      <td><select
+         name="campers-smokingoptionid-<?php echo $camper->camperid;?>"
          class="ui-corner-all">
             <?php
             foreach ($this->smokingoptions as $smokingoption) {
@@ -238,7 +240,7 @@ $user =& JFactory::getUser();
          Sponsor
       </td>
       <td colspan="3"><input type="text" maxlength="30"
-         name="campers-sponsor<?php echo $cprid;?>"
+         name="campers-sponsor-<?php echo $camper->camperid;?>"
          class="inputtext ui-corner-all"
          value="<?php echo $camper->sponsor;?>" />
       </td>
@@ -262,7 +264,7 @@ $user =& JFactory::getUser();
    <tr>
       <td>Church Affiliation</td>
       <td colspan="3"><?php
-      echo "                     <select name='campers-churchid$cprid' class='ui-corner-all'>\n";
+      echo "                     <select name='campers-churchid-$camper->camperid' class='ui-corner-all'>\n";
       echo "                     <option value='0'>No Affiliation</option>\n;";
       foreach ($this->churches as $church) {
          $selected = $camper->churchid == $church->churchid ? " selected" : "";

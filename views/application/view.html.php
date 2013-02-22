@@ -94,14 +94,14 @@ class muusla_applicationViewapplication extends JView
             if($camper->fiscalyearid) {
                $camper->roomtypes = $model->getRoomtypepreferences($camper->fiscalyearid);
                $camper->roommates = $model->getRoommatepreferences($camper->fiscalyearid);
-               $camper->attendees = $model->getAttendees($camper->fiscalyearid);
+               //$camper->attendees = $model->getAttendees($camper->fiscalyearid);
             }
          }
          $this->assignRef('charges', $model->getCharges($family->familyid));
          $this->assignRef('credits', $model->getCredits($family->familyid));
       }
       $this->assignRef('campers', $campers);
-      $this->assignRef('positions', $model->getPositions());
+      //$this->assignRef('positions', $model->getPositions());
       $this->assignRef('buildings', $model->getBuildings());
       $this->assignRef('states', $model->getStates());
       $this->assignRef('foodoptions', $model->getFoodoptions());
@@ -110,15 +110,6 @@ class muusla_applicationViewapplication extends JView
       $this->assignRef('phonetypes', $model->getPhonetypes());
       $this->assignRef('programs', $model->getPrograms());
       $this->assignRef('year', $model->getYear());
-      $times = $model->getTimes();
-      foreach($model->getWorkshops() as $workshop) {
-         if($workshop["days"] == "MTuWThF") {
-            $workshop["days"] = "5 days";
-         }
-         $times[$workshop["timeid"]]["shops"][$workshop["eventid"]] = $workshop;
-      }
-      $this->assignRef('times', $times);
-
       $emptyPhonenumber = new stdClass;
       $emptyPhonenumber->phonenbrid = 0;
       $emptyPhonenumber->phonetypeid = 0;
@@ -130,6 +121,15 @@ class muusla_applicationViewapplication extends JView
    function detail($tpl = null) {
       // 		$model =& $this->getModel();
       // 		$user =& JFactory::getUser();
+      $times = $model->getTimes();
+      foreach($model->getWorkshops() as $workshop) {
+         if($workshop["days"] == "MTuWThF") {
+            $workshop["days"] = "5 days";
+         }
+         $times[$workshop["timeid"]]["shops"][$workshop["eventid"]] = $workshop;
+      }
+      $this->assignRef('times', $times);
+      
       // 		$calls[][] = array();
       // 		$phonenumbers[] = array();
       // 		if($calls["campers"][0]) {

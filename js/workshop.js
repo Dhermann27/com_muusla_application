@@ -1,105 +1,17 @@
 $(window).load(
 		function() {
-			$("#muusaApp").tabs({
-				active : 0,
-				beforeActivate : function(event, ui) {
-					trap(event, ui);
-					recalc(event, ui);
-					return true;
-				}
-			}).tooltip({
-				position : {
-					at : "left bottom"
-				}
-			});
-			$(".info").button({
-				icons : {
-					primary : "ui-icon-info"
-				},
-				text : false
-			}).click(function() {
-				switchNextRow($(this));
-				return false;
-			});
-			$(".link").button({
-				icons : {
-					primary : "ui-icon-link"
-				},
-				text : false
-			}).click(function() {
-				openLink($(this));
-				return false;
-			});
-			$(".radios").buttonset();
-			$(".add").button({
-				icons : {
-					primary : "ui-icon-plus"
-				},
-				text : false
-			}).click(function() {
-				addRow($(this), "tr");
-				return false;
-			});
-			$(".birthday").datepicker({
-				yearRange : (thisyear - 100) + ":" + thisyear,
-				changeMonth : true,
-				changeYear : true
-			});
-			$(".roomtypes").accordion({
-				collapsible : true,
+			$(".workshopSelection").accordion({
 				heightStyle : "content",
-				header : "h4",
-				active : false
+				header : "h4"
 			});
-			$(".roomtypeSave").button().click(function() {
-				$(this).closest("div.roomtypes").accordion({
-					active : false
-				});
-				return false;
+			$(".workshopTimes").accordion({
+				heightStyle : "content",
+				header : "h5"
 			});
-			$(".roomtype-yes, .roomtype-no").sortable({
+			$(".workshop-yes, .workshop-no").sortable({
 				placeholder : "ui-state-highlight",
-				connectWith : ".connectedRoomtype"
+				connectWith : ".connectedWorkshop"
 			}).disableSelection();
-			$(".dialog-message").dialog({
-				modal : true,
-				autoOpen : false,
-				minWidth : 800,
-				buttons : {
-					Ok : function() {
-						$(this).dialog("close");
-					}
-				}
-			});
-			$(".delete").button({
-				icons : {
-					primary : "ui-icon-minus"
-				},
-				text : false
-			}).click(function() {
-				hideThis($(this).parents("tr"));
-				return false;
-			});
-			$("#nextCamper").button().click(function() {
-				$("#muusaApp").tabs({
-					active : 1
-				});
-				return false;
-			});
-			$("#addCamper").button().click(
-					function() {
-						$("#appCamper tbody.camperBody:hidden :first").show()
-								.find(".roomtype-yes, .roomtype-no").sortable({
-									placeholder : "ui-state-highlight",
-									connectWith : ".connectedRoomtype"
-								}).disableSelection();
-						return false;
-					});
-			$(".removeCamper").button().click(function() {
-				$(this).parents("tbody").hide();
-				$(this)
-				return false;
-			});
 			$("#nextPayment").button().click(function() {
 				$("#muusaApp").tabs({
 					active : 3
@@ -188,7 +100,51 @@ function errorCheck(event, obj, check, msg) {
 }
 
 function recalc(event, ui) {
-	if (ui.newPanel.attr("id") == "appPayment") {
+	if (ui.newPanel.attr("id") == "appWorkshop") {
+		/*$("#appWorkshop h4").addClass("deleteMe");
+		$("#appCamper tbody.camperBody:not(.hidden)")
+				.each(
+						function() {
+							var campername = $(".firstname", $(this)).val()
+									+ " " + $(".lastname", $(this)).val();
+							if ($(".attending", $(this)).val() != 0) {
+								var camper = $("#appWorkshop h4:contains('"
+										+ campername + "')");
+								if (camper.size() >= 1) {
+									camper.first().show();
+									camper.removeClass("deleteMe");
+								} else {
+									var grade = pInt($(".grade", $(this)).val());
+									if (grade < 13) {
+										var dummy = $("#childDummy");
+										var newrow = dummy.clone(true)
+												.removeAttr("id").insertBefore(
+														dummy);
+										$("h4", newrow).text(campername)
+												.removeClass("deleteMe");
+										$("p", newrow)
+												.html(
+														"<strong>Automatically enrolled in program-specific activities.</strong>");
+										newrow.show();
+									} else {
+										var dummy = $("#workshopDummy");
+										var newrow = dummy.clone(true)
+												.removeAttr("id").insertBefore(
+														dummy);
+										$("h4", newrow).text(campername)
+												.removeClass("deleteMe");
+										newrow.show();
+									}
+								}
+							} else {
+								$(
+										"#appWorkshop h4:contains('"
+												+ campername + "')")
+										.removeClass("deleteMe").hide();
+							}
+
+						});*/
+	} else if (ui.newPanel.attr("id") == "appPayment") {
 		$("#appPayment tr.dummy").remove();
 		$("#noattending").hide();
 		var dummy = $("#paymentDummy");
@@ -291,13 +247,29 @@ function submit() {
 											}
 										});
 						if ($(".attending", $(this)).val() > 0) {
-							var camperid = $(this).attr("id");
+							var camperid = $(this).attr("id") != undefined ? $(
+									this).attr("id") : camperCount++;
+							$("input:not(.hidden),select:not(.hidden)", $(this))
+									.each(function() {
+										incName($(this), camperid);
+									});
+							$("input[name*='campers-camperid']", $(this)).val(
+									camperid);
+							$("input[name*='phonenumbers-camperid']", $(this))
+									.val(camperid);
 							addHidden("roomtype_preferences-buildingids-"
 									+ camperid, $(".roomtype-yes li", $(this)));
 							addHidden("roommate_preferences-names-" + camperid,
 									$("input.roommates", $(this)));
 						}
 					});
+	$("#appWorkshop div.desired").each(
+			function() {
+				addHidden("attendees-" + $("h6", $(this)).attr("class"), $(
+						".workshop-yes li", $(this)));
+			});
+	addHidden("volunteers" + $("h6", $(this)).attr("class"),
+			$("#appWorkshop .volunteers li"));
 	$("#muusaApp").closest("form").submit();
 }
 
