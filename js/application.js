@@ -9,7 +9,7 @@ $(window).load(
 				}
 			}).tooltip({
 				position : {
-					at : "left bottom"
+					at : "right center"
 				}
 			});
 			$(".info").button({
@@ -96,13 +96,12 @@ $(window).load(
 						return false;
 					});
 			$(".removeCamper").button().click(function() {
-				$(this).parents("tbody").hide();
-				$(this)
+				$(this).parents("tbody").hide().find(".firstname").val("");
 				return false;
 			});
 			$("#nextPayment").button().click(function() {
 				$("#muusaApp").tabs({
-					active : 3
+					active : 2
 				});
 				return false;
 			});
@@ -203,10 +202,12 @@ function recalc(event, ui) {
 				}).each(function() {
 			registered.push($("td.memo", $(this)).text());
 		});
-		$("#appCamper tbody.camperBody:not(.hidden)")
-				.filter(function() {
-					return $(".attending[value!='0']", $(this)).size() > 0
-				})
+		$("#appCamper tbody.camperBody")
+				.filter(
+						function() {
+							return $(".attending", $(this)).val() != 0
+									&& $(".firstname", $(this)).val() != "";
+						})
 				.each(
 						function() {
 							var campername = $(".firstname", $(this)).val()
@@ -232,14 +233,19 @@ function recalc(event, ui) {
 			$("#noattending").show();
 		} else if ($("#appPayment td.chargetype:contains('Housing Fee')")
 				.size() == 0) {
-			var housingdepo = $("#appPayment td.chargetype:contains('Housing Deposit')");
-			if (housingdepo)
-				var newrow = dummy.clone(true).removeAttr("id").addClass(
+			var housingdepo = $("#appPayment tr").filter(
+					function() {
+						return $("td.chargetype", $(this)).text().contains(
+								"Housing Deposit");
+					});
+			if (housingdepo.size() == 0) {
+				var housingdepo = dummy.clone(true).removeAttr("id").addClass(
 						"dummy").insertBefore(dummy);
-			$(".chargetype", newrow).text("Housing Deposit");
-			$(".amount", newrow).text("$" + deposit.toFixed(2));
-			$(".date", newrow).text(now);
-			newrow.show();
+				$(".chargetype", housingdepo).text("Housing Deposit");
+				$(".date", housingdepo).text(now);
+				housingdepo.show();
+			}
+			$(".amount", housingdepo).text("$" + deposit.toFixed(2));
 		}
 		$("#appPayment td.amount").each(function() {
 			total += pFloat($(this).text());
@@ -259,21 +265,29 @@ function donationCalc() {
 		donation = 0.0;
 	}
 	total += donation;
-	$("#donation").val("$" + donation.toFixed(2));
+	$("#donation").val(donation.toFixed(2));
 	$("#amountNow").text("$" + total.toFixed(2));
 }
 
 function submit() {
 	var camperCount = 100;
-	$("#appCamper tbody.camperBody:not(.hidden)")
+	var phoneCount = 200;
+	$("#appCamper tbody.camperBody")
 			.each(
 					function() {
-						var phoneCount = 200;
-						$(".phonenbrs:not(.hidden)", $(this))
-								.each(
-										function() {
-											if ($("input[type=text]", $(this))
-													.val() != "") {
+						if ($(".attending", $(this)).val() != 0
+								&& $(".firstname", $(this)).val() != "") {
+							$(".phonenbrs", $(this))
+									.filter(
+											function() {
+												return $("input[type=text]",
+														$(this)).val() != ""
+														&& $(
+																"input[name*='phonenumbers-phonenbrid']",
+																$(this)).val() == "";
+											})
+									.each(
+											function() {
 												$("select,input", $(this))
 														.each(
 																function() {
@@ -283,27 +297,39 @@ function submit() {
 																});
 												$(
 														"input[name*='phonenumbers-phonenbrid']",
-														$(this))
-														.val(phoneCount);
-												phoneCount++;
-											} else {
-												$(this).remove();
-											}
-										});
-						if ($(".attending", $(this)).val() > 0) {
-							var camperid = $(this).attr("id");
-							addHidden("roomtype_preferences-buildingids-"
-									+ camperid, $(".roomtype-yes li", $(this)));
-							addHidden("roommate_preferences-names-" + camperid,
-									$("input.roommates", $(this)));
+														$(this)).val(
+														phoneCount++);
+											});
+							if ($(".attending", $(this)).val() > 0
+									&& $(".firstname", $(this)).val() != "") {
+								var camperid = $(
+										"input[name*='campers-camperid']",
+										$(this)).val();
+								if (camperid == undefined) {
+									camperid = camperCount++;
+								}
+								$(
+										"select[name*='campers'],input[name*='campers']",
+										$(this)).each(function() {
+									incName($(this), camperid)
+								})
+								$("input[name*='phonenumbers-camperid']",
+										$(this)).val(camperid);
+								addHidden("roomtype_preferences-buildingids-"
+										+ camperid, $(".roomtype-yes li",
+										$(this)));
+								addHidden("roommate_preferences-names-"
+										+ camperid, $("input.roommates",
+										$(this)));
+							}
 						}
 					});
 	$("#muusaApp").closest("form").submit();
 }
 
 function incName(obj, count) {
-	if (obj.attr("name") != undefined && !obj.attr("name").match(/-\d+$/)) {
-		obj.attr("name", obj.attr("name") + "-" + count);
+	if (obj.attr("name") != undefined && !obj.attr("name").match(/\d+$/)) {
+		obj.attr("name", obj.attr("name") + count);
 	}
 }
 

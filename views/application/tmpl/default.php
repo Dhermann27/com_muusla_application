@@ -6,7 +6,7 @@ $user =& JFactory::getUser();
       href="<?php echo JURI::root(true);?>/components/com_muusla_application/css/application.css"
       rel="stylesheet" />
    <link type="text/css"
-      href="<?php echo JURI::root(true);?>/components/com_muusla_application/css/jquery-ui-1.10.0.custom.css"
+      href="<?php echo JURI::root(true);?>/components/com_muusla_application/css/jquery-ui-1.10.0.custom.min.css"
       rel="stylesheet" />
    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
    <script src="http://code.jquery.com/jquery-migrate-1.1.1.min.js"></script>
@@ -134,8 +134,7 @@ $user =& JFactory::getUser();
                <?php
                if(count($this->campers)== 0) {
                   $camper = new stdClass;
-                  $camper->camperid = 100;
-                  //$phonenumber = $this->emptyPhonenumber;
+                  $camper->camperid = 1;
                   include 'blocks/camper.php';
                } else {
                   foreach($this->campers as $index => $camper) {
@@ -143,8 +142,7 @@ $user =& JFactory::getUser();
                   }
                }
                $camper = new stdClass;
-               for($index=101; $index<111; $index++) {
-                  $camper->camperid = $index;
+               for($i=1; $i<11; $i++) {
                   include 'blocks/camper.php';
                }
                ?>
@@ -154,7 +152,7 @@ $user =& JFactory::getUser();
                         <button id="addCamper">Add Another Camper</button>
                      </td>
                      <td colspan="2" align="right">
-                        <button id="nextWorkshop">Next Page</button>
+                        <button id="nextPayment">Next Page</button>
                      </td>
                   </tr>
                </tfoot>
@@ -219,7 +217,7 @@ $user =& JFactory::getUser();
                   <td class="chargetype"></td>
                   <td class="amount" align="right"></td>
                   <td class="date" align="center"></td>
-                  <td class="memo padleft"></td>
+                  <td class="memo"></td>
                </tr>
                <tr>
                   <td class="chargetype">Donation</td>

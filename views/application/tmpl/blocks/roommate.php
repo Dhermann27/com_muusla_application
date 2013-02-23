@@ -1,4 +1,4 @@
-<?php 
+<?php defined('_JEXEC') or die('Restricted access'); 
 /**
  * roommate.php
  * XHTML Block containing a roommate preference and one control

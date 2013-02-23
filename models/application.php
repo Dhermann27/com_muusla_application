@@ -179,7 +179,7 @@ class muusla_applicationModelapplication extends JModel
          JError::raiseError(500, $db->stderr());
       }
    }
-    
+
    function insertAttendees($fiscalyearid, $choicenbr, $timeid, $eventid) {
       $db =& JFactory::getDBO();
       $user =& JFactory::getUser();
@@ -219,7 +219,7 @@ class muusla_applicationModelapplication extends JModel
    function upsertCamper($obj) {
       $db =& JFactory::getDBO();
       unset($obj->attending);
-      $obj->gradeoffset = $obj->grade < 13 ? "&&$obj->grade-muusa_age_f(STR_TO_DATE('$obj->birthdate', '%m/%d/%Y')')" : "-5";
+      $obj->gradeoffset = $obj->grade < 13 ? "&&$obj->grade-muusa_age_f(STR_TO_DATE('$obj->birthdate', '%m/%d/%Y'))" : "-5";
       unset($obj->grade);
       $obj->birthdate = "&&STR_TO_DATE('$obj->birthdate', '%m/%d/%Y')";
       if($obj->camperid < 1000) {
@@ -368,52 +368,33 @@ class muusla_applicationModelapplication extends JModel
       return $db->loadObjectList();
    }
 
-   function calculateCharges() {
+   function calculateCharges($familyid) {
       $db =& JFactory::getDBO();
       $user =& JFactory::getUser();
-      $query = "SELECT mc.camperid, mc.firstname, mc.lastname, mc.hohid, DATE_FORMAT(mc.birthdate, '%m/%d/%Y') birthdate, muusa_age_f(mc.birthdate) age, mc.gradeoffset, IFNULL(mv.roomid,0) roomid FROM muusa_campers mc LEFT JOIN muusa_campers_v mv ON mc.camperid=mv.camperid WHERE mc.email='$user->email'";
+      $query = "SELECT mc.camperid, mc.firstname, mc.lastname, DATE_FORMAT(mc.birthdate, '%m/%d/%Y') birthdate, muusa_age_f(mc.birthdate) age, mc.gradeoffset, IFNULL(mv.roomid,0) roomid FROM muusa_campers mc LEFT JOIN muusa_campers_v mv ON mc.camperid=mv.camperid WHERE mc.familyid=$familyid";
       $db->setQuery($query);
-      $camper = $db->loadObject();
+      $campers = $db->loadObjectList();
+      $camperids = $db->loadColumn(0);
       if($db->getErrorNum()) {
          JError::raiseError(500, $db->stderr());
       }
 
-      if($camper->camperid != 0 && $camper->hohid == 0) {
-         $query = "DELETE FROM muusa_charges WHERE fiscalyear=(SELECT year FROM muusa_currentyear) AND camperid IN (SELECT camperid FROM muusa_campers_v WHERE camperid=$camper->camperid OR hohid=$camper->camperid) AND chargetypeid IN (SELECT chargetypeid FROM muusa_chargetypes WHERE name LIKE 'Registration%' OR name LIKE 'Housing Depo%')";
+      if(count($campers) > 0) {
+         $query = "DELETE FROM muusa_charges WHERE fiscalyear=(SELECT year FROM muusa_currentyear) AND camperid IN (" . implode(",", $camperids) . ") AND chargetypeid IN (1003,1004)";
          $db->setQuery($query);
          $db->query();
          if($db->getErrorNum()) {
             JError::raiseError(500, $db->stderr());
          }
 
-         $obj = new stdClass;
-         $obj->camperid = $camper->camperid;
-         $obj->amount = "&&muusa_programs_fee_f(STR_TO_DATE('$camper->birthdate', '%m/%d/%Y'), $camper->gradeoffset)";
-         $obj->memo = $camper->firstname . " " . $camper->lastname;
-         $obj->chargetypeid = "&&(SELECT chargetypeid FROM muusa_chargetypes WHERE name LIKE 'Registration%')";
-         $obj->timestamp = date("Y-m-d");
-         $obj->fiscalyear = "&&(SELECT year FROM muusa_currentyear)";
-         $obj->created_by = $user->username;
-         $obj->created_at = date("Y-m-d H:i:s");
-         $db->insertObject("muusa_charges", $obj);
-         if($db->getErrorNum()) {
-            JError::raiseError(500, $db->stderr());
-         }
-         $housingdepo = 50;
+         $housingdepo = 0;
 
-         $query = "SELECT camperid, firstname, lastname, birthdate, age, gradeoffset FROM muusa_campers_v WHERE hohid=$camper->camperid";
-         $db->setQuery($query);
-         $children = $db->loadObjectList();
-         if($db->getErrorNum()) {
-            JError::raiseError(500, $db->stderr());
-         }
-
-         foreach($children as $child) {
+         foreach($campers as $camper) {
             $obj = new stdClass;
-            $obj->camperid = $child->camperid;
-            $obj->amount = "&&muusa_programs_fee_f(STR_TO_DATE('$child->birthdate', '%m/%d/%Y'), $child->gradeoffset)";
-            $obj->memo = $child->firstname . " " . $child->lastname;
-            $obj->chargetypeid = "&&(SELECT chargetypeid FROM muusa_chargetypes WHERE name LIKE 'Registration%')";
+            $obj->camperid = $camper->camperid;
+            $obj->amount = "&&muusa_programs_fee_f(STR_TO_DATE('$camper->birthdate', '%m/%d/%Y'), $camper->gradeoffset)";
+            $obj->memo = $camper->firstname . " " . $camper->lastname;
+            $obj->chargetypeid = "1003";
             $obj->timestamp = date("Y-m-d");
             $obj->fiscalyear = "&&(SELECT year FROM muusa_currentyear)";
             $obj->created_by = $user->username;
@@ -422,17 +403,17 @@ class muusla_applicationModelapplication extends JModel
             if($db->getErrorNum()) {
                JError::raiseError(500, $db->stderr());
             }
-            if($child->age > 16 || ($child->age+$child->gradeoffset) > 6) {
+            if($camper->roomid == 0 && ($camper->age > 16 || ($camper->age+$camper->gradeoffset) > 6)) {
                $housingdepo += 50;
             }
          }
 
-         if($camper->roomid == 0) {
+         if($housingdepo > 0) {
             $obj = new stdClass;
-            $obj->camperid = $camper->camperid;
+            $obj->camperid = $campers[0]->camperid;
             $obj->amount = $housingdepo;
             $obj->memo = "Housing Deposit";
-            $obj->chargetypeid = "&&(SELECT chargetypeid FROM muusa_chargetypes WHERE name LIKE 'Housing Depo%')";
+            $obj->chargetypeid = "1004";
             $obj->timestamp = date("Y-m-d");
             $obj->fiscalyear = "&&(SELECT year FROM muusa_currentyear)";
             $obj->created_by = $user->username;
@@ -443,6 +424,23 @@ class muusla_applicationModelapplication extends JModel
             }
          }
       }
-      return $camper;
+   }
+    
+   function insertDonation($camperid, $amt) {
+      $db =& JFactory::getDBO();
+      $user =& JFactory::getUser();
+      $obj = new stdClass;
+      $obj->camperid = $camperid;
+      $obj->amount = $amt;
+      $obj->memo = "Thank you for your donation";
+      $obj->chargetypeid = "1008";
+      $obj->timestamp = date("Y-m-d");
+      $obj->fiscalyear = "&&(SELECT year FROM muusa_currentyear)";
+      $obj->created_by = $user->username;
+      $obj->created_at = date("Y-m-d H:i:s");
+      $db->insertObject("muusa_charges", $obj);
+      if($db->getErrorNum()) {
+         JError::raiseError(500, $db->stderr());
+      }
    }
 }

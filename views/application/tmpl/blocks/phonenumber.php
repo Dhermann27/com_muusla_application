@@ -1,4 +1,4 @@
-<?php 
+<?php defined('_JEXEC') or die('Restricted access'); 
 /**
  * phonenumber.php
  * XHTML Block containing a phone number and one control
@@ -7,12 +7,12 @@
  * @param   object  $phonenumber The database phone number object if the number exists
  *
  */
-$nbrid = $phonenumber->phonenbrid > 0 ? "-" . $phonenumber->phonenbrid : "";
+$nbrid = $phonenumber->phonenbrid > 0 ? $phonenumber->phonenbrid : "";
 ?>
 <tr class="phonenbrs<?echo $nbrindex == -1 ? " hidden" : "";?>">
    <td><?php echo $nbrindex == 0 ? "Phone Numbers" : "&nbsp;";?></td>
    <td colspan="3"><select
-      name="phonenumbers-phonetypeid<?php echo $nbrid;?>"
+      name="phonenumbers-phonetypeid-<?php echo $nbrid;?>"
       class="ui-corner-all">
          <?php
          foreach($this->phonetypes as $phonetype) {
@@ -21,12 +21,12 @@ $nbrid = $phonenumber->phonenbrid > 0 ? "-" . $phonenumber->phonenbrid : "";
          }
          ?>
    </select> <input type="text"
-      name="phonenumbers-phonenbr<?php echo $nbrid; ?>" maxlength="14"
+      name="phonenumbers-phonenbr-<?php echo $nbrid; ?>" maxlength="14"
       class="inputtextshort validphone ui-corner-all"
       value="<?php echo $phonenumber->phonenbr;?>" /> <input
-      type="hidden" name="phonenumbers-phonenbrid<?php echo $nbrid; ?>"
+      type="hidden" name="phonenumbers-phonenbrid-<?php echo $nbrid; ?>"
       value="<?php echo $phonenumber->phonenbrid?>" /><input
-      type="hidden" name="phonenumbers-camperid<?php echo $nbrid; ?>"
+      type="hidden" name="phonenumbers-camperid-<?php echo $nbrid; ?>"
       value="<?php echo $camperid?>" />
       <button
          class="<?php echo $nbrindex == 0 ? "add" :"delete";?> help">

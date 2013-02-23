@@ -20,7 +20,6 @@ class muusla_applicationViewapplication extends JView
       $calls[][] = array();
       foreach(JRequest::get() as $key=>$value) {
          if(preg_match('/^(\w+)-(\w+)-(\d+)$/', $key, $objects)) {
-            echo($key . " => " . $value . "<br/>");
             $table = $this->getSafe($objects[1]);
             $column = $this->getSafe($objects[2]);
             $id = $this->getSafe($objects[3]);
@@ -38,7 +37,7 @@ class muusla_applicationViewapplication extends JView
             $calls[$table][$id]->$column = $this->getSafe($value);
          }
       }
-     /* if(count($calls["family"]) > 0) {
+      if(count($calls["family"]) > 0) {
          foreach($calls["family"] as $id => $family) {
             $familyid = $model->upsertFamily($family);
          }
@@ -46,40 +45,58 @@ class muusla_applicationViewapplication extends JView
       if(count($calls["campers"]) > 0) {
          foreach($calls["campers"] as $oldcamperid => $camper) {
             $attending = $camper->attending;
-            $camper->familyid = $familyid;
-            $newcamperid = $model->upsertCamper($camper);
-            foreach($calls["phonenumbers"] as $phonenumber) {
-               if($phonenumber->camperid == $oldcamperid) {
-                  $phonenumber->camperid = $newcamperid;
+            if($attending && $camper->firstname != "" && $camper->lastname != "") {
+               $camper->familyid = $familyid;
+               $newcamperid = $model->upsertCamper($camper);
+               if(count($calls["phonenumbers"])) {
+                  foreach($calls["phonenumbers"] as $phonenumber) {
+                     if($phonenumber->camperid == $oldcamperid) {
+                        $phonenumber->camperid = $newcamperid;
+                     }
+                  }
                }
-            }
-            $fiscalyearid = $model->upsertFiscalyear($newcamperid, $attending);
-            $model->deleteRoomtypepreferences($fiscalyearid);
-            foreach(explode(",", $calls["roomtype_preferences"][$oldcamperid]->buildingids) as $choicenbr => $buildingid) {
-               $model->insertRoomtypepreferences($fiscalyearid, $choicenbr+1, $buildingid);
-            }
-            $model->deleteRoommatepreferences($fiscalyearid);
-            foreach(explode(",", $calls["roommate_preferences"][$oldcamperid]->names) as $choicenbr => $name) {
-               $model->insertRoommatepreferences($fiscalyearid, $choicenbr+1, $this->getSafe(urldecode($name)));
-            }
-            $model->deleteAttendees($fiscalyearid);
-            foreach($calls["attendees"] as $timeid => $eventids) {
+               $fiscalyearid = $model->upsertFiscalyear($newcamperid, $attending);
+               $model->deleteRoomtypepreferences($fiscalyearid);
+               if(count($calls["roomtype_preferences"][$oldcamperid]->buildingids) > 0) {
+                  foreach(explode(",", $calls["roomtype_preferences"][$oldcamperid]->buildingids) as $choicenbr => $buildingid) {
+                     $model->insertRoomtypepreferences($fiscalyearid, $choicenbr+1, $buildingid);
+                  }
+               }
+               $model->deleteRoommatepreferences($fiscalyearid);
+               if(count($calls["roommate_preferences"][$oldcamperid]->names) > 0) {
+                  foreach(explode(",", $calls["roommate_preferences"][$oldcamperid]->names) as $choicenbr => $name) {
+                     $model->insertRoommatepreferences($fiscalyearid, $choicenbr+1, $this->getSafe(urldecode($name)));
+                  }
+               }
+               /*$model->deleteAttendees($fiscalyearid);
+                foreach($calls["attendees"] as $timeid => $eventids) {
                foreach(explode(",", $eventids->eventids) as $choicenbr => $eventid) {
-                  $model->insertAttendees($fiscalyearid, $choicenbr+1, $timeid, $eventid);
+               $model->insertAttendees($fiscalyearid, $choicenbr+1, $timeid, $eventid);
                }
-            }
-            $model->deleteOldVolunteers($fiscalyearid, $calls["volunteers"][0]->positionids);
-            if($calls["volunteers"][0]->positionids != "") {
+               }
+               $model->deleteOldVolunteers($fiscalyearid, $calls["volunteers"][0]->positionids);
+               if($calls["volunteers"][0]->positionids != "") {
                $model->insertVolunteers($fiscalyearid, $calls["volunteers"][0]->positionids);
+               }*/
             }
+         }
+         $model->calculateCharges($familyid);
+         if(count($calls["charges"]) > 0 && $calls["charges"][0]->amount > 0) {
+            $model->insertDonation($newcamperid, $calls["charges"][0]->amount);
          }
       }
       if(count($calls["phonenumbers"]) > 0) {
-         $model->deleteOldPhonenumbers(implode(",", array_keys($calls["campers"])), implode(",", array_keys($calls["phonenumbers"])));
+         $phonenbrs = array();
+         foreach($calls["phonenumbers"] as $key => $phonenumber) {
+            if($phonenumber->phonenbr != "") {
+               array_push($phonenbrs, $key);
+            }
+         }
+         $model->deleteOldPhonenumbers(implode(",", array_keys($calls["campers"])), implode(",", $phonenbrs));
          foreach($calls["phonenumbers"] as $phonenumber) {
             $model->upsertPhonenumber($phonenumber);
          }
-      }*/
+      }
 
       // DATA SAVED, GET NEW DATA
 
@@ -89,7 +106,7 @@ class muusla_applicationViewapplication extends JView
          $campers = $model->getCampers($family->familyid);
          foreach($campers as $camper) {
             $camper->phonenbrs = $model->getPhonenumbers($camper->camperid);
-            $camper->volunteers = $model->getVolunteers($camper->camperid);
+            //$camper->volunteers = $model->getVolunteers($camper->camperid);
             $camper->fiscalyearid = $model->getFiscalyear($camper->camperid);
             if($camper->fiscalyearid) {
                $camper->roomtypes = $model->getRoomtypepreferences($camper->fiscalyearid);
@@ -110,11 +127,6 @@ class muusla_applicationViewapplication extends JView
       $this->assignRef('phonetypes', $model->getPhonetypes());
       $this->assignRef('programs', $model->getPrograms());
       $this->assignRef('year', $model->getYear());
-      $emptyPhonenumber = new stdClass;
-      $emptyPhonenumber->phonenbrid = 0;
-      $emptyPhonenumber->phonetypeid = 0;
-      $this->assignRef('emptyPhonenumber', $emptyPhonenumber);
-
       parent::display($tpl);
    }
 
@@ -129,7 +141,7 @@ class muusla_applicationViewapplication extends JView
          $times[$workshop["timeid"]]["shops"][$workshop["eventid"]] = $workshop;
       }
       $this->assignRef('times', $times);
-      
+
       // 		$calls[][] = array();
       // 		$phonenumbers[] = array();
       // 		if($calls["campers"][0]) {
