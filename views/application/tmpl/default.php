@@ -296,7 +296,7 @@ $user =& JFactory::getUser();
                   <td colspan="2" align="center"><div>
                         Make checks payable to: <strong>MUUSA, Inc.</strong><br />
                         Mail check by May 31, 2013 to<br /> MUUSA, Inc.<br />6501
-                        Amber Crest<br />Indianapolis, IN 46220<br /><br />
+                        Amber Crest<br />Indianapolis, IN 46220<br /> <br />
                      </div></td>
                   <td align="center"
                      style="border-left: 2px dashed black"><div>
@@ -305,7 +305,8 @@ $user =& JFactory::getUser();
                      </div>
                      <table>
                         <tr align="center">
-                           <td class="small"><a href="#"
+                           <td class="small"><a
+                              href="http://<?php echo $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];?>#"
                               onclick="switchNextRow($(this));">+ Pay
                                  Another Amount</a></td>
                         </tr>

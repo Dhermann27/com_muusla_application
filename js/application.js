@@ -31,9 +31,9 @@ jQuery(document).ready(
 				return false;
 			});
 			var pp = $("#paypalRedirect");
-			if(pp != undefined) {
+			if (pp != undefined) {
 				pp.dialog();
-				setTimeout("$('#paypalForm').submit();", 1000);
+				setTimeout("jQuery('#paypalForm').submit();", 1000);
 			}
 			$(".radios").buttonset();
 			$(".add").button({
@@ -89,6 +89,9 @@ jQuery(document).ready(
 				$("#muusaApp").tabs({
 					active : 1
 				});
+				$("html, body").animate({
+					scrollTop : 0
+				}, "slow");
 				return false;
 			});
 			$("#addCamper").button().click(
@@ -108,6 +111,9 @@ jQuery(document).ready(
 				$("#muusaApp").tabs({
 					active : 2
 				});
+				$("html, body").animate({
+					scrollTop : 0
+				}, "slow");
 				return false;
 			});
 			$("#donation").blur(function() {
@@ -239,10 +245,22 @@ function recalc($, event, ui) {
 								$(".memo", newrow).text(campername);
 								newrow.show();
 							}
+							registered = jQuery.grep(registered,
+									function(value) {
+										return value != campername;
+									});
 							if (grade > 5) {
 								deposit += 50.0;
 							}
 						});
+
+		$("#appPayment tr").filter(
+				function() {
+					return $("td.chargetype:contains('Registration Fee')",
+							$(this)).size() > 0
+							&& $.inArray($("td.memo", $(this)).text(),
+									registered) != -1;
+				}).remove();
 		if (deposit == 0.0) {
 			$("#noattending").show();
 		} else if ($("#appPayment td.chargetype:contains('Housing Fee')")

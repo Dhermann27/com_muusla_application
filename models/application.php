@@ -79,7 +79,7 @@ class muusla_applicationModelapplication extends JModel
    function getCampers($familyid) {
       $db =& JFactory::getDBO();
       $user =& JFactory::getUser();
-      $query = "SELECT mc.camperid, mc.firstname, mc.lastname, mc.sexcd, mc.email, DATE_FORMAT(mc.birthdate, '%m/%d/%Y') birthday, (muusa_age_f(mc.birthdate)+gradeoffset) grade, mc.sponsor, mc.is_handicap, mc.foodoptionid, mc.churchid, mp.name programname FROM muusa_campers mc LEFT JOIN muusa_programs mp ON muusa_age_f(mc.birthdate)<mp.agemax AND muusa_age_f(mc.birthdate)>mp.agemin AND muusa_age_f(mc.birthdate)+mc.gradeoffset<mp.grademax AND muusa_age_f(mc.birthdate)+mc.gradeoffset>mp.grademin WHERE mc.familyid=$familyid ORDER BY mc.birthdate";
+      $query = "SELECT mc.camperid, mc.firstname, mc.lastname, mc.sexcd, mc.email, DATE_FORMAT(mc.birthdate, '%m/%d/%Y') birthday, (muusa_age_f(mc.birthdate)+mc.gradeoffset) grade, mc.sponsor, mc.is_handicap, mc.foodoptionid, mc.churchid, mp.name programname, IFNULL(mv.days,0) days FROM muusa_campers mc LEFT JOIN muusa_campers_v mv ON mc.camperid=mv.camperid LEFT JOIN muusa_programs mp ON muusa_age_f(mc.birthdate)<mp.agemax AND muusa_age_f(mc.birthdate)>mp.agemin AND muusa_age_f(mc.birthdate)+mc.gradeoffset<mp.grademax AND muusa_age_f(mc.birthdate)+mc.gradeoffset>mp.grademin WHERE mc.familyid=$familyid ORDER BY mc.birthdate";
       $db->setQuery($query);
       return $db->loadObjectList();
    }
@@ -228,54 +228,63 @@ class muusla_applicationModelapplication extends JModel
       }
    }
 
-   function upsertFiscalyear($camperid, $attending) {
+   function upsertFiscalyear($camperid) {
       $db =& JFactory::getDBO();
       $user =& JFactory::getUser();
-      if($attending > 0) {
-         $query = "SELECT mf.fiscalyearid FROM muusa_fiscalyear mf, muusa_currentyear my WHERE mf.fiscalyear=my.year AND mf.camperid=$camperid";
-         $db->setQuery($query);
-         $fiscalyearid = $db->loadResult();
-         if(!$fiscalyearid) {
-            $fyobj = new stdClass;
-            $fyobj->camperid = $camperid;
-            $fyobj->fiscalyear = "&&(SELECT year FROM muusa_currentyear)";
-            $fyobj->days = 6;
-            $fyobj->postmark = "&&CURRENT_TIMESTAMP";
-            $fyobj->created_by = $user->username;
-            $fyobj->created_at = "&&CURRENT_TIMESTAMP";
-            $db->insertObject("muusa_fiscalyear", $fyobj);
-            $fiscalyearid = $db->insertid();
-         }
-         return $fiscalyearid;
-         /*} else {
-          $query = "DELETE FROM muusa_fiscalyear WHERE camperid=$camperid AND fiscalyear=(SELECT year FROM muusa_currentyear)";
+      $query = "SELECT mf.fiscalyearid FROM muusa_fiscalyear mf, muusa_currentyear my WHERE mf.fiscalyear=my.year AND mf.camperid=$camperid";
+      $db->setQuery($query);
+      $fiscalyearid = $db->loadResult();
+      if(!$fiscalyearid) {
+         $fyobj = new stdClass;
+         $fyobj->camperid = $camperid;
+         $fyobj->fiscalyear = "&&(SELECT year FROM muusa_currentyear)";
+         $fyobj->days = 6;
+         $fyobj->postmark = "&&CURRENT_TIMESTAMP";
+         $fyobj->created_by = $user->username;
+         $fyobj->created_at = "&&CURRENT_TIMESTAMP";
+         $db->insertObject("muusa_fiscalyear", $fyobj);
+         $fiscalyearid = $db->insertid();
+      }
+      return $fiscalyearid;
+   }
+
+   function removeFiscalyear($camperid) {
+      $db =& JFactory::getDBO();
+      $query = "SELECT mf.fiscalyearid FROM muusa_fiscalyear mf, muusa_currentyear my WHERE mf.fiscalyear=my.year AND mf.camperid=$camperid";
+      $db->setQuery($query);
+      $fiscalyearid = $db->loadResult();
+
+      if($fiscalyearid > 0) {
+         $query = "DELETE FROM muusa_fiscalyear WHERE fiscalyearid=$fiscalyearid";
          $db->setQuery($query);
          $db->query();
          if($db->getErrorNum()) {
-         JError::raiseError(500, $db->stderr());
+            JError::raiseError(500, $db->stderr());
          }
 
          $query = "DELETE FROM muusa_charges WHERE camperid=$camperid AND fiscalyear=(SELECT year FROM muusa_currentyear)";
          $db->setQuery($query);
          $db->query();
          if($db->getErrorNum()) {
-         JError::raiseError(500, $db->stderr());
+            JError::raiseError(500, $db->stderr());
          }
 
-         $query = "DELETE FROM muusa_volunteers WHERE camperid=$camperid AND fiscalyear=(SELECT year FROM muusa_currentyear)";
+         $query = "DELETE FROM muusa_volunteers WHERE fiscalyearid=$fiscalyearid";
          $db->setQuery($query);
          $db->query();
          if($db->getErrorNum()) {
-         JError::raiseError(500, $db->stderr());
+            JError::raiseError(500, $db->stderr());
          }
 
-         $query = "DELETE FROM muusa_attendees WHERE camperid=$camperid";
+         $query = "DELETE FROM muusa_attendees WHERE fiscalyearid=$fiscalyearid";
          $db->setQuery($query);
          $db->query();
          if($db->getErrorNum()) {
-         JError::raiseError(500, $db->stderr());
+            JError::raiseError(500, $db->stderr());
+
          }
-         return 0;*/
+         $this->deleteRoomtypepreferences($fiscalyearid);
+         $this->deleteRoommatepreferences($fiscalyearid);
       }
    }
 
@@ -365,7 +374,7 @@ class muusla_applicationModelapplication extends JModel
    function calculateCharges($familyid) {
       $db =& JFactory::getDBO();
       $user =& JFactory::getUser();
-      $query = "SELECT mc.camperid, mc.firstname, mc.lastname, DATE_FORMAT(mc.birthdate, '%m/%d/%Y') birthdate, muusa_age_f(mc.birthdate) age, mc.gradeoffset, IFNULL(mv.roomid,0) roomid FROM muusa_campers mc LEFT JOIN muusa_campers_v mv ON mc.camperid=mv.camperid WHERE mc.familyid=$familyid";
+      $query = "SELECT camperid, firstname, lastname, birthdate, age, gradeoffset, IFNULL(roomid,0) roomid FROM muusa_campers_v WHERE familyid=$familyid";
       $db->setQuery($query);
       $campers = $db->loadObjectList();
       $camperids = $db->loadColumn(0);

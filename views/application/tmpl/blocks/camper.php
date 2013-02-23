@@ -32,8 +32,11 @@ $user =& JFactory::getUser();
          <button class="help info">Show Attending Help</button> <select
          name="campers-attending-<?php echo $camperid;?>"
          class="attending ui-corner-all">
-            <option value="7" selected="selected">Attending</option>
-            <option value="0">Not Attending</option>
+            <option value="7"
+            <?php echo $camper->days > 0 || $this->sumdays == 0 ? " selected" : "";?>>Attending</option>
+            <option value="0"
+            <?php echo $camper->days == 0 && $this->sumdays > 0 ? " selected" : "";?>>Not
+               Attending</option>
       </select>
       </td>
    </tr>

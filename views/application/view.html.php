@@ -44,8 +44,7 @@ class muusla_applicationViewapplication extends JView
       }
       if(count($calls["campers"]) > 0) {
          foreach($calls["campers"] as $oldcamperid => $camper) {
-            $attending = $camper->attending;
-            if($attending && $camper->firstname != "" && $camper->lastname != "") {
+            if($camper->attending > 0 && $camper->firstname != "" && $camper->lastname != "") {
                $camper->familyid = $familyid;
                $newcamperid = $model->upsertCamper($camper);
                if(count($calls["phonenumbers"])) {
@@ -55,7 +54,7 @@ class muusla_applicationViewapplication extends JView
                      }
                   }
                }
-               $fiscalyearid = $model->upsertFiscalyear($newcamperid, $attending);
+               $fiscalyearid = $model->upsertFiscalyear($newcamperid);
                $model->deleteRoomtypepreferences($fiscalyearid);
                if(count($calls["roomtype_preferences"][$oldcamperid]->buildingids) > 0) {
                   foreach(explode(",", $calls["roomtype_preferences"][$oldcamperid]->buildingids) as $choicenbr => $buildingid) {
@@ -68,6 +67,8 @@ class muusla_applicationViewapplication extends JView
                      $model->insertRoommatepreferences($fiscalyearid, $choicenbr+1, $this->getSafe(urldecode($name)));
                   }
                }
+            } else {
+               $model->removeFiscalyear($oldcamperid);
             }
          }
          $model->calculateCharges($familyid);
@@ -100,6 +101,7 @@ class muusla_applicationViewapplication extends JView
 
       // DATA SAVED, GET NEW DATA
 
+      $sumdays = 0;
       $family = $model->getFamily();
       $this->assignRef('family', $family);
       if($family->familyid) {
@@ -111,6 +113,7 @@ class muusla_applicationViewapplication extends JView
                $camper->roomtypes = $model->getRoomtypepreferences($camper->fiscalyearid);
                $camper->roommates = $model->getRoommatepreferences($camper->fiscalyearid);
             }
+            $sumdays += $camper->days;
          }
          $this->assignRef('charges', $model->getCharges($family->familyid));
          $this->assignRef('credits', $model->getCredits($family->familyid));
@@ -123,6 +126,7 @@ class muusla_applicationViewapplication extends JView
       $this->assignRef('phonetypes', $model->getPhonetypes());
       $this->assignRef('programs', $model->getPrograms());
       $this->assignRef('year', $model->getYear());
+      $this->assignRef('sumdays', $sumdays);
 
 
       // UGH THIS SUCKS
