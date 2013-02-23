@@ -1,107 +1,106 @@
+#muusaApp table {
+	width: 95%;
+	align: center;
+}
 
-   #muusaApp table {
-      width: 95%;
-      align: center;
-   }
-   
-   #muusaApp td {
-      padding-bottom: 1.25em;
-   }
-   
-   #muusaApp p, #muusaApp ul {
-      margin-bottom: 1em;
-   }
+#muusaApp .small {
+	font-size: smaller;
+}
 
-   #muusaApp .left {
-      float: left;
-   }
- 
-   #muusaApp .right {
-      float: right;
-   }
- 
-   #muusaApp .clearboth {
-      clear: both;
-   }
-   
- 
-   #muusaApp button.help {
-      width: 1.75em;
-      height: 1.75em;
-      vertical-align: middle;
-   }
- 
-   #muusaApp .hidden {
-      display: none;
-   }
-   
-   #muusaApp .space {
-      margin: 1em;
-   }
- 
-   #muusaApp .spaceleft {
-      margin-left: 1.75em;
-   }
- 
-   #muusaApp .padtop {
-      padding-top: 1em;
-   }
-   
- 
-   #muusaApp .padleft {
-      padding-left: 1.75em;
-   }
-   
-   #muusaApp input, #muusaApp select {
-      height: 1.75em;
-      padding-left: .25em;
-   }
-   
-   #muusaApp .inputtext {
-      width: 25em;
-   }
-   
-   #muusaApp .inputtextshort {
-      width: 15em;
-   }
-   
-   #muusaApp .inputtexttiny {
-      width: 5em;
-      text-align: right;
-   }
- 
- 
-   #muusaApp .ui-button .ui-button-text
-   {
-      line-height: 1.1em;
-   }
- 
-   #muusaApp .connected {
-      list-style-type: none;
-      padding: 0 0 0 0;
-      float: left;
-      cursor: pointer;
-      border: 1px dashed black;
-      margin-bottom: 2em;
-   }
- 
-   #muusaApp .connected li {
-      margin: 0 2px 2px 2px;
-      padding: 6px;
-      font-size: 1.2em;
-   }
- 
-   #muusaApp .connected li.ui-state-highlight {
-      height: 1.5em;
-      line-height: 1.2em;
-   }
- 
-   #muusaApp .connectedRoomtype {
-      width: 18.5em;
-      min-height: 20em;
-   }
- 
-   #muusaApp .connectedWorkshop {
-      width: 25em;
-      min-height: 10em;
-   }
+#muusaApp td {
+	padding-bottom: 1.25em;
+}
+
+#muusaApp p,#muusaApp ul {
+	margin-bottom: 1em;
+}
+
+#muusaApp .left {
+	float: left;
+}
+
+#muusaApp .right {
+	float: right;
+}
+
+#muusaApp .clearboth {
+	clear: both;
+}
+
+#muusaApp button.help {
+	width: 1.75em;
+	height: 1.75em;
+	vertical-align: middle;
+}
+
+#muusaApp .hidden {
+	display: none;
+}
+
+#muusaApp .space {
+	margin: 1em;
+}
+
+#muusaApp .spaceleft {
+	margin-left: 1.75em;
+}
+
+#muusaApp .padtop {
+	padding-top: 1em;
+}
+
+#muusaApp .padleft {
+	padding-left: 1.75em;
+}
+
+#muusaApp input,#muusaApp select {
+	height: 1.75em;
+	padding-left: .25em;
+}
+
+#muusaApp .inputtext {
+	width: 25em;
+}
+
+#muusaApp .inputtextshort {
+	width: 15em;
+}
+
+#muusaApp .inputtexttiny {
+	width: 5em;
+	text-align: right;
+}
+
+#muusaApp .ui-button .ui-button-text {
+	line-height: 1.1em;
+}
+
+#muusaApp .connected {
+	list-style-type: none;
+	padding: 0 0 0 0;
+	float: left;
+	cursor: pointer;
+	border: 1px dashed black;
+	margin-bottom: 2em;
+}
+
+#muusaApp .connected li {
+	margin: 0 2px 2px 2px;
+	padding: 6px;
+	font-size: 1.2em;
+}
+
+#muusaApp .connected li.ui-state-highlight {
+	height: 1.5em;
+	line-height: 1.2em;
+}
+
+#muusaApp .connectedRoomtype {
+	width: 18.5em;
+	min-height: 20em;
+}
+
+#muusaApp .connectedWorkshop {
+	width: 25em;
+	min-height: 10em;
+}

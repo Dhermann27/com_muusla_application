@@ -24,10 +24,29 @@ $user =& JFactory::getUser();
             style="float: left; margin: 1em;"></span> You have
          successfully registered for camp! Be sure to pay your balance
          to be assigned housing and register for your workshops by
-         clicking on the Workshop Selection link above.<br />
+         clicking here. <br />
+         <button id="nextWorkshop">Proceed to Workshop Selection</button>
       </p>
    </div>
    <p>&nbsp;</p>
+   <?php } elseif ($this->redirectAmt) {?>
+   <div id="paypalRedirect" class="dialog-message" title="PayPal">
+      <strong>Redirecting to PayPal...</strong>
+      <form id="paypalForm" name="_xclick"
+         action="https://www.paypal.com/cgi-bin/webscr" method="post">
+         <input type="hidden" name="amount"
+            value="<?php echo $this->redirectAmt?>" /> <input
+            type="hidden" name="cmd" value="_xclick"> <input
+            type="hidden" name="business"
+            value="muusaregistar@gmail.com"> <input type="hidden"
+            name="currency_code" value="USD"> <input type="hidden"
+            name="item_name"
+            value="Midwest Unitarian Universalist Summer Assembly"> <img
+            alt="" border="0"
+            src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif"
+            width="1" height="1" />
+      </form>
+   </div>
    <?php }?>
    <form
       action="http://<? echo $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];?>"
@@ -265,11 +284,43 @@ $user =& JFactory::getUser();
                   echo "              <td id='amountArrival'>$" . number_format($total, 2, '.', '') . "</td>\n";
                   echo "              <td colspan='2'>&nbsp;</td>\n";
                   echo "           </tr>\n";
+               } else {
+                  echo "           <tr>\n";
+                  echo "              <td colspan='4'><i>Does not include your remaining housing fees, which are due on the first day of camp. Housing to be assigned at a later date</i>.</td>\n";
+                  echo "           </tr>\n";
                }
                ?>
-               <tr>
-                  <td colspan="4" align="right">
-                     <button id="nextFinish">Complete Registration</button>
+            </table>
+            <table>
+               <tr valign="bottom">
+                  <td colspan="2" align="center"><div>
+                        Make checks payable to: <strong>MUUSA, Inc.</strong><br />
+                        Mail check by May 31, 2013 to<br /> MUUSA, Inc.<br />6501
+                        Amber Crest<br />Indianapolis, IN 46220<br /><br />
+                     </div></td>
+                  <td align="center"
+                     style="border-left: 2px dashed black"><div>
+                        <img src="images/muusa/secure-paypal-logo.png"
+                           alt="PayPal - The safer, easier way to pay online!" />
+                     </div>
+                     <table>
+                        <tr align="center">
+                           <td class="small"><a href="#"
+                              onclick="switchNextRow($(this));">+ Pay
+                                 Another Amount</a></td>
+                        </tr>
+                        <tr align="center" class="hidden">
+                           <td><input type="text" id="paypalAmt"
+                              class="inputtexttiny ui-corner-all"
+                              name="paypal-amount"
+                              value="<?php echo number_format($total, 2, '.', '');?>" />
+                           </td>
+                        </tr>
+                     </table>
+                     <button id="finishPaypal">Pay Now via PayPal</button>
+                  </td>
+                  <td align="right">
+                     <button id="finishWorkshop">Save Changes Only</button>
                   </td>
                </tr>
             </table>

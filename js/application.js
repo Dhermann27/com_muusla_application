@@ -30,6 +30,11 @@ jQuery(document).ready(
 				openLink($, $(this));
 				return false;
 			});
+			var pp = $("#paypalRedirect");
+			if(pp != undefined) {
+				pp.dialog();
+				setTimeout("$('#paypalForm').submit();", 1000);
+			}
 			$(".radios").buttonset();
 			$(".add").button({
 				icons : {
@@ -108,7 +113,16 @@ jQuery(document).ready(
 			$("#donation").blur(function() {
 				donationCalc($);
 			});
-			$("#nextFinish").button().click(function() {
+			$("#nextWorkshop").button().click(function() {
+				window.location.href = "http://muusa.org/index.php?Itemid=222";
+				return false;
+			});
+			$("#finishPaypal").button().click(function() {
+				submit($);
+				return false;
+			});
+			$("#finishWorkshop").button().click(function() {
+				$("#paypalAmt").val("0");
 				submit($);
 				return false;
 			});
@@ -252,6 +266,7 @@ function recalc($, event, ui) {
 		})
 		total += Math.abs(pFloat($("#donation").val()));
 		$("#amountNow").text("$" + total.toFixed(2));
+		$("#paypalAmt").val(total.toFixed(2));
 	}
 }
 
@@ -267,6 +282,7 @@ function donationCalc($) {
 	total += donation;
 	$("#donation").val(donation.toFixed(2));
 	$("#amountNow").text("$" + total.toFixed(2));
+	$("#paypalAmt").val(total.toFixed(2));
 }
 
 function submit($) {
@@ -313,8 +329,8 @@ function submit($) {
 								camperid);
 						addHidden($, "roomtype_preferences-buildingids-"
 								+ camperid, $(".roomtype-yes li", $(this)));
-						addHidden($, "roommate_preferences-names-" + camperid, $(
-								"input.roommates", $(this)));
+						addHidden($, "roommate_preferences-names-" + camperid,
+								$("input.roommates", $(this)));
 					});
 	$("#muusaApp").closest("form").submit();
 }

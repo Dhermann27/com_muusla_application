@@ -74,8 +74,14 @@ class muusla_applicationViewapplication extends JView
          if(count($calls["charges"]) > 0 && $calls["charges"][0]->amount > 0) {
             $model->insertDonation($newcamperid, $calls["charges"][0]->amount);
          }
-         $msg = true;
-         $this->assignRef("msg", $msg);
+         if($this->getSafe(JRequest::getVar('paypal-amount')) != 0) {
+            $msg = floatval($this->getSafe(JRequest::getVar('paypal-amount')));
+            $this->assignRef("redirectAmt", $msg);
+         } else {
+            $msg = true;
+            $this->assignRef("msg", $msg);
+
+         }
       }
       if(count($calls["phonenumbers"]) > 0) {
          $phonenbrs = array();
@@ -89,6 +95,8 @@ class muusla_applicationViewapplication extends JView
             $model->upsertPhonenumber($phonenumber);
          }
       }
+
+
 
       // DATA SAVED, GET NEW DATA
 
@@ -119,9 +127,13 @@ class muusla_applicationViewapplication extends JView
 
       // UGH THIS SUCKS
       $regcampers = $model->getRegisteredCampers();
-      foreach($regcampers as $camper) {
-         $model->deleteAttendees($camper->fiscalyearid);
-         $model->deleteOldVolunteers($camper->fiscalyearid);
+      if(JRequest::getVar('deleteMe') == "1") {
+         $msg = true;
+         $this->assignRef("msg", $msg);
+         foreach($regcampers as $camper) {
+            $model->deleteAttendees($camper->fiscalyearid);
+            $model->deleteOldVolunteers($camper->fiscalyearid);
+         }
       }
       if(count($calls["attendees"]) > 0) {
          foreach($calls["attendees"] as $dummy => $attendee) {

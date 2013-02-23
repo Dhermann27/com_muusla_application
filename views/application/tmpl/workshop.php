@@ -1,7 +1,5 @@
 <?php defined('_JEXEC') or die('Restricted access'); ?>
 <div id="ja-content">
-   <script type='text/javascript' language='Javascript'
-      src='components/com_muusla_application/js/application.js'></script>
    <link type="text/css"
       href="<?php echo JURI::root(true);?>/components/com_muusla_application/css/application.css"
       rel="stylesheet" />
@@ -14,7 +12,9 @@
       src="<?php echo JURI::root(true);?>/components/com_muusla_application/js/jquery-ui-1.10.0.custom.min.js"></script>
    <script
       src='<?php echo JURI::root(true);?>/components/com_muusla_application/js/workshop.js'></script>
-   <form action="<? echo $_SERVER['PHP_SELF'];?>" method="post">
+   <form
+      action="http://<? echo $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];?>"
+      method="post">
       <table class="blog" cellpadding="0" cellspacing="0">
          <tr>
             <td valign='top'>
@@ -29,15 +29,28 @@
                      workshops for the same timeslot if they are offered
                      on different days. List all in your choices.
                   </div>
-                  <?php if(count($this->regcampers) == 0) {?>
+                  <?php if($this->msg) {?>
+                  <div class="ui-state-highlight ui-corner-all">
+                     <p style="margin: 1em;">
+                        <span class="ui-icon ui-icon-info"
+                           style="float: left; margin: 1em;"></span> You
+                        have successfully signed up for workshops! Be
+                        sure to pay your balance to be assigned housing
+                        by clicking on the Register Online link above.<br />
+                     </p>
+                  </div>
+                  <p>&nbsp;</p>
+                  <?php }
+                  if(count($this->regcampers) == 0) {?>
                   <div
                      class="padtop ui-state-error ui-corner-all hidden spaceleft">
                      <p style="margin: 1em;">
-                        <span class="ui-icon ui-icon-alert" style="float: left; margin: 1em;"></span>
-                        You have not completed your registration
-                        process. Please click "Register Online" above to
-                        first register you and your family, then return
-                        here to register for workshops.
+                        <span class="ui-icon ui-icon-alert"
+                           style="float: left; margin: 1em;"></span> You
+                        have not completed your registration process.
+                        Please click "Register Online" above to first
+                        register you and your family, then return here
+                        to register for workshops.
                      </p>
                   </div>
                   <?php }?>
@@ -51,12 +64,9 @@
                         }?>
                      </div>
                      <div class="padtop" align="right">
-                        <form
-                           action="http://<? echo $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];?>"
-                           method="post">
-                           <button id="submitWorkshops">Save Workshop
-                              Preferences</button>
-                        </form>
+                        <input type="hidden" name="deleteMe" value="1" />
+                        <button id="submitWorkshops">Save Workshop
+                           Preferences</button>
                      </div>
                   </div>
                </div>
