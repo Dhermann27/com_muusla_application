@@ -84,6 +84,8 @@ class muusla_applicationViewapplication extends JView
          if(count($calls["charges"]) > 0 && $calls["charges"][0]->amount > 0) {
             $model->insertDonation($newcamperid, $calls["charges"][0]->amount);
          }
+         $msg = true;
+         $this->assignRef("msg", $msg);
       }
       if(count($calls["phonenumbers"]) > 0) {
          $phonenbrs = array();
@@ -106,23 +108,19 @@ class muusla_applicationViewapplication extends JView
          $campers = $model->getCampers($family->familyid);
          foreach($campers as $camper) {
             $camper->phonenbrs = $model->getPhonenumbers($camper->camperid);
-            //$camper->volunteers = $model->getVolunteers($camper->camperid);
             $camper->fiscalyearid = $model->getFiscalyear($camper->camperid);
             if($camper->fiscalyearid) {
                $camper->roomtypes = $model->getRoomtypepreferences($camper->fiscalyearid);
                $camper->roommates = $model->getRoommatepreferences($camper->fiscalyearid);
-               //$camper->attendees = $model->getAttendees($camper->fiscalyearid);
             }
          }
          $this->assignRef('charges', $model->getCharges($family->familyid));
          $this->assignRef('credits', $model->getCredits($family->familyid));
       }
       $this->assignRef('campers', $campers);
-      //$this->assignRef('positions', $model->getPositions());
       $this->assignRef('buildings', $model->getBuildings());
       $this->assignRef('states', $model->getStates());
       $this->assignRef('foodoptions', $model->getFoodoptions());
-      $this->assignRef('smokingoptions', $model->getSmokingoptions());
       $this->assignRef('churches', $model->getChurches());
       $this->assignRef('phonetypes', $model->getPhonetypes());
       $this->assignRef('programs', $model->getPrograms());
@@ -131,8 +129,14 @@ class muusla_applicationViewapplication extends JView
    }
 
    function detail($tpl = null) {
-      // 		$model =& $this->getModel();
-      // 		$user =& JFactory::getUser();
+      $model =& $this->getModel();
+      $user =& JFactory::getUser();
+      $campers = $model->getCampers($family->familyid);
+      foreach($campers as $camper) {
+         $camper->volunteers = $model->getVolunteers($camper->camperid);
+         $camper->attendees = $model->getAttendees($camper->fiscalyearid);
+      }
+      $this->assignRef('positions', $model->getPositions());
       $times = $model->getTimes();
       foreach($model->getWorkshops() as $workshop) {
          if($workshop["days"] == "MTuWThF") {

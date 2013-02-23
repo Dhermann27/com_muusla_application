@@ -8,8 +8,8 @@ $user =& JFactory::getUser();
    <link type="text/css"
       href="<?php echo JURI::root(true);?>/components/com_muusla_application/css/jquery-ui-1.10.0.custom.min.css"
       rel="stylesheet" />
-   <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
-   <script src="http://code.jquery.com/jquery-migrate-1.1.1.min.js"></script>
+   <script
+      src="<?php echo JURI::root(true);?>/components/com_muusla_application/js/jquery-1.9.1.min.js"></script>
    <script
       src="<?php echo JURI::root(true);?>/components/com_muusla_application/js/jquery-ui-1.10.0.custom.min.js"></script>
    <script
@@ -17,13 +17,24 @@ $user =& JFactory::getUser();
    <script
       src='<?php echo JURI::root(true);?>/components/com_muusla_application/js/application.js'></script>
    <script>var thisyear = <?php echo substr($this->year, -4)?>;</script>
+   <?php if($this->msg) {?>
+   <div class="padtop ui-state-highlight ui-corner-all spaceleft">
+      <p>
+         <span class="space left ui-icon ui-icon-info"></span> You have
+         successfully registered for camp! Be sure to pay your balance
+         to be assigned housing and register for your workshops by
+         clicking on the Workshop Selection link above.<br />
+      </p>
+   </div>
+   <p>&nbsp;</p>
+   <?php }?>
    <form action="<? echo $_SERVER['PHP_SELF'];?>" method="post">
       <div id="muusaApp">
          <?php $familyid = $this->family->familyid ? $this->family->familyid : 0;?>
          <ul>
-            <li><a href="#appFamily">Family Information</a></li>
-            <li><a href="#appCamper">Camper Listing</a></li>
-            <li><a href="#appPayment">Statement &amp; Payment</a></li>
+            <li><a href="http://<?php echo $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];?>#appFamily">Household Information</a></li>
+            <li><a href="http://<?php echo $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];?>#appCamper">Camper List</a></li>
+            <li><a href="http://<?php echo $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];?>#appPayment">Statement &amp; Payment</a></li>
          </ul>
          <div id="appFamily">
             <table>
@@ -118,7 +129,7 @@ $user =& JFactory::getUser();
                   <td><input type="text"
                      name="family-country-<?php echo $familyid;?>"
                      maxlength="30" class="inputtextshort ui-corner-all"
-                     value="<?php echo $this->family->country?>" />
+                     value="<?php echo $this->family->country != "" ? $this->family->country : "USA";?>" />
                   </td>
                </tr>
                <tr>
@@ -130,6 +141,10 @@ $user =& JFactory::getUser();
             </table>
          </div>
          <div id="appCamper">
+            <p>
+               <strong>Please fill out the following form for each
+                  camper.</strong>
+            </p>
             <table>
                <?php
                if(count($this->campers)== 0) {
@@ -142,7 +157,7 @@ $user =& JFactory::getUser();
                   }
                }
                $camper = new stdClass;
-               for($i=1; $i<11; $i++) {
+               for ($i=0; $i<10; $i++) {
                   include 'blocks/camper.php';
                }
                ?>
@@ -182,11 +197,12 @@ $user =& JFactory::getUser();
                </p>
             </div>
             <table width="98%" align="center">
-               <tr align="center">
-                  <td width="20%">Charge Type</td>
-                  <td width="15%">Amount</td>
-                  <td width="15%">Date</td>
-                  <td width="50%">Memo</td>
+               <tr>
+                  <td width="20%"><strong>Charge Type</strong></td>
+                  <td width="15%" align="right"><strong>Amount</strong>
+                  </td>
+                  <td width="15%" align="center"><strong>Date</strong></td>
+                  <td width="50%"><strong>Memo</strong></td>
                </tr>
                <?php
                $total = 0.0;

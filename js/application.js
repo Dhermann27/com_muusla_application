@@ -1,10 +1,10 @@
-$(window).load(
-		function() {
+jQuery(document).ready(
+		function($) {
 			$("#muusaApp").tabs({
 				active : 0,
 				beforeActivate : function(event, ui) {
-					trap(event, ui);
-					recalc(event, ui);
+					trap($, event, ui);
+					recalc($, event, ui);
 					return true;
 				}
 			}).tooltip({
@@ -27,7 +27,7 @@ $(window).load(
 				},
 				text : false
 			}).click(function() {
-				openLink($(this));
+				openLink($, $(this));
 				return false;
 			});
 			$(".radios").buttonset();
@@ -106,10 +106,10 @@ $(window).load(
 				return false;
 			});
 			$("#donation").blur(function() {
-				donationCalc();
+				donationCalc($);
 			});
 			$("#nextFinish").button().click(function() {
-				submit();
+				submit($);
 				return false;
 			});
 		});
@@ -119,7 +119,7 @@ function switchNextRow(obj) {
 			: obj.parents("tr").next().show();
 }
 
-function openLink(obj) {
+function openLink($, obj) {
 	eval("$(\"#room-" + obj.parents("li").attr("id") + "\").dialog(\"open\");");
 }
 
@@ -128,7 +128,7 @@ function addRow(obj, type) {
 	hiddenRow.clone(true).removeClass("hidden").insertBefore(hiddenRow).show();
 }
 
-function trap(event, ui) {
+function trap($, event, ui) {
 	var panel = $("#" + ui.oldPanel.attr("id"));
 	$(".notempty:visible", panel).each(
 			function() {
@@ -146,8 +146,8 @@ function trap(event, ui) {
 			});
 	$(".onlydigits:visible", panel).each(
 			function() {
-				if (!errorCheck(event, $(this), !/^\d*$/.test($(this).val()),
-						"Only numbers are allowed")) {
+				if (!errorCheck(event, $(this), !/^\d*$/.test($(this).val()
+						.replace(/-/g, "")), "Only numbers are allowed")) {
 					return false;
 				}
 			});
@@ -186,7 +186,7 @@ function errorCheck(event, obj, check, msg) {
 	}
 }
 
-function recalc(event, ui) {
+function recalc($, event, ui) {
 	if (ui.newPanel.attr("id") == "appPayment") {
 		$("#appPayment tr.dummy").remove();
 		$("#noattending").hide();
@@ -255,7 +255,7 @@ function recalc(event, ui) {
 	}
 }
 
-function donationCalc() {
+function donationCalc($) {
 	var total = 0.0;
 	$("#appPayment td.amount:visible").each(function() {
 		total += pFloat($(this).text());
@@ -269,12 +269,12 @@ function donationCalc() {
 	$("#amountNow").text("$" + total.toFixed(2));
 }
 
-function submit() {
+function submit($) {
 	var camperCount = 100;
 	var phoneCount = 200;
 	$("#appCamper tbody.camperBody")
 			.each(
-					function() {
+					function($) {
 						if ($(".attending", $(this)).val() != 0
 								&& $(".firstname", $(this)).val() != "") {
 							$(".phonenbrs", $(this))
