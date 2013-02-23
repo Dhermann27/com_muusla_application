@@ -18,9 +18,10 @@ $user =& JFactory::getUser();
       src='<?php echo JURI::root(true);?>/components/com_muusla_application/js/application.js'></script>
    <script>var thisyear = <?php echo substr($this->year, -4)?>;</script>
    <?php if($this->msg) {?>
-   <div class="padtop ui-state-highlight ui-corner-all spaceleft">
-      <p>
-         <span class="space left ui-icon ui-icon-info"></span> You have
+   <div class="ui-state-highlight ui-corner-all">
+      <p style="margin-top: 1em;">
+         <span class="ui-icon ui-icon-info"
+            style="float: left; margin: 1em;"></span> You have
          successfully registered for camp! Be sure to pay your balance
          to be assigned housing and register for your workshops by
          clicking on the Workshop Selection link above.<br />
@@ -28,13 +29,21 @@ $user =& JFactory::getUser();
    </div>
    <p>&nbsp;</p>
    <?php }?>
-   <form action="<? echo $_SERVER['PHP_SELF'];?>" method="post">
+   <form
+      action="http://<? echo $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];?>"
+      method="post">
       <div id="muusaApp">
          <?php $familyid = $this->family->familyid ? $this->family->familyid : 0;?>
          <ul>
-            <li><a href="http://<?php echo $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];?>#appFamily">Household Information</a></li>
-            <li><a href="http://<?php echo $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];?>#appCamper">Camper List</a></li>
-            <li><a href="http://<?php echo $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];?>#appPayment">Statement &amp; Payment</a></li>
+            <li><a
+               href="http://<?php echo $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];?>#appFamily">Household
+                  Information</a></li>
+            <li><a
+               href="http://<?php echo $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];?>#appCamper">Camper
+                  List</a></li>
+            <li><a
+               href="http://<?php echo $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];?>#appPayment">Statement
+                  &amp; Payment</a></li>
          </ul>
          <div id="appFamily">
             <table>

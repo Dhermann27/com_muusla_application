@@ -87,7 +87,7 @@ class muusla_applicationModelapplication extends JModel
    function getRegisteredCampers() {
       $db =& JFactory::getDBO();
       $user =& JFactory::getUser();
-      $query = "SELECT mc.camperid, mc.firstname, mc.lastname, IF(mc.grade<13,0,1) shops, mc.programname FROM muusa_campers mh, muusa_family_v mf, muusa_campers_v mc  WHERE mh.email='dh78@me.com' AND mh.familyid=mf.familyid AND mf.familyid=mc.familyid ORDER BY mc.birthdate";
+      $query = "SELECT mc.camperid, mc.firstname, mc.lastname, mc.fiscalyearid, IF(mc.grade<13,0,1) shops, mc.programname FROM muusa_campers mh, muusa_family_v mf, muusa_campers_v mc  WHERE mh.email='$user->email' AND mh.familyid=mf.familyid AND mf.familyid=mc.familyid";
       $db->setQuery($query);
       return $db->loadObjectList();
    }
@@ -181,17 +181,12 @@ class muusla_applicationModelapplication extends JModel
       }
    }
 
-   function insertAttendees($fiscalyearid, $choicenbr, $timeid, $eventid) {
+   function insertAttendee($attendee) {
       $db =& JFactory::getDBO();
       $user =& JFactory::getUser();
-      $obj = new stdClass;
-      $obj->eventid = $eventid;
-      $obj->timeid = $timeid;
-      $obj->fiscalyearid = $fiscalyearid;
-      $obj->choicenbr = $choicenbr;
-      $obj->created_by = $user->username;
-      $obj->created_at = date("Y-m-d H:i:s");
-      $db->insertObject("muusa_attendees", $obj);
+      $attendee->created_by = $user->username;
+      $attendee->created_at = date("Y-m-d H:i:s");
+      $db->insertObject("muusa_attendees", $attendee);
       if($db->getErrorNum()) {
          JError::raiseError(500, $db->stderr());
       }
@@ -310,12 +305,9 @@ class muusla_applicationModelapplication extends JModel
       }
    }
 
-   function deleteOldVolunteers($fiscalyearid, $numbers) {
+   function deleteOldVolunteers($fiscalyearid) {
       $db =& JFactory::getDBO();
-      $query = "DELETE FROM muusa_volunteers WHERE fiscalyearid IN ($fiscalyearid)";
-      if($numbers != "") {
-         $query .= " AND positionid NOT IN ($numbers)";
-      }
+      $query = "DELETE FROM muusa_volunteers WHERE fiscalyearid=$fiscalyearid";
       $db->setQuery($query);
       $db->query();
       if($db->getErrorNum()) {
@@ -323,15 +315,12 @@ class muusla_applicationModelapplication extends JModel
       }
    }
 
-   function insertVolunteers($fiscalyearid, $positionids) {
+   function insertVolunteer($volunteer) {
       $db =& JFactory::getDBO();
       $user =& JFactory::getUser();
-      $query = "INSERT INTO muusa_volunteers (fiscalyearid, positionid, created_by, created_at) ";
-      $query .= "SELECT $fiscalyearid, positionid, '$user->username', CURRENT_TIMESTAMP FROM muusa_positions ";
-      $query .= "WHERE positionid NOT IN (SELECT positionid FROM muusa_volunteers WHERE fiscalyearid=$fiscalyearid) ";
-      $query .= "AND positionid IN ($positionids)";
-      $db->setQuery($query);
-      $db->query();
+      $volunteer->created_by = $user->username;
+      $volunteer->created_at = date("Y-m-d H:i:s");
+      $db->insertObject("muusa_volunteers", $volunteer);
       if($db->getErrorNum()) {
          JError::raiseError(500, $db->stderr());
       }

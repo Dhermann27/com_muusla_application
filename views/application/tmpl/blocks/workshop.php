@@ -9,14 +9,18 @@
  */
 $user =& JFactory::getUser();
 ?>
-<span id="workshop<?echo $camper->camperid;?>"
-<?php echo $camper->camperid > 100 && $camper->camperid < 1000 ? " class='hidden'" : "";?>>
+<span id="<?php echo $camper->fiscalyearid;?>" class="camper">
    <h4>
       <?php echo $camper->firstname . " " . $camper->lastname;?>
    </h4>
    <div class="workshopTimes">
       <?php
-      foreach($this->times as $timeid => $time) {
+      $validtimes = $this->times;
+      if($camper->shops != 1) {
+         $validtimes = array(1020 => $validtimes[1020]);
+         echo "					   <p><strong>Automatically enrolled in $camper->programname programming.</strong></p>\n";
+      }
+      foreach($validtimes as $timeid => $time) {
          echo "					   <h5>" . $time["name"];
          if($timeid != 1020) {
             echo " (" . $time["start"] . " - " . $time["end"] . ")";
@@ -39,7 +43,7 @@ $user =& JFactory::getUser();
          echo "                           </ul>\n";
          echo "                        </div>\n";
          echo "                        <div class='desired'>\n";
-         echo "                           <h6 class='$camper->camperid-$timeid'>Desired Workshops (in order of preference)</h6>\n";
+         echo "                           <h6 class='$timeid'>Desired Workshops (in order of preference)</h6>\n";
          echo "                           <ul class='connected connectedWorkshop workshop-yes'>\n";
          if(count($camper->attendees) > 0) {
             foreach($camper->attendees as $eventid) {
@@ -73,17 +77,18 @@ $user =& JFactory::getUser();
             </ul>
          </div>
          <div class="volunteers">
-            <h6 class="<?php echo $camper->camperid?>-0">Desired Roles</h6>
+            <h6 class="0">Desired
+               Roles</h6>
             <ul class="connected connectedWorkshop workshop-yes">
                <?php
                if($camper->volunteers) {
                   foreach($camper->volunteers as $positionid) {
                      echo "                              <li value='$positionid' class='ui-state-default'>\n";
                      echo "                                 " . $this->positions[$positionid]["name"] . "\n";
-                  echo "                              </li>\n";
+                     echo "                              </li>\n";
+                  }
                }
-            }
-            ?>
+               ?>
             </ul>
          </div>
       </div>

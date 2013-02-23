@@ -158,7 +158,7 @@ $user =& JFactory::getUser();
                   </ul>
                </div>
                <div>
-                  <h5>Preferred Room Type</h5>
+                  <h5>Preferred Room Type (in order of preference)</h5>
                   <ul class="connected connectedRoomtype roomtype-yes">
                      <?php
                      if($camper->roomtypes) {

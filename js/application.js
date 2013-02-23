@@ -273,56 +273,48 @@ function submit($) {
 	var camperCount = 100;
 	var phoneCount = 200;
 	$("#appCamper tbody.camperBody")
+			.filter(
+					function() {
+						return $(".attending", $(this)).val() != 0
+								&& $(".firstname", $(this)).val() != "";
+					})
 			.each(
-					function($) {
-						if ($(".attending", $(this)).val() != 0
-								&& $(".firstname", $(this)).val() != "") {
-							$(".phonenbrs", $(this))
-									.filter(
-											function() {
-												return $("input[type=text]",
-														$(this)).val() != ""
-														&& $(
-																"input[name*='phonenumbers-phonenbrid']",
-																$(this)).val() == "";
-											})
-									.each(
-											function() {
-												$("select,input", $(this))
-														.each(
-																function() {
-																	incName(
-																			$(this),
-																			phoneCount);
-																});
-												$(
-														"input[name*='phonenumbers-phonenbrid']",
-														$(this)).val(
-														phoneCount++);
-											});
-							if ($(".attending", $(this)).val() > 0
-									&& $(".firstname", $(this)).val() != "") {
-								var camperid = $(
-										"input[name*='campers-camperid']",
-										$(this)).val();
-								if (camperid == undefined) {
-									camperid = camperCount++;
-								}
-								$(
-										"select[name*='campers'],input[name*='campers']",
-										$(this)).each(function() {
-									incName($(this), camperid)
-								})
-								$("input[name*='phonenumbers-camperid']",
-										$(this)).val(camperid);
-								addHidden("roomtype_preferences-buildingids-"
-										+ camperid, $(".roomtype-yes li",
-										$(this)));
-								addHidden("roommate_preferences-names-"
-										+ camperid, $("input.roommates",
-										$(this)));
-							}
+					function() {
+						$(".phonenbrs", $(this))
+								.filter(
+										function() {
+											return $("input[type=text]",
+													$(this)).val() != ""
+													&& $(
+															"input[name*='phonenumbers-phonenbrid']",
+															$(this)).val() == "";
+										})
+								.each(
+										function() {
+											$("select,input", $(this)).each(
+													function() {
+														incName($(this),
+																phoneCount);
+													});
+											$(
+													"input[name*='phonenumbers-phonenbrid']",
+													$(this)).val(phoneCount++);
+										});
+						var camperid = $("input[name*='campers-camperid']",
+								$(this)).val();
+						if (camperid == undefined) {
+							camperid = camperCount++;
 						}
+						$("select[name*='campers'],input[name*='campers']",
+								$(this)).each(function() {
+							incName($(this), camperid)
+						})
+						$("input[name*='phonenumbers-camperid']", $(this)).val(
+								camperid);
+						addHidden($, "roomtype_preferences-buildingids-"
+								+ camperid, $(".roomtype-yes li", $(this)));
+						addHidden($, "roommate_preferences-names-" + camperid, $(
+								"input.roommates", $(this)));
 					});
 	$("#muusaApp").closest("form").submit();
 }
@@ -333,7 +325,7 @@ function incName(obj, count) {
 	}
 }
 
-function addHidden(fieldname, selector) {
+function addHidden($, fieldname, selector) {
 	var arr = new Array();
 	selector.each(function() {
 		var str = $(this).val();
