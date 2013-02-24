@@ -6,6 +6,11 @@ jQuery(document).ready(
 					trap($, event, ui);
 					recalc($, event, ui);
 					return true;
+				},
+				activate : function() {
+					$("html, body").animate({
+						scrollTop : 0
+					}, "slow");
 				}
 			}).tooltip({
 				position : {
@@ -89,9 +94,6 @@ jQuery(document).ready(
 				$("#muusaApp").tabs({
 					active : 1
 				});
-				$("html, body").animate({
-					scrollTop : 0
-				}, "slow");
 				return false;
 			});
 			$("#addCamper").button().click(
@@ -111,9 +113,6 @@ jQuery(document).ready(
 				$("#muusaApp").tabs({
 					active : 2
 				});
-				$("html, body").animate({
-					scrollTop : 0
-				}, "slow");
 				return false;
 			});
 			$("#donation").blur(function() {
@@ -189,6 +188,17 @@ function trap($, event, ui) {
 						.val().replace(/\D/g, "")),
 						"Must be a valid 10-digit phone number")) {
 					return false;
+				}
+			});
+	var seen = {};
+	$(".email:visible").each(
+			function() {
+				var email = $(this).val();
+				if (!errorCheck(event, $(this), email != "" && seen[email],
+						"Duplicate email address")) {
+					return false;
+				} else {
+					seen[email] = true;
 				}
 			});
 	return true;

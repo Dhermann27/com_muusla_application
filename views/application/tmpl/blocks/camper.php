@@ -77,7 +77,7 @@ $user =& JFactory::getUser();
       </td>
       <?php 
       echo "								<td colspan='3'>$user->email\n";
-      echo "                                 <input type='hidden' name='campers-email-$camperid' value='$user->email' />\n";
+      echo "                                 <input type='hidden' name='campers-email-$camperid' value='$user->email' class='email' />\n";
       echo "                              </td>\n";
       ?>
    </tr>
@@ -98,7 +98,7 @@ $user =& JFactory::getUser();
       <td colspan="3"><input type="text"
          name="campers-email-<?php echo $camperid;?>"
          value="<?php echo $camper->email;?>"
-         class="inputtextshort ui-corner-all" /></td>
+         class="inputtextshort email ui-corner-all" /></td>
    </tr>
    <?php
    }
