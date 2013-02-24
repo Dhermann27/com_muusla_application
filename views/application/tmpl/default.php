@@ -337,35 +337,12 @@ $user =& JFactory::getUser();
             </div>
          </div>
       </div>
-      <div id="room-guest" class="dialog-message" title="Guest Room">
-         <ul>
-            <li>1st through 3rd floors of Trout Lodge</li>
-            <li>60 air-conditioned guest rooms</li>
-            <li>2 queen beds, rollaway bed, a bathroom with separate
-               vanity area, table and chairs</li>
-            <li>Walkout balcony or patio with view of the lake</li>
-            <li>Limited number of refrigerators available at the front
-               desk for those with medical needs. Please notify the
-               Registrar if you need a refrigerator.</li>
-            <li><i>Handicapped persons will have top priority for
-                  handicapped-accessible rooms located on the 1st floor.</i>
-            </li>
-         </ul>
-      </div>
-      <div id="room-loft" class="dialog-message" title="Loft Suite">
-         <ul>
-            <li>4th and 5th floors of Trout Lodge</li>
-            <li>19 air-conditioned loft rooms with two levels and stairs</li>
-            <li>Guests enter the suite on the upper level</li>
-            <li><i>Upper Level</i>: sofa, roll-away bed, sink and
-               vanity, table and chairs, small refrigerator</li>
-            <li>Stairs in the loft suite lead down to the lower level</li>
-            <li><i>Lower Level</i>: 2 queen beds, a bathroom with
-               separate vanity area, table and chairs</li>
-            <li>Walkout balcony with view of the lake</li>
-            <li>Loft suites are recommended for 3 or more adults
-               choosing to share housing</li>
-         </ul>
-      </div>
+      <?php
+      foreach($this->buildings as $buildingid => $building) {
+         echo "      <div id='room-$buildingid' class='dialog-message' title='" . $building["name"] . "'>\n";
+         echo "         " . $building["introtext"] . "\n";
+         echo "      </div>\n";
+      }
+      ?>
    </form>
 </div>

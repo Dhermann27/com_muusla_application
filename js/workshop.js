@@ -7,6 +7,15 @@ $(window).load(function() {
 		heightStyle : "content",
 		header : "h5"
 	});
+	$(".link").button({
+		icons : {
+			primary : "ui-icon-image"
+		},
+		text : false
+	}).click(function() {
+		openLink($(this));
+		return false;
+	});
 	$(".workshop-yes, .workshop-no").sortable({
 		placeholder : "ui-state-highlight",
 		connectWith : ".connectedWorkshop"
@@ -15,7 +24,21 @@ $(window).load(function() {
 		submit();
 		return false;
 	});
+	$(".dialog-message").dialog({
+		modal : true,
+		autoOpen : false,
+		minWidth : 800,
+		buttons : {
+			Ok : function() {
+				$(this).dialog("close");
+			}
+		}
+	});
 });
+
+function openLink(obj) {
+	eval("$(\"#room-" + obj.parents("li").val() + "\").dialog(\"open\");");
+}
 
 function submit() {
 	var attendeeCount = 0;

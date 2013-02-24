@@ -29,7 +29,7 @@ class muusla_applicationModelapplication extends JModel
 
    function getBuildings() {
       $db =& JFactory::getDBO();
-      $query = "SELECT buildingid, name FROM muusa_buildings ORDER BY name";
+      $query = "SELECT buildingid, name, introtext FROM muusa_buildings LEFT JOIN jml_content ON title LIKE CONCAT('%', name, '%') ORDER BY name";
       $db->setQuery($query);
       return $db->loadAssocList("buildingid");
    }
@@ -380,7 +380,7 @@ class muusla_applicationModelapplication extends JModel
 
    function getWorkshops() {
       $db =& JFactory::getDBO();
-      $query = "SELECT timeid, CONCAT(IF(su,'S',''),IF(m,'M',''),IF(t,'Tu',''),IF(w,'W',''),IF(th,'Th',''),IF(f,'F',''),IF(sa,'S','')) days, eventid, name FROM muusa_events ORDER BY name";
+      $query = "SELECT timeid, CONCAT(IF(su,'S',''),IF(m,'M',''),IF(t,'Tu',''),IF(w,'W',''),IF(th,'Th',''),IF(f,'F',''),IF(sa,'S','')) days, eventid, name, introtext FROM muusa_events LEFT JOIN jml_content ON REPLACE(title, '&', '') LIKE CONCAT('%', REPLACE(name, '&', ''), '%') AND STATE=1 ORDER BY name";
       $db->setQuery($query);
       return $db->loadAssocList("eventid");
    }

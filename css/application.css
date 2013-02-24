@@ -88,11 +88,12 @@
 	margin: 0 2px 2px 2px;
 	padding: 6px;
 	font-size: 1.2em;
+	line-height: 1.7em;
 }
 
 #muusaApp .connected li.ui-state-highlight {
 	height: 1.5em;
-	line-height: 1.2em;
+	line-height: 1.7em;
 }
 
 #muusaApp .connectedRoomtype {

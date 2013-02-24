@@ -69,6 +69,15 @@
                            Preferences</button>
                      </div>
                   </div>
+                  <?php
+                  foreach($this->times as $timeid => $time) {
+                     foreach($time["shops"] as $eventid => $shop) {
+                        echo "      <div id='room-$eventid' class='dialog-message' title='" . $shop["name"] . "'>\n";
+                        echo "         " . $shop["introtext"] . "\n";
+                        echo "      </div>\n";
+                     }
+                  }
+                  ?>
                </div>
             </td>
          </tr>

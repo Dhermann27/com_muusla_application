@@ -28,11 +28,11 @@ jQuery(document).ready(
 			});
 			$(".link").button({
 				icons : {
-					primary : "ui-icon-link"
+					primary : "ui-icon-image"
 				},
 				text : false
 			}).click(function() {
-				openLink($, $(this));
+				openLink($(this));
 				return false;
 			});
 			var pp = $("#paypalRedirect");
@@ -138,8 +138,8 @@ function switchNextRow(obj) {
 			: obj.parents("tr").next().show();
 }
 
-function openLink($, obj) {
-	eval("$(\"#room-" + obj.parents("li").attr("id") + "\").dialog(\"open\");");
+function openLink(obj) {
+	eval("jQuery(\"#room-" + obj.parents("li").val() + "\").dialog(\"open\");");
 }
 
 function addRow(obj, type) {

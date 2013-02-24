@@ -152,7 +152,9 @@ $user =& JFactory::getUser();
                      foreach($this->buildings as $buildingid => $building) {
                         if(!$camper->roomtypes || !in_array($buildingid, $camper->roomtypes)) {
                            echo "                  <li value='$buildingid' class='ui-state-default'>\n";
-                           // echo "                     <button class='help link right'>Show $building->name Information</button>\n";
+                           if($building["introtext"]) {
+                              echo "                     <button class='help link right'>Show $building->name Information</button>\n";
+                           }
                            echo "                     " . $building["name"] . "\n";
                            echo "                  </li>\n";
                         }
@@ -161,13 +163,15 @@ $user =& JFactory::getUser();
                   </ul>
                </div>
                <div>
-                  <h5>Preferred Room Type (in order of preference)</h5>
+                  <h5>Preferred Room Type</h5>
                   <ul class="connected connectedRoomtype roomtype-yes">
                      <?php
                      if($camper->roomtypes) {
                         foreach($camper->roomtypes as $roomtype) {
                            echo "                  <li value='$roomtype' class='ui-state-default'>\n";
-                           // echo "                     <button class='help link right'>Show " . $this->buildings[$roomtype]->name . " Information</button>\n";
+                           if($this->buildings[$roomtype]["introtext"]) {
+                              echo "                     <button class='help link right'>Show " . $this->buildings[$roomtype]->name . " Information</button>\n";
+                           }
                            echo "                     " . $this->buildings[$roomtype]["name"] . "\n";
                            echo "                  </li>\n";
                         }

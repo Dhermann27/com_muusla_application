@@ -34,7 +34,9 @@ $user =& JFactory::getUser();
             foreach($time["shops"] as $eventid => $shop) {
                if(!$camper->attendees || !in_array($eventid, $camper->attendees)) {
                   echo "                              <li value='$eventid' class='ui-state-default'>\n";
-                  // echo "                              <button class='help link right'>Show $building->name Information</button>\n";
+                  if($shop["introtext"]) {
+                     echo "                     <button class='help link right'>Show " . $shop["name"] . " Information</button>\n";
+                  }
                   echo "                                 " . $shop["name"] . " (" . $shop["days"] . ")\n";
                   echo "                              </li>\n";
                }
@@ -49,7 +51,9 @@ $user =& JFactory::getUser();
             foreach($camper->attendees as $eventid) {
                if(array_key_exists($eventid, $time["shops"])) {
                   echo "                              <li value='$eventid' class='ui-state-default'>\n";
-                  // echo "                              <button class='help link right'>Show $building->name Information</button>\n";
+                  if($time["shops"][$eventid]["introtext"]) {
+                     echo "                     <button class='help link right'>Show " . $time["shops"][$eventid]["name"] . " Information</button>\n";
+                  }
                   echo "                                 " . $time["shops"][$eventid]["name"] . " (" . $time["shops"][$eventid]["days"] . ")\n";
                   echo "                              </li>\n";
                }
@@ -77,8 +81,7 @@ $user =& JFactory::getUser();
             </ul>
          </div>
          <div class="volunteers">
-            <h6 class="0">Desired
-               Roles</h6>
+            <h6 class="0">Desired Roles</h6>
             <ul class="connected connectedWorkshop workshop-yes">
                <?php
                if($camper->volunteers) {
