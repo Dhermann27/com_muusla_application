@@ -204,8 +204,17 @@ class muusla_applicationModelapplication extends JModel
       $db =& JFactory::getDBO();
       if($obj->familyid < 1000) {
          unset($obj->familyid);
-         $db->insertObject("muusa_family", $obj, "familyid");
-         return $db->insertid();
+         $query = "SELECT familyid FROM muusa_family WHERE familyname='$obj->familyname' AND address1='$obj->address1' AND city='$obj->city'";
+         $db->setQuery($query);
+         $familyid = $db->loadResult();
+         if($familyid > 0) {
+            $obj->familyid = $familyid;
+            $db->updateObject("muusa_family", $obj, "familyid");
+            return $familyid;
+         } else {
+            $db->insertObject("muusa_family", $obj, "familyid");
+            return $obj->familyid;
+         }
       } else {
          $db->updateObject("muusa_family", $obj, "familyid");
          return $obj->familyid;
@@ -220,8 +229,17 @@ class muusla_applicationModelapplication extends JModel
       $obj->birthdate = "&&STR_TO_DATE('$obj->birthdate', '%m/%d/%Y')";
       if($obj->camperid < 1000) {
          unset($obj->camperid);
-         $db->insertObject("muusa_campers", $obj, "camperid");
-         return $db->insertid();
+         $query = "SELECT camperid FROM muusa_campers WHERE firstname='$obj->firstname' AND lastname='$obj->lastname' AND email='$obj->email'";
+         $db->setQuery($query);
+         $camperid = $db->loadResult();
+         if($camperid > 0) {
+            $obj->camperid = $camperid;
+            $db->updateObject("muusa_campers", $obj, "camperid");
+            return $camperid;
+         } else {
+            $db->insertObject("muusa_campers", $obj, "camperid");
+            return $obj->camperid;
+         }
       } else {
          $db->updateObject("muusa_campers", $obj, "camperid");
          return $obj->camperid;
@@ -235,15 +253,15 @@ class muusla_applicationModelapplication extends JModel
       $db->setQuery($query);
       $fiscalyearid = $db->loadResult();
       if(!$fiscalyearid) {
-         $fyobj = new stdClass;
-         $fyobj->camperid = $camperid;
-         $fyobj->fiscalyear = "&&(SELECT year FROM muusa_currentyear)";
-         $fyobj->days = 6;
-         $fyobj->postmark = "&&CURRENT_TIMESTAMP";
-         $fyobj->created_by = $user->username;
-         $fyobj->created_at = "&&CURRENT_TIMESTAMP";
-         $db->insertObject("muusa_fiscalyear", $fyobj);
-         $fiscalyearid = $db->insertid();
+         $obj = new stdClass;
+         $obj->camperid = $camperid;
+         $obj->fiscalyear = "&&(SELECT year FROM muusa_currentyear)";
+         $obj->days = 6;
+         $obj->postmark = "&&CURRENT_TIMESTAMP";
+         $obj->created_by = $user->username;
+         $obj->created_at = "&&CURRENT_TIMESTAMP";
+         $db->insertObject("muusa_fiscalyear", $obj, "fiscalyearid");
+         $fiscalyearid = $obj->fiscalyearid;
       }
       return $fiscalyearid;
    }
@@ -304,12 +322,22 @@ class muusla_applicationModelapplication extends JModel
       $obj->phonenbr = preg_replace($phone, "", $obj->phonenbr);
       if($obj->phonenbrid < 1000) {
          unset($obj->phonenbrid);
-         $fyobj->created_by = $user->username;
-         $fyobj->created_at = "&&CURRENT_TIMESTAMP";
-         $db->insertObject("muusa_phonenumbers", $obj);
+         $query = "SELECT phonenbrid FROM muusa_phonenumbers WHERE camperid=$obj->camperid AND phonenbr=$obj->phonenbr";
+         $db->setQuery($query);
+         $phonenbrid = $db->loadResult();
+         if($phonenbrid > 0) {
+            $obj->phonenbrid = $phonenbrid;
+            $obj->modified_by = $user->username;
+            $obj->modified_at = "&&CURRENT_TIMESTAMP";
+            $db->updateObject("muusa_campers", $obj, "phonenbrid");
+         } else {
+            $obj->created_by = $user->username;
+            $obj->created_at = "&&CURRENT_TIMESTAMP";
+            $db->insertObject("muusa_phonenumbers", $obj);
+         }
       } else {
-         $fyobj->modified_by = $user->username;
-         $fyobj->modified_at = "&&CURRENT_TIMESTAMP";
+         $obj->modified_by = $user->username;
+         $obj->modified_at = "&&CURRENT_TIMESTAMP";
          $db->updateObject("muusa_phonenumbers", $obj, "phonenbrid");
       }
    }
@@ -441,7 +469,15 @@ class muusla_applicationModelapplication extends JModel
       $obj->fiscalyear = "&&(SELECT year FROM muusa_currentyear)";
       $obj->created_by = $user->username;
       $obj->created_at = date("Y-m-d H:i:s");
-      $db->insertObject("muusa_charges", $obj);
+      $query = "SELECT chargeid FROM muusa_charges WHERE chargetypeid=1008 AND timestamp='$obj->timestamp' AND camperid=$camperid";
+      $db->setQuery($query);
+      $chargeid = $db->loadResult();
+      if($chargeid > 0) {
+         $obj->chargeid = $chargeid;
+         $db->updateObject("muusa_charges", $obj, "chargeid");
+      } else {
+         $db->insertObject("muusa_charges", $obj);
+      }
       if($db->getErrorNum()) {
          JError::raiseError(500, $db->stderr());
       }
