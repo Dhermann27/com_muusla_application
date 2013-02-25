@@ -19,19 +19,29 @@ jimport( 'joomla.application.component.model' );
  */
 class muusla_applicationModelpaypal extends JModel
 {
-	function insertCharge($amount) {
-//		$db =& JFactory::getDBO();
-//		$user =& JFactory::getUser();
-//		$query = "INSERT INTO muusa_charges (camperid, chargetypeid, amount, timestamp, fiscalyear, created_by, created_at) VALUES (";
-//		$query .= "(SELECT IF(hohid=0,camperid,hohid) camperid FROM muusa_campers WHERE email='" . $user->email . "'), ";
-//		$query .= "(SELECT chargetypeid FROM muusa_chargetypes WHERE name LIKE 'Paypal%'), ";
-//		$query .= "-" . $amount . ", ";
-//		$query .= "CURRENT_TIMESTAMP, ";
-//		$query .= "2009, '$user->username', CURRENT_TIMESTAMP)";
-//		$db->setQuery($query);
-//		$db->query();
-//		if($db->getErrorNum()) {
-//			JError::raiseError(500, $db->stderr());
-//		}
-	}
+   function insertCharge($amount, $camperid, $txn) {
+      $db =& JFactory::getDBO();
+      $user =& JFactory::getUser();
+      $obj = new stdClass();
+      $obj->camperid = $camperid;
+      $obj->chargetypeid = 1005;
+      $obj->amount = $amount;
+      $obj->timestamp = date("Y-m-d");
+      $obj->memo = $txn;
+      $obj->fiscalyear = "&&(SELECT year FROM muusa_currentyear)";
+      $obj->created_by = "paypal";
+      $obj->created_at = date("Y-m-d H:i:s");
+      $query = "SELECT chargeid FROM muusa_charges WHERE chargetypeid=1008 AND timestamp='$obj->timestamp' AND camperid=$camperid";
+      $db->setQuery($query);
+      $chargeid = $db->loadResult();
+      if($chargeid > 0) {
+         $obj->chargeid = $chargeid;
+         $db->updateObject("muusa_charges", $obj, "chargeid");
+      }else {
+         $db->insertObject("muusa_charges", $obj);
+      }
+      if($db->getErrorNum()) {
+         JError::raiseError(500, $db->stderr());
+      }
+   }
 }

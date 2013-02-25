@@ -36,6 +36,8 @@ $user =& JFactory::getUser();
          action="https://www.paypal.com/cgi-bin/webscr" method="post">
          <input type="hidden" name="amount"
             value="<?php echo $this->redirectAmt?>" /> <input
+            type="hidden" name="custom"
+            value="<?php echo $this->campers[0]->camperid;?>" /> <input
             type="hidden" name="cmd" value="_xclick"> <input
             type="hidden" name="business"
             value="muusaregistar@gmail.com"> <input type="hidden"
@@ -307,7 +309,7 @@ $user =& JFactory::getUser();
                         <tr align="center">
                            <td class="small"><a
                               href="http://<?php echo $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];?>#"
-                              onclick="switchNextRow($(this));">+ Pay
+                              onclick="switchNextRow(jQuery(this));">+ Pay
                                  Another Amount</a></td>
                         </tr>
                         <tr align="center" class="hidden">

@@ -67,10 +67,10 @@ class muusla_applicationViewpaypal extends JView
                $amount = $keyarray['payment_gross'];
                $this->assignRef('name', $name);
                $this->assignRef('amount', $amount);
-               $model->insertCharge($amount);
+               $model->insertCharge(-$amount, $keyarray['custom'], $keyarray['txn_id']);
             }
             else if (strcmp ($lines[0], "FAIL") == 0) {
-               echo "log for manual investigation";
+               //echo "log for manual investigation";
             }
          }
          fclose ($fp);

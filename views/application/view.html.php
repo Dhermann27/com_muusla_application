@@ -187,28 +187,6 @@ class muusla_applicationViewapplication extends JView
       parent::display($tpl);
    }
 
-   function payment($tpl = null) {
-      // 		$model =& $this->getModel();
-      // 		$events = array();
-      // 		foreach(JRequest::get() as $key=>$value) {
-      // 			if(preg_match('/^selected-(\d+)-(\d+)$/', $key, $objects)) {
-      // 				$events[$objects[2]][$objects[1]] = is_array($value) ? $value : array($value);
-      // 			}
-      // 		}
-      // 		foreach($events as $camperid => $event) {
-      // 			$model->upsertAttendees($camperid, $event);
-      // 		}
-
-      // 		$camper = $model->calculateCharges();
-      // 		if($camper) {
-      // 			$this->assignRef('hohid', $camper->hohid);
-      // 			$this->assignRef('charges', $model->getCharges($camper->camperid));
-      // 			$this->assignRef('credits', $model->getCredits($camper->camperid));
-      // 		}
-
-      // 		parent::display($tpl);
-   }
-
    function getSafe($obj)
    {
       return htmlspecialchars(trim($obj), ENT_QUOTES);

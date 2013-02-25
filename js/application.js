@@ -259,7 +259,7 @@ function recalc($, event, ui) {
 									function(value) {
 										return value != campername;
 									});
-							if (grade > 5) {
+							if (grade > 6) {
 								deposit += 50.0;
 							}
 						});
