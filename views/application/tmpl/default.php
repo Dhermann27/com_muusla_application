@@ -16,7 +16,7 @@ $user =& JFactory::getUser();
       src="<?php echo JURI::root(true);?>/components/com_muusla_application/js/jquery.scrollTo-1.4.3.1-min.js"></script>
    <script
       src='<?php echo JURI::root(true);?>/components/com_muusla_application/js/application.js'></script>
-   <script>var thisyear = <?php echo substr($this->year, -4)?>;</script>
+   <script>var thisyear = <?php echo $this->year["year"]?>;</script>
    <?php if($this->msg) {?>
    <div class="ui-state-highlight ui-corner-all">
       <p style="margin-top: 1em;">
@@ -53,6 +53,9 @@ $user =& JFactory::getUser();
    <form
       action="http://<? echo $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];?>"
       method="post">
+      <?php if($this->editcamper) {
+         echo "<input type='hidden' name='editcamper' value='$this->editcamper' />\n";
+      }?>
       <div id="muusaApp">
          <?php $familyid = $this->family->familyid ? $this->family->familyid : 0;?>
          <ul>
@@ -206,7 +209,7 @@ $user =& JFactory::getUser();
          <div id="appPayment">
             <script>
 				<?php
-				   echo "               var campDate = new Date('$this->year');\n";
+				   echo "               var campDate = new Date('" . $this->year["date"] . "');\n";
 				   echo "				var feeTable = { fees: [\n				";
 				   $fees = array();
 				   foreach($this->programs as $program) {
@@ -226,117 +229,26 @@ $user =& JFactory::getUser();
                   upper-right.
                </p>
             </div>
-            <table width="98%" align="center">
-               <tr>
-                  <td width="20%"><strong>Charge Type</strong></td>
-                  <td width="15%" align="right"><strong>Amount</strong>
-                  </td>
-                  <td width="15%" align="center"><strong>Date</strong></td>
-                  <td width="50%"><strong>Memo</strong></td>
-               </tr>
-               <?php
-               $total = 0.0;
-               if($this->charges) {
-                  foreach($this->charges as $charge) {
-                     echo "           <tr>\n";
-                     $total += (float)preg_replace("/,/", "",  $charge->amount);
-                     echo "                   <td class='chargetype'>$charge->name</td>\n";
-                     echo "                   <td class='amount' align='right'>\$" . $charge->amount . "</td>\n";
-                     echo "                   <td class='date' align='center'>$charge->timestamp</td>\n";
-                     echo "                   <td class='memo'>$charge->memo</td>\n";
-                     echo "                </tr>\n";
+            <?php if($this->charges) {
+               $multiyear = count($this->charges) > 1;
+               if($multiyear) {
+                  echo "<div class='paymentYears'>\n";
+               }
+               foreach($this->charges as $year => $charges) {
+                  if($multiyear) {
+                     echo "<h4>$year</h4>\n";
+                     echo "<div>\n";
+                  }
+                  $credits = $this->credits[$year];
+                  include 'blocks/payment.php';
+                  if($multiyear) {
+                     echo "</div>\n";
                   }
                }
-               if($this->credits) {
-                  foreach($this->credits as $credit) {
-                     echo "           <tr>\n";
-                     echo "               <td class='chargetype'>Credit</td>\n";
-                     $total -= (float)preg_replace("/,/", "",  $credit->housing_amount+$credit->registration_amount);
-                     echo "                <td class='amount' align='right'>\$-" . number_format($credit->housing_amount+$credit->registration_amount, 2) . "</td>\n";
-                     echo "                <td>&nbsp;</td>\n";
-                     echo "                <td class='memo'><i>$credit->positionname</i></td>\n";
-                     echo "           </tr>\n";
-                  }
+               if($multiyear) {
+                  echo "</div>\n";
                }
-               ?>
-               <tr id="paymentDummy" class="hidden">
-                  <td class="chargetype"></td>
-                  <td class="amount" align="right"></td>
-                  <td class="date" align="center"></td>
-                  <td class="memo"></td>
-               </tr>
-               <tr>
-                  <td class="chargetype">Donation</td>
-                  <td align="right"><input type="text" id="donation"
-                     name="charges-amount-0" maxlength="9"
-                     class="inputtexttiny onlymoney ui-corner-all" /></td>
-                  <td colspan='2' class="memo padleft">Please consider
-                     at least a $10.00 donation to the MUUSA Scholarship
-                     fund.</td>
-               </tr>
-               <?php
-               echo "           <tr align='right'>\n";
-               echo "              <td><strong>Amount Due Now:</strong></td>\n";
-               echo "              <td id='amountNow'>$" . number_format($total, 2, '.', '') . "</td>\n";
-               echo "              <td colspan='2'>&nbsp;</td>\n";
-               echo "           </tr>\n";
-               if($this->room != 0) {
-                  echo "           <tr align='right'>\n";
-                  echo "              <td><strong>Amount Due Upon Arrival:</strong></td>\n";
-                  echo "              <td id='amountArrival'>$" . number_format($total, 2, '.', '') . "</td>\n";
-                  echo "              <td colspan='2'>&nbsp;</td>\n";
-                  echo "           </tr>\n";
-               } else {
-                  echo "           <tr>\n";
-                  echo "              <td colspan='4'><i>Does not include your remaining housing fees, which are due on the first day of camp. Housing to be assigned at a later date</i>.</td>\n";
-                  echo "           </tr>\n";
-               }
-               ?>
-            </table>
-            <table>
-               <tr valign="bottom">
-                  <td colspan="2" align="center"><div>
-                        Make checks payable to: <strong>MUUSA, Inc.</strong><br />
-                        Mail check by May 31, 2013 to<br /> MUUSA, Inc.<br />6501
-                        Amber Crest<br />Indianapolis, IN 46220<br /> <br />
-                     </div></td>
-                  <td align="center"
-                     style="border-left: 2px dashed black"><div>
-                        <img src="images/muusa/secure-paypal-logo.png"
-                           alt="PayPal - The safer, easier way to pay online!" />
-                     </div>
-                     <table>
-                        <tr align="center">
-                           <td class="small"><a
-                              href="http://<?php echo $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];?>#"
-                              onclick="switchNextRow(jQuery(this));">+ Pay
-                                 Another Amount</a></td>
-                        </tr>
-                        <tr align="center" class="hidden">
-                           <td><input type="text" id="paypalAmt"
-                              class="inputtexttiny ui-corner-all"
-                              name="paypal-amount"
-                              value="<?php echo number_format($total, 2, '.', '');?>" />
-                           </td>
-                        </tr>
-                     </table>
-                     <button id="finishPaypal">Pay Now via PayPal</button>
-                  </td>
-                  <td align="right">
-                     <button id="finishWorkshop">Save Changes Only</button>
-                  </td>
-               </tr>
-            </table>
-            <div class="padtop ui-state-highlight ui-corner-all">
-               <p>
-                  <span class="space left ui-icon ui-icon-info"></span>
-                  If you paid a pre-registration deposit or are
-                  expecting a staff position credit but do not see it
-                  here, it has been associated with a different name or
-                  e-mail address. Please contact the Registrar by phone
-                  or using the Contact Us link above.
-               </p>
-            </div>
+            }?>
          </div>
       </div>
       <?php

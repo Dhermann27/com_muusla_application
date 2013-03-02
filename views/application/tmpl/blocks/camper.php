@@ -122,7 +122,7 @@ $user =& JFactory::getUser();
          class="birthday validday ui-corner-all"
          value="<?php echo $camper->birthday;?>" />
       </td>
-      <td align="right">Grade Entering in Fall <?php echo substr($this->year, -4)?>
+      <td align="right">Grade Entering in Fall <?php echo $this->year["year"]?>
       </td>
       <td><select name="campers-grade-<?php echo $camperid;?>"
          class="grade ui-corner-all">

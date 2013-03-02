@@ -31,7 +31,7 @@ class muusla_applicationModelpaypal extends JModel
       $obj->fiscalyear = "&&(SELECT year FROM muusa_currentyear)";
       $obj->created_by = "paypal";
       $obj->created_at = date("Y-m-d H:i:s");
-      $query = "SELECT chargeid FROM muusa_charges WHERE chargetypeid=1008 AND timestamp='$obj->timestamp' AND camperid=$camperid";
+      $query = "SELECT chargeid FROM muusa_charges WHERE chargetypeid=1005 AND timestamp='$obj->timestamp' AND camperid=$camperid";
       $db->setQuery($query);
       $chargeid = $db->loadResult();
       if($chargeid > 0) {

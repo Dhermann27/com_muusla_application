@@ -41,20 +41,5 @@ class muusla_applicationController extends JController
       }
    }
 
-   function save()
-   {
-      $this->muuslaControl('default', 'save');
-   }
-
-   function detail()
-   {
-      $this->muuslaControl('workshop', 'detail');
-   }
-
-   function payment()
-   {
-      $this->muuslaControl('payment', 'payment');
-   }
-
 }
 ?>

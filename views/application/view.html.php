@@ -97,12 +97,18 @@ class muusla_applicationViewapplication extends JView
          }
       }
 
-
-
       // DATA SAVED, GET NEW DATA
 
       $sumdays = 0;
-      $family = $model->getFamily();
+      $year = $model->getYear();
+      $editcamper = JRequest::getVar($this->getSafe("editcamper"));
+      $admin = $editcamper && (in_array("8", $user->groups) || in_array("10", $user->groups));
+      if(preg_match('/\((\d+)\)$/', $editcamper, $familyids) && $admin) {
+         $this->assignRef('editcamper', $editcamper);
+         $family = $model->getFamily("mf.familyid=" . $familyids[1]);
+      } else {
+         $family = $model->getFamily("mc.email='" . $user->email . "'");
+      }
       $this->assignRef('family', $family);
       if($family->familyid) {
          $campers = $model->getCampers($family->familyid);
@@ -115,17 +121,36 @@ class muusla_applicationViewapplication extends JView
             }
             $sumdays += $camper->days;
          }
-         $this->assignRef('charges', $model->getCharges($family->familyid));
-         $this->assignRef('credits', $model->getCredits($family->familyid));
+         foreach($model->getCharges($family->familyid, $admin ? "" : "AND mc.fiscalyear=" . $year["year"]) as $charge) {
+            if($charges[$charge->fiscalyear] == null) {
+               $charges[$charge->fiscalyear] = array($charge);
+            } else {
+               array_push($charges[$charge->fiscalyear], $charge);
+            }
+         }
+         $this->assignRef('charges', $charges);
+         $credits[] = array();
+         foreach($model->getCredits($family->familyid, $admin ? "" : "AND mf.fiscalyear=" . $year["year"]) as $credit) {
+            if($credits[$credit->fiscalyear] == null) {
+               $credits[$credit->fiscalyear] = array($credit);
+            } else {
+               array_push($credits[$credit->fiscalyear], $credit);
+            }
+         }
+         $this->assignRef('credits', $credits);
       }
       $this->assignRef('campers', $campers);
+
       $this->assignRef('buildings', $model->getBuildings());
       $this->assignRef('states', $model->getStates());
       $this->assignRef('foodoptions', $model->getFoodoptions());
       $this->assignRef('churches', $model->getChurches());
       $this->assignRef('phonetypes', $model->getPhonetypes());
       $this->assignRef('programs', $model->getPrograms());
-      $this->assignRef('year', $model->getYear());
+      $this->assignRef('year', $year);
+      if($admin) {
+         $this->assignRef('chargetypes', $model->getChargetypes());
+      }
       $this->assignRef('sumdays', $sumdays);
 
 
@@ -164,26 +189,6 @@ class muusla_applicationViewapplication extends JView
       }
       $this->assignRef('times', $times);
 
-      parent::display($tpl);
-   }
-
-   function detail($tpl = null) {
-      $model =& $this->getModel();
-      $user =& JFactory::getUser();
-      $campers = $model->getRegisteredCampers();
-      foreach($campers as $camper) {
-         $camper->volunteers = $model->getVolunteers($camper->camperid);
-         $camper->attendees = $model->getAttendees($camper->fiscalyearid);
-      }
-      $this->assignRef('positions', $model->getPositions());
-      $times = $model->getTimes();
-      foreach($model->getWorkshops() as $workshop) {
-         if($workshop["days"] == "MTuWThF") {
-            $workshop["days"] = "5 days";
-         }
-         $times[$workshop["timeid"]]["shops"][$workshop["eventid"]] = $workshop;
-      }
-      $this->assignRef('times', $times);
       parent::display($tpl);
    }
 

@@ -17,6 +17,10 @@ jQuery(document).ready(
 					at : "right center"
 				}
 			});
+			$(".paymentYears").accordion({
+				heightStyle : "content",
+				header : "h4"
+			});
 			$(".info").button({
 				icons : {
 					primary : "ui-icon-info"
@@ -126,7 +130,7 @@ jQuery(document).ready(
 				submit($);
 				return false;
 			});
-			$("#finishWorkshop").button().click(function() {
+			$(".finishWorkshop").button().click(function() {
 				$("#paypalAmt").val("0");
 				submit($);
 				return false;
@@ -291,7 +295,7 @@ function recalc($, event, ui) {
 		}
 		$("#appPayment td.amount").each(function() {
 			total += pFloat($(this).text());
-		})
+		});
 		total += Math.abs(pFloat($("#donation").val()));
 		$("#amountNow").text("$" + total.toFixed(2));
 		$("#paypalAmt").val(total.toFixed(2));
@@ -413,9 +417,11 @@ function hideThis(obj) {
 }
 
 function pInt(val) {
-	return val != "" ? parseInt(val.replace(/[^0-9\.-]+/g, ""), 10) : 0;
+	return val != undefined && val != "" ? parseInt(val.replace(/[^0-9\.-]+/g,
+			""), 10) : 0;
 }
 
 function pFloat(val) {
-	return val != "" ? parseFloat(val.replace(/[^0-9\.-]+/g, "")) : 0.0;
+	return val != undefined && val != "" ? parseFloat(val.replace(
+			/[^0-9\.-]+/g, "")) : 0.0;
 }
