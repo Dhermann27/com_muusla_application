@@ -229,7 +229,7 @@ function recalc($, event, ui) {
 		var deposit = 0.0;
 		var total = 0.0;
 		var registered = new Array();
-		$("#appPayment tr").filter(
+		$("#payments" + thisyear + " tr").filter(
 				function() {
 					return $("td.chargetype:contains('Registration Fee')",
 							$(this)).size() > 0
@@ -268,7 +268,7 @@ function recalc($, event, ui) {
 							}
 						});
 
-		$("#appPayment tr").filter(
+		$("#payments" + thisyear + " tr").filter(
 				function() {
 					return $("td.chargetype:contains('Registration Fee')",
 							$(this)).size() > 0
@@ -277,9 +277,9 @@ function recalc($, event, ui) {
 				}).remove();
 		if (deposit == 0.0) {
 			$("#noattending").show();
-		} else if ($("#appPayment td.chargetype:contains('Housing Fee')")
+		} else if ($("#payments" + thisyear + " td.chargetype:contains('Housing Fee')")
 				.size() == 0) {
-			var housingdepo = $("#appPayment tr").filter(
+			var housingdepo = $("#payments" + thisyear + " tr").filter(
 					function() {
 						return $("td.chargetype", $(this)).text().contains(
 								"Housing Deposit");
@@ -293,7 +293,7 @@ function recalc($, event, ui) {
 			}
 			$(".amount", housingdepo).text("$" + deposit.toFixed(2));
 		}
-		$("#appPayment td.amount").each(function() {
+		$("#payments" + thisyear + " td.amount").each(function() {
 			total += pFloat($(this).text());
 		});
 		total += Math.abs(pFloat($("#donation").val()));
@@ -304,7 +304,7 @@ function recalc($, event, ui) {
 
 function donationCalc($) {
 	var total = 0.0;
-	$("#appPayment td.amount:visible").each(function() {
+	$("#payments" + thisyear + " td.amount:visible").each(function() {
 		total += pFloat($(this).text());
 	});
 	var donation = Math.abs(pFloat($("#donation").val()));

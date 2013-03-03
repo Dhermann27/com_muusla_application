@@ -54,6 +54,7 @@ class muusla_applicationViewapplication extends JView
                      }
                   }
                }
+               $calls["charges"][0]->camperid = $newcamperid;
                $fiscalyearid = $model->upsertFiscalyear($newcamperid);
                $model->deleteRoomtypepreferences($fiscalyearid);
                if(count($calls["roomtype_preferences"][$oldcamperid]->buildingids) > 0) {
@@ -72,8 +73,8 @@ class muusla_applicationViewapplication extends JView
             }
          }
          $model->calculateCharges($familyid);
-         if(count($calls["charges"]) > 0 && $calls["charges"][0]->amount > 0) {
-            $model->insertDonation($newcamperid, $calls["charges"][0]->amount);
+         if(count($calls["charges"]) > 0 && $calls["charges"][0]->amount != 0) {
+            $model->insertCharge($calls["charges"][0]);
          }
          if($this->getSafe(JRequest::getVar('paypal-amount')) != 0) {
             $msg = floatval($this->getSafe(JRequest::getVar('paypal-amount')));

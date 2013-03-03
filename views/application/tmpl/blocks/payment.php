@@ -9,7 +9,7 @@
  *
  */
 ?>
-<table width="98%" align="center">
+<table id="payments<?php echo $year;?>" width="98%" align="center">
    <tr>
       <td width="20%"><strong>Charge Type</strong></td>
       <td width="15%" align="right"><strong>Amount</strong>
@@ -51,25 +51,31 @@
    <?php }
    if(!$this->editcamper) {?>
    <tr>
-      <td class="chargetype">Donation</td>
+      <td class="chargetype">Donation <input type="hidden"
+         name="charges-chargetypeid-0" value="1008" />
+      </td>
       <td align="right"><input type="text" id="donation"
          name="charges-amount-0"
          class="inputtexttiny onlymoney ui-corner-all" /></td>
       <td colspan='2' class="memo padleft">Please consider at least a
-         $10.00 donation to the MUUSA Scholarship fund.</td>
+         $10.00 donation to the MUUSA Scholarship fund. <input
+         type="hidden" name="charges-timestamp-0"
+         value="<?php echo date("m/d/Y");?>" /> <input type="hidden"
+         name="charges-memo-0" value="Thank you for your donation" />
+      </td>
    </tr>
    <?php
-   } else {
+   } else if($year == $this->year["year"]) {
       echo "   <tr>\n";
-      echo "      <td class='chargetype'><select name='charges-chargetypeid-0' class='notzero ui-corner-all'>\n";
+      echo "      <td><select name='charges-chargetypeid-0' class='notzero ui-corner-all'>\n";
       echo "          <option value='0'>Charge Type</option>\n";
       foreach($this->chargetypes as $chargetype) {
          echo "          <option value='$chargetype->chargetypeid'>$chargetype->name</option>\n";
       }
       echo "      </select></td>\n";
       echo "      <td align='right'><input type='text' name='charges-amount-0' class='inputtexttiny onlymoney ui-corner-all' /></td>\n";
-      echo "      <td align='center'><input type='text' name='charges-timestamp-0' class='inputtexttiny birthday ui-corner-all' /></td>\n";
-      echo "      <td><input type='text' name='charges-memo-0' class='inputtext ui-corner-all' /></td>\n";
+      echo "      <td align='center'><input type='text' name='charges-timestamp-0' class='inputtexttiny birthday ui-corner-all' value=" . date("m/d/Y") . "/></td>\n";
+      echo "      <td><input type='text' name='charges-memo-0' class='inputtext ui-corner-all' /> <input type='hidden' name='charges-fiscalyear-0' value='$year' /></td>\n";
       echo "   </tr>\n";
    }
    echo "           <tr align='right'>\n";

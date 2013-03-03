@@ -473,21 +473,13 @@ class muusla_applicationModelapplication extends JModel
       }
    }
 
-   function insertDonation($camperid, $amt) {
+   function insertCharge($obj) {
       $db =& JFactory::getDBO();
       $user =& JFactory::getUser();
-      $obj = new stdClass;
-      $obj->camperid = $camperid;
-      $obj->amount = $amt;
-      $obj->memo = "Thank you for your donation";
-      $obj->chargetypeid = "1008";
-      $obj->timestamp = date("Y-m-d");
-      $obj->fiscalyear = "&&(SELECT year FROM muusa_currentyear)";
-      $obj->created_by = $user->username;
-      $obj->created_at = date("Y-m-d H:i:s");
-      $query = "SELECT chargeid FROM muusa_charges WHERE chargetypeid=1008 AND timestamp='$obj->timestamp' AND camperid=$camperid";
+      $query = "SELECT chargeid FROM muusa_charges WHERE chargetypeid=$obj->chargetypeid AND timestamp='$obj->timestamp' AND camperid=$obj->camperid";
       $db->setQuery($query);
       $chargeid = $db->loadResult();
+      $obj->timestamp = "&&STR_TO_DATE('$obj->timestamp', '%m/%d/%Y')";
       if($chargeid > 0) {
          $obj->chargeid = $chargeid;
          $db->updateObject("muusa_charges", $obj, "chargeid");
