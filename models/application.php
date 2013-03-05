@@ -19,7 +19,7 @@ jimport( 'joomla.application.component.model' );
  */
 class muusla_applicationModelapplication extends JModel
 {
-    
+
    // DATA FUNCTIONS
 
    function getBuildings() {
@@ -34,7 +34,7 @@ class muusla_applicationModelapplication extends JModel
       $query = "SELECT chargetypeid, name FROM muusa_chargetypes ORDER BY name";
       $db->setQuery($query);
       return $db->loadObjectList();
-   }   
+   }
 
    function getChurches() {
       $db =& JFactory::getDBO();
@@ -98,7 +98,7 @@ class muusla_applicationModelapplication extends JModel
       $db->setQuery($query);
       return $db->loadAssocList("eventid");
    }
-    
+
    // CAMPER FUNCTIONS
 
    function getFamily($where) {
@@ -184,7 +184,7 @@ class muusla_applicationModelapplication extends JModel
       return $db->loadResult();
    }
 
-   function upsertFiscalyear($camperid) {
+   function upsertFiscalyear($camperid, $postmark) {
       $db =& JFactory::getDBO();
       $user =& JFactory::getUser();
       $query = "SELECT mf.fiscalyearid FROM muusa_fiscalyear mf, muusa_currentyear my WHERE mf.fiscalyear=my.year AND mf.camperid=$camperid";
@@ -195,7 +195,7 @@ class muusla_applicationModelapplication extends JModel
          $obj->camperid = $camperid;
          $obj->fiscalyear = "&&(SELECT year FROM muusa_currentyear)";
          $obj->days = 6;
-         $obj->postmark = "&&CURRENT_TIMESTAMP";
+         $obj->postmark = $postmark != "" ? "&&STR_TO_DATE('$postmark', '%m/%d/%Y')" : "&&CURRENT_TIMESTAMP";
          $obj->created_by = $user->username;
          $obj->created_at = "&&CURRENT_TIMESTAMP";
          $db->insertObject("muusa_fiscalyear", $obj, "fiscalyearid");
@@ -479,6 +479,7 @@ class muusla_applicationModelapplication extends JModel
       $query = "SELECT chargeid FROM muusa_charges WHERE chargetypeid=$obj->chargetypeid AND timestamp='$obj->timestamp' AND camperid=$obj->camperid";
       $db->setQuery($query);
       $chargeid = $db->loadResult();
+      $obj->fiscalyear = "&&(SELECT year FROM muusa_currentyear)";
       $obj->timestamp = "&&STR_TO_DATE('$obj->timestamp', '%m/%d/%Y')";
       if($chargeid > 0) {
          $obj->chargeid = $chargeid;

@@ -67,15 +67,18 @@
    <?php
    } else if($year == $this->year["year"]) {
       echo "   <tr>\n";
-      echo "      <td><select name='charges-chargetypeid-0' class='notzero ui-corner-all'>\n";
+      echo "      <td><select name='charges-chargetypeid-0' class='ui-corner-all'>\n";
       echo "          <option value='0'>Charge Type</option>\n";
       foreach($this->chargetypes as $chargetype) {
          echo "          <option value='$chargetype->chargetypeid'>$chargetype->name</option>\n";
       }
       echo "      </select></td>\n";
       echo "      <td align='right'><input type='text' name='charges-amount-0' class='inputtexttiny onlymoney ui-corner-all' /></td>\n";
-      echo "      <td align='center'><input type='text' name='charges-timestamp-0' class='inputtexttiny birthday ui-corner-all' value=" . date("m/d/Y") . "/></td>\n";
-      echo "      <td><input type='text' name='charges-memo-0' class='inputtext ui-corner-all' /> <input type='hidden' name='charges-fiscalyear-0' value='$year' /></td>\n";
+      echo "      <td align='center'><input type='text' name='charges-timestamp-0' class='inputtexttiny birthday ui-corner-all' value='" . date("m/d/Y") . "' /></td>\n";
+      echo "      <td><input type='text' name='charges-memo-0' class='inputtext ui-corner-all' /></td>\n";
+      echo "   </tr>\n";
+      echo "   <tr>\n";
+      echo "      <td colspan='4'><strong>$year Registration Postmark</strong> <input type='text' name='fiscalyear-postmark-0' class='birthday ui-corner-all' value='" . date("m/d/Y") . "' /></td>\n";
       echo "   </tr>\n";
    }
    echo "           <tr align='right'>\n";

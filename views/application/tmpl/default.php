@@ -31,7 +31,8 @@ $user =& JFactory::getUser();
    <p>&nbsp;</p>
    <?php } elseif ($this->redirectAmt) {?>
    <div id="paypalRedirect" class="dialog-message" title="PayPal">
-      <strong>Redirecting to PayPal...</strong>
+      <strong>Redirecting to PayPal. Please let your transaction
+         complete and do not hit the Back button.</strong>
       <form id="paypalForm" name="_xclick"
          action="https://www.paypal.com/cgi-bin/webscr" method="post">
          <input type="hidden" name="amount"
@@ -248,6 +249,9 @@ $user =& JFactory::getUser();
                if($multiyear) {
                   echo "</div>\n";
                }
+            } else {
+               $year = $this->year["year"];
+               include 'blocks/payment.php';
             }?>
          </div>
       </div>
