@@ -56,6 +56,8 @@ $user =& JFactory::getUser();
       method="post">
       <?php if($this->editcamper) {
          echo "<input type='hidden' name='editcamper' value='$this->editcamper' />\n";
+         //echo "<div style='float: right;'><button id='forwardWorkshop'>Do not Save<br />Proceed to Workshops</button></div>\n";
+         echo "<div><button id='backDetails'>Return<br />to Camper Details</button></div>\n";
       }?>
       <div id="muusaApp">
          <?php $familyid = $this->family->familyid ? $this->family->familyid : 0;?>
@@ -256,10 +258,12 @@ $user =& JFactory::getUser();
          </div>
       </div>
       <?php
-      foreach($this->buildings as $buildingid => $building) {
-         echo "      <div id='room-$buildingid' class='dialog-message' title='" . $building["name"] . "'>\n";
-         echo "         " . $building["introtext"] . "\n";
-         echo "      </div>\n";
+      if(!$editcamper) {
+         foreach($this->buildings as $buildingid => $building) {
+            echo "      <div id='room-$buildingid' class='dialog-message' title='" . $building["name"] . "'>\n";
+            echo "         " . $building["introtext"] . "\n";
+            echo "      </div>\n";
+         }
       }
       ?>
    </form>

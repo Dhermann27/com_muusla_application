@@ -132,7 +132,7 @@ class muusla_applicationModelapplication extends JModel
    function getCampers($familyid) {
       $db =& JFactory::getDBO();
       $user =& JFactory::getUser();
-      $query = "SELECT mc.camperid, mc.firstname, mc.lastname, mc.sexcd, mc.email, DATE_FORMAT(mc.birthdate, '%m/%d/%Y') birthday, (muusa_age_f(mc.birthdate)+mc.gradeoffset) grade, mc.sponsor, mc.is_handicap, mc.foodoptionid, mc.churchid, mp.name programname, IFNULL(mv.days,0) days FROM muusa_campers mc LEFT JOIN muusa_campers_v mv ON mc.camperid=mv.camperid LEFT JOIN muusa_programs mp ON muusa_age_f(mc.birthdate)<mp.agemax AND muusa_age_f(mc.birthdate)>mp.agemin AND muusa_age_f(mc.birthdate)+mc.gradeoffset<mp.grademax AND muusa_age_f(mc.birthdate)+mc.gradeoffset>mp.grademin WHERE mc.familyid=$familyid ORDER BY IF(mc.email='$user->email',0,1), mc.birthdate";
+      $query = "SELECT mc.camperid, mc.firstname, mc.lastname, mc.sexcd, mc.email, DATE_FORMAT(mc.birthdate, '%m/%d/%Y') birthday, (muusa_age_f(mc.birthdate)+mc.gradeoffset) grade, mc.sponsor, mc.is_handicap, mc.foodoptionid, mc.churchid, mp.name programname, IFNULL(mv.days,0) days, IFNULL(mv.postmark,'') postmark FROM muusa_campers mc LEFT JOIN muusa_campers_v mv ON mc.camperid=mv.camperid LEFT JOIN muusa_programs mp ON muusa_age_f(mc.birthdate)<mp.agemax AND muusa_age_f(mc.birthdate)>mp.agemin AND muusa_age_f(mc.birthdate)+mc.gradeoffset<mp.grademax AND muusa_age_f(mc.birthdate)+mc.gradeoffset>mp.grademin WHERE mc.familyid=$familyid ORDER BY IF(mc.email='$user->email',0,1), mc.birthdate";
       $db->setQuery($query);
       return $db->loadObjectList();
    }
@@ -200,6 +200,13 @@ class muusla_applicationModelapplication extends JModel
          $obj->created_at = "&&CURRENT_TIMESTAMP";
          $db->insertObject("muusa_fiscalyear", $obj, "fiscalyearid");
          $fiscalyearid = $obj->fiscalyearid;
+      } else {
+         $obj = new stdClass;
+         $obj->fiscalyearid = $fiscalyearid;
+         $obj->postmark = $postmark != "" ? "&&STR_TO_DATE('$postmark', '%m/%d/%Y')" : "&&CURRENT_TIMESTAMP";
+         $obj->modified_by = $user->username;
+         $obj->modified_at = "&&CURRENT_TIMESTAMP";
+         $db->updateObject("muusa_fiscalyear", $obj, "fiscalyearid");
       }
       return $fiscalyearid;
    }

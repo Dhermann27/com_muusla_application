@@ -126,6 +126,14 @@ jQuery(document).ready(
 				window.location.href = "http://muusa.org/index.php?Itemid=222";
 				return false;
 			});
+			$("#backDetails").button({ icons: { primary : "ui-icon-triangle-1-w" } }).click(function() {
+				window.location.href = "http://muusa.org/index.php/administration/database/campers";
+				return false;
+			});
+			$("#forwardWorkshop").button({ icons: { primary : "ui-icon-triangle-1-e" } }).click(function() {
+				window.location.href = "http://muusa.org/index.php?Itemid=222";
+				return false;
+			});
 			$("#finishPaypal").button().click(function() {
 				submit($);
 				return false;

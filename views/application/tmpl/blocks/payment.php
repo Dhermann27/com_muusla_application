@@ -78,7 +78,7 @@
       echo "      <td><input type='text' name='charges-memo-0' class='inputtext ui-corner-all' /></td>\n";
       echo "   </tr>\n";
       echo "   <tr>\n";
-      echo "      <td colspan='4'><strong>$year Registration Postmark</strong> <input type='text' name='fiscalyear-postmark-0' class='birthday ui-corner-all' value='" . date("m/d/Y") . "' /></td>\n";
+      echo "      <td colspan='4'><strong>$year Registration Postmark</strong> <input type='text' name='fiscalyear-postmark-0' class='birthday ui-corner-all' value='" . ($this->campers[0]->postmark != "" ? $this->campers[0]->postmark : date("m/d/Y")) . "' /></td>\n";
       echo "   </tr>\n";
    }
    echo "           <tr align='right'>\n";

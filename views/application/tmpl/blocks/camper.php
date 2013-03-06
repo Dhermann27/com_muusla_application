@@ -152,7 +152,7 @@ $user =& JFactory::getUser();
                      foreach($this->buildings as $buildingid => $building) {
                         if(!$camper->roomtypes || !in_array($buildingid, $camper->roomtypes)) {
                            echo "                  <li value='$buildingid' class='ui-state-default'>\n";
-                           if($building["introtext"]) {
+                           if(!$editcamper && $building["introtext"]) {
                               echo "                     <button class='help link right'>Show $building->name Information</button>\n";
                            }
                            echo "                     " . $building["name"] . "\n";
@@ -169,7 +169,7 @@ $user =& JFactory::getUser();
                      if($camper->roomtypes) {
                         foreach($camper->roomtypes as $roomtype) {
                            echo "                  <li value='$roomtype' class='ui-state-default'>\n";
-                           if($this->buildings[$roomtype]["introtext"]) {
+                           if(!$editcamper && $this->buildings[$roomtype]["introtext"]) {
                               echo "                     <button class='help link right'>Show " . $this->buildings[$roomtype]->name . " Information</button>\n";
                            }
                            echo "                     " . $this->buildings[$roomtype]["name"] . "\n";

@@ -49,7 +49,7 @@ class muusla_applicationViewapplication extends JView
          if(count($calls["family"]) > 0) {
             foreach($calls["family"] as $id => $family) {
                $familyid = $model->upsertFamily($family);
-               if($editcamper == "(1)") {
+               if($editcamper == "1") {
                   $editcamper = "($familyid)";
                }
             }
@@ -117,9 +117,9 @@ class muusla_applicationViewapplication extends JView
 
       $sumdays = 0;
       $year = $model->getYear();
-      if(preg_match('/\((\d+)\)$/', $editcamper, $familyids) && $admin) {
+      if($admin && preg_match('/^\d+$/', $editcamper)) {
          $this->assignRef('editcamper', $editcamper);
-         $family = $model->getFamily("mf.familyid=" . $familyids[1]);
+         $family = $model->getFamily("mf.familyid=" . $editcamper);
       } else {
          $family = $model->getFamily("mc.email='" . $user->email . "'");
       }
