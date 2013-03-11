@@ -1,149 +1,171 @@
-jQuery(document).ready(
-		function($) {
-			$("#muusaApp").tabs({
-				active : 0,
-				beforeActivate : function(event, ui) {
-					trap($, event, ui);
-					recalc($, event, ui);
-					return true;
-				},
-				activate : function() {
-					$("html, body").animate({
-						scrollTop : 0
-					}, "slow");
-				}
-			}).tooltip({
-				position : {
-					at : "right center"
-				}
-			});
-			$(".paymentYears").accordion({
-				heightStyle : "content",
-				header : "h4"
-			});
-			$(".info").button({
-				icons : {
-					primary : "ui-icon-info"
-				},
-				text : false
-			}).click(function() {
-				switchNextRow($(this));
-				return false;
-			});
-			$(".link").button({
-				icons : {
-					primary : "ui-icon-image"
-				},
-				text : false
-			}).click(function() {
-				openLink($(this));
-				return false;
-			});
-			var pp = $("#paypalRedirect");
-			if (pp != undefined) {
-				pp.dialog();
-				setTimeout("jQuery('#paypalForm').submit();", 1000);
-			}
-			$(".radios").buttonset();
-			$(".add").button({
-				icons : {
-					primary : "ui-icon-plus"
-				},
-				text : false
-			}).click(function() {
-				addRow($(this), "tr");
-				return false;
-			});
-			$(".birthday").datepicker({
-				yearRange : (thisyear - 100) + ":" + thisyear,
-				changeMonth : true,
-				changeYear : true
-			});
-			$(".roomtypes").accordion({
-				collapsible : true,
-				heightStyle : "content",
-				header : "h4",
-				active : false
-			});
-			$(".roomtypeSave").button().click(function() {
-				$(this).closest("div.roomtypes").accordion({
-					active : false
-				});
-				return false;
-			});
-			$(".roomtype-yes, .roomtype-no").sortable({
-				placeholder : "ui-state-highlight",
-				connectWith : ".connectedRoomtype"
-			}).disableSelection();
-			$(".dialog-message").dialog({
-				modal : true,
-				autoOpen : false,
-				minWidth : 800,
-				buttons : {
-					Ok : function() {
-						$(this).dialog("close");
-					}
-				}
-			});
-			$(".delete").button({
-				icons : {
-					primary : "ui-icon-minus"
-				},
-				text : false
-			}).click(function() {
-				hideThis($(this).parents("tr"));
-				return false;
-			});
-			$("#nextCamper").button().click(function() {
-				$("#muusaApp").tabs({
-					active : 1
-				});
-				return false;
-			});
-			$("#addCamper").button().click(
-					function() {
-						$("#appCamper tbody.camperBody:hidden :first").show()
-								.find(".roomtype-yes, .roomtype-no").sortable({
-									placeholder : "ui-state-highlight",
-									connectWith : ".connectedRoomtype"
-								}).disableSelection();
+jQuery(document)
+		.ready(
+				function($) {
+					$("#muusaApp").tabs({
+						active : 0,
+						beforeActivate : function(event, ui) {
+							trap($, event, ui);
+							recalc($, event, ui);
+							return true;
+						},
+						activate : function() {
+							$("html, body").animate({
+								scrollTop : 0
+							}, "slow");
+						}
+					}).tooltip({
+						position : {
+							at : "right center"
+						}
+					});
+					$(".paymentYears").accordion({
+						heightStyle : "content",
+						header : "h4"
+					});
+					$(".info").button({
+						icons : {
+							primary : "ui-icon-info"
+						},
+						text : false
+					}).click(function() {
+						switchNextRow($(this));
 						return false;
 					});
-			$(".removeCamper").button().click(function() {
-				$(this).parents("tbody").hide().find(".firstname").val("");
-				return false;
-			});
-			$("#nextPayment").button().click(function() {
-				$("#muusaApp").tabs({
-					active : 2
+					$(".link").button({
+						icons : {
+							primary : "ui-icon-image"
+						},
+						text : false
+					}).click(function() {
+						openLink($(this));
+						return false;
+					});
+					var pp = $("#paypalRedirect");
+					if (pp != undefined) {
+						pp.dialog();
+						setTimeout("jQuery('#paypalForm').submit();", 1000);
+					}
+					$(".radios").buttonset();
+					$(".add").button({
+						icons : {
+							primary : "ui-icon-plus"
+						},
+						text : false
+					}).click(function() {
+						addRow($(this), "tr");
+						return false;
+					});
+					$(".birthday").datepicker({
+						yearRange : (thisyear - 100) + ":" + thisyear,
+						changeMonth : true,
+						changeYear : true
+					});
+					$(".roomtypes").accordion({
+						collapsible : true,
+						heightStyle : "content",
+						header : "h4",
+						active : false
+					});
+					$(".roomtypeSave").button().click(function() {
+						$(this).closest("div.roomtypes").accordion({
+							active : false
+						});
+						return false;
+					});
+					$(".roomtype-yes, .roomtype-no").sortable({
+						placeholder : "ui-state-highlight",
+						connectWith : ".connectedRoomtype"
+					}).disableSelection();
+					$(".dialog-message").dialog({
+						modal : true,
+						autoOpen : false,
+						minWidth : 800,
+						buttons : {
+							Ok : function() {
+								$(this).dialog("close");
+							}
+						}
+					});
+					$(".delete").button({
+						icons : {
+							primary : "ui-icon-minus"
+						},
+						text : false
+					}).click(function() {
+						hideThis($(this).parents("tr"));
+						return false;
+					});
+					$("#nextCamper").button().click(function() {
+						$("#muusaApp").tabs({
+							active : 1
+						});
+						return false;
+					});
+					$("#addCamper").button().click(
+							function() {
+								$("#appCamper tbody.camperBody:hidden :first")
+										.show().find(
+												".roomtype-yes, .roomtype-no")
+										.sortable({
+											placeholder : "ui-state-highlight",
+											connectWith : ".connectedRoomtype"
+										}).disableSelection();
+								return false;
+							});
+					$(".removeCamper").button().click(
+							function() {
+								$(this).parents("tbody").hide().find(
+										".firstname").val("");
+								return false;
+							});
+					$("#nextPayment").button().click(function() {
+						$("#muusaApp").tabs({
+							active : 2
+						});
+						return false;
+					});
+					$(".recalc").blur(function() {
+						donationCalc($);
+					});
+					$("#nextWorkshop")
+							.button()
+							.click(
+									function() {
+										window.location.href = "http://muusa.org/index.php?Itemid=222";
+										return false;
+									});
+					$("#backDetails")
+							.button({
+								icons : {
+									primary : "ui-icon-triangle-1-w"
+								}
+							})
+							.click(
+									function() {
+										window.location.href = "http://muusa.org/index.php/administration/database/campers";
+										return false;
+									});
+					$("#forwardWorkshop")
+							.button({
+								icons : {
+									primary : "ui-icon-triangle-1-e"
+								}
+							})
+							.click(
+									function() {
+										window.location.href = "http://muusa.org/index.php?Itemid=222";
+										return false;
+									});
+					$("#finishPaypal").button().click(function() {
+						submit($);
+						return false;
+					});
+					$(".finishWorkshop").button().click(function() {
+						$("#paypalAmt").val("0");
+						submit($);
+						return false;
+					});
 				});
-				return false;
-			});
-			$("#donation").blur(function() {
-				donationCalc($);
-			});
-			$("#nextWorkshop").button().click(function() {
-				window.location.href = "http://muusa.org/index.php?Itemid=222";
-				return false;
-			});
-			$("#backDetails").button({ icons: { primary : "ui-icon-triangle-1-w" } }).click(function() {
-				window.location.href = "http://muusa.org/index.php/administration/database/campers";
-				return false;
-			});
-			$("#forwardWorkshop").button({ icons: { primary : "ui-icon-triangle-1-e" } }).click(function() {
-				window.location.href = "http://muusa.org/index.php?Itemid=222";
-				return false;
-			});
-			$("#finishPaypal").button().click(function() {
-				submit($);
-				return false;
-			});
-			$(".finishWorkshop").button().click(function() {
-				$("#paypalAmt").val("0");
-				submit($);
-				return false;
-			});
-		});
 
 function switchNextRow(obj) {
 	obj.parents("tr").next().is(":visible") ? obj.parents("tr").next().hide()
@@ -235,7 +257,7 @@ function recalc($, event, ui) {
 		var dummy = $("#paymentDummy");
 		var now = $.datepicker.formatDate('m/dd/yy', new Date());
 		var deposit = 0.0;
-		var total = 0.0;
+		var total = totalCharges($);
 		var registered = new Array();
 		$("#payments" + thisyear + " tr").filter(
 				function() {
@@ -285,8 +307,9 @@ function recalc($, event, ui) {
 				}).remove();
 		if (deposit == 0.0) {
 			$("#noattending").show();
-		} else if ($("#payments" + thisyear + " td.chargetype:contains('Housing Fee')")
-				.size() == 0) {
+		} else if ($(
+				"#payments" + thisyear
+						+ " td.chargetype:contains('Housing Fee')").size() == 0) {
 			var housingdepo = $("#payments" + thisyear + " tr").filter(
 					function() {
 						return $("td.chargetype", $(this)).text().contains(
@@ -301,9 +324,6 @@ function recalc($, event, ui) {
 			}
 			$(".amount", housingdepo).text("$" + deposit.toFixed(2));
 		}
-		$("#payments" + thisyear + " td.amount").each(function() {
-			total += pFloat($(this).text());
-		});
 		total += Math.abs(pFloat($("#donation").val()));
 		$("#amountNow").text("$" + total.toFixed(2));
 		$("#paypalAmt").val(total.toFixed(2));
@@ -311,10 +331,7 @@ function recalc($, event, ui) {
 }
 
 function donationCalc($) {
-	var total = 0.0;
-	$("#payments" + thisyear + " td.amount:visible").each(function() {
-		total += pFloat($(this).text());
-	});
+	var total = totalCharges($);
 	var donation = Math.abs(pFloat($("#donation").val()));
 	if (isNaN(donation)) {
 		donation = 0.0;
@@ -323,6 +340,18 @@ function donationCalc($) {
 	$("#donation").val(donation.toFixed(2));
 	$("#amountNow").text("$" + total.toFixed(2));
 	$("#paypalAmt").val(total.toFixed(2));
+}
+
+function totalCharges($) {
+	var total = 0.0;
+	$("#payments" + thisyear + " td.amount").each(function() {
+		total += pFloat($(this).text());
+	});
+	$("#payments" + thisyear + " input[name*='charges-amount']").each(
+			function() {
+				total += pFloat($(this).val());
+			});
+	return total;
 }
 
 function submit($) {

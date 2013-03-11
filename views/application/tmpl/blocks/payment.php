@@ -8,8 +8,9 @@
  * @param   object  $credits  The database credits list for one year
  *
  */
+$serverCharges = array("1000", "1002", "1003", "1004");
 ?>
-<table id="payments<?php echo $year;?>" width="98%" align="center">
+<table id="payments<?php echo $year;?>">
    <tr>
       <td width="20%"><strong>Charge Type</strong></td>
       <td width="15%" align="right"><strong>Amount</strong>
@@ -21,13 +22,17 @@
    $total = 0.0;
    if($charges) {
       foreach($charges as $charge) {
-         echo "           <tr>\n";
-         $total += (float)preg_replace("/,/", "",  $charge->amount);
-         echo "                   <td class='chargetype'>$charge->name</td>\n";
-         echo "                   <td class='amount' align='right'>\$$charge->amount</td>\n";
-         echo "                   <td class='date' align='center'>$charge->timestamp</td>\n";
-         echo "                   <td class='memo'>$charge->memo</td>\n";
-         echo "                </tr>\n";
+         if($year != $this->year["year"] || !$this->editcamper || in_array($charge->chargetypeid, $serverCharges)) {
+            echo "           <tr>\n";
+            $total += (float)preg_replace("/,/", "",  $charge->amount);
+            echo "                   <td class='chargetype'>$charge->name</td>\n";
+            echo "                   <td class='amount' align='right'>\$$charge->amount</td>\n";
+            echo "                   <td class='date' align='center'>$charge->timestamp</td>\n";
+            echo "                   <td class='memo'>$charge->memo</td>\n";
+            echo "                </tr>\n";
+         } else {
+            include 'charge.php';
+         }
       }
       if($credits) {
          foreach($credits as $credit) {
@@ -56,7 +61,8 @@
       </td>
       <td align="right"><input type="text" id="donation"
          name="charges-amount-0"
-         class="inputtexttiny onlymoney ui-corner-all" /></td>
+         class="inputtexttiny onlymoney recalc ui-corner-all" />
+      </td>
       <td colspan='2' class="memo padleft">Please consider at least a
          $10.00 donation to the MUUSA Scholarship fund. <input
          type="hidden" name="charges-timestamp-0"
@@ -66,17 +72,9 @@
    </tr>
    <?php
    } else if($year == $this->year["year"]) {
-      echo "   <tr>\n";
-      echo "      <td><select name='charges-chargetypeid-0' class='ui-corner-all'>\n";
-      echo "          <option value='0'>Charge Type</option>\n";
-      foreach($this->chargetypes as $chargetype) {
-         echo "          <option value='$chargetype->chargetypeid'>$chargetype->name</option>\n";
-      }
-      echo "      </select></td>\n";
-      echo "      <td align='right'><input type='text' name='charges-amount-0' class='inputtexttiny onlymoney ui-corner-all' /></td>\n";
-      echo "      <td align='center'><input type='text' name='charges-timestamp-0' class='inputtexttiny birthday ui-corner-all' value='" . date("m/d/Y") . "' /></td>\n";
-      echo "      <td><input type='text' name='charges-memo-0' class='inputtext ui-corner-all' /></td>\n";
-      echo "   </tr>\n";
+      $charge = new stdClass;
+      $charge->chargeid = 0;
+      include 'charge.php';
       echo "   <tr>\n";
       echo "      <td colspan='4'><strong>$year Registration Postmark</strong> <input type='text' name='fiscalyear-postmark-0' class='birthday ui-corner-all' value='" . ($this->campers[0]->postmark != "" ? $this->campers[0]->postmark : date("m/d/Y")) . "' /></td>\n";
       echo "   </tr>\n";

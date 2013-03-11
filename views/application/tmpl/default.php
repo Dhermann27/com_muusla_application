@@ -237,6 +237,13 @@ $user =& JFactory::getUser();
                if($multiyear) {
                   echo "<div class='paymentYears'>\n";
                }
+               if(!$this->charges[$this->year["year"]]) {
+                  $year = $this->year["year"];
+                  echo "<h4>$year</h4>\n";
+                  echo "<div>\n";
+                  include 'blocks/payment.php';
+                  echo "</div>\n";
+               }
                foreach($this->charges as $year => $charges) {
                   if($multiyear) {
                      echo "<h4>$year</h4>\n";
@@ -258,7 +265,7 @@ $user =& JFactory::getUser();
          </div>
       </div>
       <?php
-      if(!$editcamper) {
+      if(!$this->editcamper) {
          foreach($this->buildings as $buildingid => $building) {
             echo "      <div id='room-$buildingid' class='dialog-message' title='" . $building["name"] . "'>\n";
             echo "         " . $building["introtext"] . "\n";

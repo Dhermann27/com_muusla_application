@@ -404,7 +404,7 @@ class muusla_applicationModelapplication extends JModel
 
    function getCharges($familyid, $where) {
       $db =& JFactory::getDBO();
-      $query = "SELECT mc.fiscalyear, mt.name, FORMAT(mc.amount,2) amount, DATE_FORMAT(mc.timestamp, '%m/%d/%Y') timestamp, mc.chargetypeid, mc.memo FROM muusa_campers ma, muusa_charges mc, muusa_chargetypes mt WHERE mc.chargetypeid=mt.chargetypeid AND mc.camperid=ma.camperid AND ma.familyid=$familyid $where ORDER BY mc.fiscalyear DESC, mc.timestamp, mc.chargetypeid, mc.camperid";
+      $query = "SELECT mc.chargeid, mc.fiscalyear, mc.chargetypeid, mt.name, FORMAT(mc.amount,2) amount, DATE_FORMAT(mc.timestamp, '%m/%d/%Y') timestamp, mc.chargetypeid, mc.memo FROM muusa_campers ma, muusa_charges mc, muusa_chargetypes mt WHERE mc.chargetypeid=mt.chargetypeid AND mc.camperid=ma.camperid AND ma.familyid=$familyid $where ORDER BY mc.fiscalyear DESC, mc.timestamp, mc.chargetypeid, mc.camperid";
       $db->setQuery($query);
       return $db->loadObjectList();
    }
@@ -480,19 +480,34 @@ class muusla_applicationModelapplication extends JModel
       }
    }
 
-   function insertCharge($obj) {
+   function upsertCharge($obj) {
       $db =& JFactory::getDBO();
       $user =& JFactory::getUser();
-      $query = "SELECT chargeid FROM muusa_charges WHERE chargetypeid=$obj->chargetypeid AND timestamp='$obj->timestamp' AND camperid=$obj->camperid";
-      $db->setQuery($query);
-      $chargeid = $db->loadResult();
-      $obj->fiscalyear = "&&(SELECT year FROM muusa_currentyear)";
-      $obj->timestamp = "&&STR_TO_DATE('$obj->timestamp', '%m/%d/%Y')";
-      if($chargeid > 0) {
-         $obj->chargeid = $chargeid;
-         $db->updateObject("muusa_charges", $obj, "chargeid");
+      if($obj->chargetypeid != "delete") {
+         $obj->amount = preg_replace("/,/", "", $obj->amount);
+         $obj->fiscalyear = "&&(SELECT year FROM muusa_currentyear)";
+         $obj->timestamp = "&&STR_TO_DATE('$obj->timestamp', '%m/%d/%Y')";
+         if($obj->chargeid < 1000) {
+            $query = "SELECT chargeid FROM muusa_charges WHERE amount=$obj->amount AND chargetypeid=$obj->chargetypeid AND camperid=$obj->camperid";
+            $db->setQuery($query);
+            $chargeid = $db->loadResult();
+            if($chargeid > 0) {
+               $obj->chargeid = $chargeid;
+               $obj->modified_by = $user->username;
+               $obj->modified_at = "&&CURRENT_TIMESTAMP";
+               $db->updateObject("muusa_charges", $obj, "chargeid");
+            } else {
+               $db->insertObject("muusa_charges", $obj);
+            }
+         } else {
+            $obj->modified_by = $user->username;
+            $obj->modified_at = "&&CURRENT_TIMESTAMP";
+            $db->updateObject("muusa_charges", $obj, "chargeid");
+         }
       } else {
-         $db->insertObject("muusa_charges", $obj);
+         $query = "DELETE FROM muusa_charges WHERE chargeid=$obj->chargeid";
+         $db->setQuery($query);
+         $db->query();
       }
       if($db->getErrorNum()) {
          JError::raiseError(500, $db->stderr());
