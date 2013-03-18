@@ -133,11 +133,11 @@ $serverCharges = array("1000", "1002", "1003", "1004");
 </table>
 <div class="padtop ui-state-highlight ui-corner-all">
    <p>
-      <span class="space left ui-icon ui-icon-info"></span> If you paid
-      a pre-registration deposit or are expecting a staff position
-      credit but do not see it here, it has been associated with a
-      different name or e-mail address. Please contact the Registrar by
-      phone or using the Contact Us link above.
+      <span class="space left ui-icon ui-icon-info"></span> If you are
+      expecting a staff position credit but do not see it here, it will
+      be entered after your registration is complete. Please contact the
+      Registrar by phone or using the Contact Us link above if you are
+      uncertain about the status of your staff credit.
    </p>
 </div>
 <?php } else {?>
