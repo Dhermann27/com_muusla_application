@@ -177,7 +177,11 @@ class muusla_applicationViewapplication extends JView
 
 
       // UGH THIS SUCKS
-      $regcampers = $model->getRegisteredCampers();
+      if($admin && preg_match('/^\d+$/', $editcamper)) {
+         $regcampers = $model->getRegisteredCampersByFamily("mf.familyid=" . $editcamper);
+      } else {
+         $regcampers = $model->getRegisteredCampersByCamper("mc.email='" . $user->email . "'");
+      }
       if(JRequest::getVar('deleteMe') == "1") {
          $msg = true;
          $this->assignRef("msg", $msg);
@@ -198,10 +202,14 @@ class muusla_applicationViewapplication extends JView
       }
       foreach($regcampers as $camper) {
          $camper->volunteers = $model->getVolunteers($camper->camperid);
+         $camper->staff = $model->getStaff($camper->camperid);
          $camper->attendees = $model->getAttendees($camper->fiscalyearid);
       }
       $this->assignRef('regcampers', $regcampers);
-      $this->assignRef('positions', $model->getPositions());
+      $this->assignRef('positions', $model->getPositions(1));
+      if($admin) {
+         $this->assignRef('paidpositions', $model->getPositions(0));
+      }
       $times = $model->getTimes();
       foreach($model->getWorkshops() as $workshop) {
          if($workshop["days"] == "MTuWThF") {

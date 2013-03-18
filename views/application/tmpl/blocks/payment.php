@@ -112,8 +112,8 @@ $serverCharges = array("1000", "1002", "1003", "1004");
          <table>
             <tr align="center">
                <td class="small"><a
-                  href="http://<?php echo $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];?>
-   #" onclick="switchNextRow(jQuery(this));">+ Pay Another Amount </a>
+                  href="http://<?php echo $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];?>#" onclick="switchNextRow(jQuery(this));">+
+                     Pay Another Amount </a>
                </td>
             </tr>
             <tr align="center" class="hidden">

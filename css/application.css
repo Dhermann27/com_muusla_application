@@ -105,3 +105,8 @@
 	width: 25em;
 	min-height: 10em;
 }
+
+#muusaApp .paidpositionlist .connectedWorkshop {
+	width: 25em;
+	min-height: 100em;
+}

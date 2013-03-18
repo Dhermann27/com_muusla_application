@@ -262,7 +262,7 @@ function recalc($, event, ui) {
 		$("#payments" + thisyear + " tr").filter(
 				function() {
 					return $("td.chargetype:contains('Registration Fee')",
-							$(this)).size() > 0
+							$(this)).size() > 0;
 				}).each(function() {
 			registered.push($("td.memo", $(this)).text());
 		});
@@ -392,8 +392,8 @@ function submit($) {
 						}
 						$("select[name*='campers'],input[name*='campers']",
 								$(this)).each(function() {
-							incName($(this), camperid)
-						})
+							incName($(this), camperid);
+						});
 						$("input[name*='phonenumbers-camperid']", $(this)).val(
 								camperid);
 						addHidden($, "roomtype_preferences-buildingids-"

@@ -57,9 +57,9 @@ class muusla_applicationModelapplication extends JModel
       return $db->loadObjectList();
    }
 
-   function getPositions() {
+   function getPositions($isshown) {
       $db =& JFactory::getDBO();
-      $query = "SELECT positionid, name FROM muusa_positions WHERE is_shown=1 ORDER BY name";
+      $query = "SELECT positionid, name FROM muusa_positions WHERE is_shown=$isshown ORDER BY name";
       $db->setQuery($query);
       return $db->loadAssocList("positionid");
    }
@@ -137,10 +137,18 @@ class muusla_applicationModelapplication extends JModel
       return $db->loadObjectList();
    }
 
-   function getRegisteredCampers() {
+   function getRegisteredCampersByFamily($where) {
       $db =& JFactory::getDBO();
       $user =& JFactory::getUser();
-      $query = "SELECT mc.camperid, mc.firstname, mc.lastname, mc.fiscalyearid, IF(mc.grade<13,0,1) shops, mc.programname FROM muusa_campers mh, muusa_family_v mf, muusa_campers_v mc  WHERE mh.email='$user->email' AND mh.familyid=mf.familyid AND mf.familyid=mc.familyid";
+      $query = "SELECT mc.camperid, mc.firstname, mc.lastname, mc.fiscalyearid, IF(mc.grade<13,0,1) shops, mc.programname FROM muusa_campers_v mc, muusa_family_v mf WHERE mf.familyid=mc.familyid AND $where";
+      $db->setQuery($query);
+      return $db->loadObjectList();
+   }
+
+   function getRegisteredCampersByCamper($where) {
+      $db =& JFactory::getDBO();
+      $user =& JFactory::getUser();
+      $query = "SELECT mcc.camperid, mcc.firstname, mcc.lastname, mcc.fiscalyearid, IF(mcc.grade<13,0,1) shops, mcc.programname FROM muusa_campers mc, muusa_family_v mf, muusa_campers_v mcc  WHERE mc.familyid=mf.familyid AND mf.familyid=mcc.familyid AND $where";
       $db->setQuery($query);
       return $db->loadObjectList();
    }
@@ -345,6 +353,14 @@ class muusla_applicationModelapplication extends JModel
       return $db->loadColumn(0);
    }
 
+   function getStaff($camperid) {
+      $db =& JFactory::getDBO();
+      $user =& JFactory::getUser();
+      $query = "SELECT positionid FROM muusa_positions_v WHERE camperid=$camperid ORDER BY positionname";
+      $db->setQuery($query);
+      return $db->loadColumn(0);
+   }
+
    function deleteOldPhonenumbers($camperids, $numbers) {
       $db =& JFactory::getDBO();
       $query = "DELETE FROM muusa_phonenumbers WHERE camperid IN ($camperids) AND phonenbrid NOT IN ($numbers)";
@@ -484,11 +500,11 @@ class muusla_applicationModelapplication extends JModel
       $db =& JFactory::getDBO();
       $user =& JFactory::getUser();
       if($obj->chargetypeid != "delete") {
+         $query = "SELECT chargeid FROM muusa_charges WHERE fiscalyear=$obj->fiscalyear AND timestamp='$obj->timestamp' AND amount=$obj->amount AND chargetypeid=$obj->chargetypeid AND camperid=$obj->camperid";
          $obj->amount = preg_replace("/,/", "", $obj->amount);
          $obj->fiscalyear = "&&(SELECT year FROM muusa_currentyear)";
          $obj->timestamp = "&&STR_TO_DATE('$obj->timestamp', '%m/%d/%Y')";
          if($obj->chargeid < 1000) {
-            $query = "SELECT chargeid FROM muusa_charges WHERE amount=$obj->amount AND chargetypeid=$obj->chargetypeid AND camperid=$obj->camperid";
             $db->setQuery($query);
             $chargeid = $db->loadResult();
             if($chargeid > 0) {

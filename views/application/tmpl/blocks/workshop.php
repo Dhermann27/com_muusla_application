@@ -95,5 +95,36 @@ $user =& JFactory::getUser();
             </ul>
          </div>
       </div>
+      <h5>Paid Positions</h5>
+      <div class="paidpositionlist">
+         <div class="right">
+            <h6>Available Paid Positions</h6>
+            <ul class="connected connectedWorkshop workshop-no">
+               <?php
+               foreach($this->paidpositions as $positionid => $position) {
+                  if(!$camper->staff || !in_array($positionid, $camper->staff)) {
+                     echo "                              <li value='$positionid' class='ui-state-default'>\n";
+                     echo "                                 " . $position["name"] . "\n";
+                     echo "                              </li>\n";
+                  }
+               }
+               ?>
+            </ul>
+         </div>
+         <div class="paid">
+            <h6 class="0">Assigned Positions</h6>
+            <ul class="connected connectedWorkshop workshop-yes">
+               <?php
+               if($camper->staff) {
+                  foreach($camper->staff as $positionid) {
+                     echo "                              <li value='$positionid' class='ui-state-default'>\n";
+                     echo "                                 " . $this->paidpositions[$positionid]["name"] . "\n";
+                     echo "                              </li>\n";
+                  }
+               }
+               ?>
+            </ul>
+         </div>
+      </div>
    </div>
 </span>

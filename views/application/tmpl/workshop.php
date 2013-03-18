@@ -15,6 +15,11 @@
    <form
       action="http://<? echo $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];?>"
       method="post">
+      <?php if($this->editcamper) {
+         echo "<input type='hidden' name='editcamper' value='$this->editcamper' />\n";
+         //echo "<div style='float: right;'><button id='forwardRoom'>Do not Save<br />Proceed to Room Selection</button></div>\n";
+         echo "<div><button id='backDetails'>Return<br />to Camper Details</button></div>\n";
+      }?>
       <table class="blog" cellpadding="0" cellspacing="0">
          <tr>
             <td valign='top'>
