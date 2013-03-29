@@ -233,7 +233,7 @@ $user =& JFactory::getUser();
                </p>
             </div>
             <?php if($this->charges) {
-               $multiyear = count($this->charges) > 1;
+               $multiyear = count($this->charges) > 1 || !$this->charges[$this->year["year"]];
                if($multiyear) {
                   echo "<div class='paymentYears'>\n";
                }

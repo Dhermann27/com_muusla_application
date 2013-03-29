@@ -11,8 +11,10 @@
    <td><select name="charges-chargetypeid-<? echo $charge->chargeid;?>"
       class="ui-corner-all">
          <option value="0">Charge Type</option>
-         <option value="delete" style="background-color: indianred">Delete Charge</option>
-         <?php foreach($this->chargetypes as $chargetype) {
+         <?php if($charge->chargeid > 0) {
+            echo "          <option value='delete' style='background-color: indianred'>Delete Charge</option>\n";
+         }
+         foreach($this->chargetypes as $chargetype) {
             $selected = $charge->chargetypeid == $chargetype->chargetypeid ? " selected" : "";
             echo "          <option value='$chargetype->chargetypeid'$selected>$chargetype->name</option>\n";
          }?>
