@@ -211,7 +211,9 @@ class muusla_applicationModelapplication extends JModel
       } else {
          $obj = new stdClass;
          $obj->fiscalyearid = $fiscalyearid;
-         $obj->postmark = $postmark != "" ? "&&STR_TO_DATE('$postmark', '%m/%d/%Y')" : "&&CURRENT_TIMESTAMP";
+         if ($postmark != "") {
+            $obj->postmark =  "&&STR_TO_DATE('$postmark', '%m/%d/%Y')";
+         }
          $obj->modified_by = $user->username;
          $obj->modified_at = "&&CURRENT_TIMESTAMP";
          $db->updateObject("muusa_fiscalyear", $obj, "fiscalyearid");
