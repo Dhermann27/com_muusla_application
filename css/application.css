@@ -11,7 +11,7 @@
 	padding-bottom: 1.25em;
 }
 
-#muusaApp p,#muusaApp ul {
+#muusaApp p, #muusaApp ul {
 	margin-bottom: 1em;
 }
 
@@ -109,4 +109,9 @@
 #muusaApp .paidpositionlist .connectedWorkshop {
 	width: 25em;
 	min-height: 100em;
+}
+
+#muusaApp .connectedRoomlist {
+	min-width: 25em;
+	min-height: 10em;
 }

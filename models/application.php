@@ -140,7 +140,7 @@ class muusla_applicationModelapplication extends JModel
    function getRegisteredCampersByFamily($where) {
       $db =& JFactory::getDBO();
       $user =& JFactory::getUser();
-      $query = "SELECT mc.camperid, mc.firstname, mc.lastname, mc.fiscalyearid, IF(mc.grade<13,0,1) shops, mc.programname FROM muusa_campers_v mc, muusa_family_v mf WHERE mf.familyid=mc.familyid AND $where";
+      $query = "SELECT mc.camperid, mc.firstname, mc.lastname, mc.fiscalyearid, IF(mc.grade<13,0,1) shops, mc.programname FROM muusa_campers_v mc, muusa_family_v mf WHERE mf.familyid=mc.familyid AND $where ORDER BY STR_TO_DATE(mc.birthdate, '%m/%d/%Y')";
       $db->setQuery($query);
       return $db->loadObjectList();
    }
@@ -148,7 +148,7 @@ class muusla_applicationModelapplication extends JModel
    function getRegisteredCampersByCamper($where) {
       $db =& JFactory::getDBO();
       $user =& JFactory::getUser();
-      $query = "SELECT mcc.camperid, mcc.firstname, mcc.lastname, mcc.fiscalyearid, IF(mcc.grade<13,0,1) shops, mcc.programname FROM muusa_campers mc, muusa_family_v mf, muusa_campers_v mcc  WHERE mc.familyid=mf.familyid AND mf.familyid=mcc.familyid AND $where";
+      $query = "SELECT mcc.camperid, mcc.firstname, mcc.lastname, mcc.fiscalyearid, IF(mcc.grade<13,0,1) shops, mcc.programname FROM muusa_campers mc, muusa_family_v mf, muusa_campers_v mcc  WHERE mc.familyid=mf.familyid AND mf.familyid=mcc.familyid AND $where ORDER BY STR_TO_DATE(mc.birthdate, '%m/%d/%Y')";
       $db->setQuery($query);
       return $db->loadObjectList();
    }
