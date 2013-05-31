@@ -159,6 +159,13 @@ class muusla_applicationViewapplication extends JView
                array_push($credits[$credit->fiscalyear], $credit);
             }
          }
+         foreach($model->getScholarships($family->familyid, $admin ? "" : "AND mf.fiscalyear=" . $year["year"]) as $credit) {
+            if($credits[$credit->fiscalyear] == null) {
+               $credits[$credit->fiscalyear] = array($credit);
+            } else {
+               array_push($credits[$credit->fiscalyear], $credit);
+            }
+         }
          $this->assignRef('credits', $credits);
       }
       $this->assignRef('campers', $campers);

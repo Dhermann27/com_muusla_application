@@ -440,6 +440,17 @@ class muusla_applicationModelapplication extends JModel
       return $db->loadObjectList();
    }
 
+   function getScholarships($familyid, $where) {
+      $db =& JFactory::getDBO();
+      $query = "SELECT mf.fiscalyear, IF(ms.is_muusa,'MUUSA Scholarship','YMCA Scholarship') positionname, ROUND(ms.registration_pct * mrr.amount, 2) registration_amount, ";
+      $query .= "IF(mrh.amount>50, ROUND(ms.housing_pct * mrh.amount, 2), -50) housing_amount FROM	(muusa_campers mc, muusa_fiscalyear mf, muusa_scholarships ms) ";
+      $query .= "LEFT JOIN muusa_charges mrr ON mc.camperid=mrr.camperid AND mrr.chargetypeid=1003 AND mrr.fiscalyear=mf.fiscalyear ";
+      $query .= "LEFT JOIN muusa_charges mrh ON mc.camperid=mrh.camperid AND mrh.chargetypeid=1000 AND mrh.fiscalyear=mf.fiscalyear ";
+      $query .= "WHERE  mc.camperid=mf.camperid AND mf.fiscalyearid=ms.fiscalyearid AND mc.familyid=$familyid $where ORDER BY mc.birthdate";
+      $db->setQuery($query);
+      return $db->loadObjectList();
+   }
+
    function calculateCharges($familyid) {
       $db =& JFactory::getDBO();
       $user =& JFactory::getUser();
