@@ -66,7 +66,7 @@ class muusla_applicationViewapplication extends JView
                         }
                      }
                   }
-                  if(count($calls["phonenumbers"])) {
+                  if(count($calls["charges"])) {
                      foreach($calls["charges"] as $charge) {
                         $charge->camperid = $newcamperid;
                      }
@@ -92,7 +92,7 @@ class muusla_applicationViewapplication extends JView
             if(count($calls["charges"]) > 0) {
                foreach($calls["charges"] as $charge) {
                   if($charge->amount != 0) {
-                     $model->upsertCharge($charge);
+                     $model->upsertCharge($charge, $newcamperid);
                   }
                }
             }
@@ -207,10 +207,22 @@ class muusla_applicationViewapplication extends JView
             $model->insertVolunteer($volunteer);
          }
       }
+      if(count($calls["scholarships"]) > 0) {
+         foreach($calls["scholarships"] as $scholarshipid => $scholarship) {
+            if($scholarship->registration_pct > 0 || $scholarship->housing_pct > 0) {
+               $scholarship->scholarshipid = $scholarshipid;
+               $model->upsertScholarship($scholarship);
+            } else {
+               $model->deleteScholarship($scholarshipid);
+            }
+         }
+      }
       foreach($regcampers as $camper) {
          $camper->volunteers = $model->getVolunteers($camper->camperid);
          $camper->staff = $model->getStaff($camper->camperid);
          $camper->attendees = $model->getAttendees($camper->fiscalyearid);
+         $camper->scholarshipMuusa = $model->getIndScholarships($camper->fiscalyearid, 1);
+         $camper->scholarshipYmca = $model->getIndScholarships($camper->fiscalyearid, 0);
       }
       $this->assignRef('regcampers', $regcampers);
       $this->assignRef('positions', $model->getPositions(1));

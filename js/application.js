@@ -142,7 +142,7 @@ jQuery(document)
 							})
 							.click(
 									function() {
-										window.location.href = "http://muusa.org/index.php/administration/database/campers";
+										window.location.href = "http://muusa.org/index.php/admin/database/campers";
 										return false;
 									});
 					$("#forwardWorkshop")

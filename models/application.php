@@ -443,12 +443,42 @@ class muusla_applicationModelapplication extends JModel
    function getScholarships($familyid, $where) {
       $db =& JFactory::getDBO();
       $query = "SELECT mf.fiscalyear, IF(ms.is_muusa,'MUUSA Scholarship','YMCA Scholarship') positionname, ROUND(ms.registration_pct * mrr.amount, 2) registration_amount, ";
-      $query .= "IF(mrh.amount>50, ROUND(ms.housing_pct * mrh.amount, 2), -50) housing_amount FROM	(muusa_campers mc, muusa_fiscalyear mf, muusa_scholarships ms) ";
+      $query .= "IF(ms.housing_pct>0,GREATEST(ROUND(ms.housing_pct * mrh.amount, 2), 50),0) housing_amount FROM	(muusa_campers mc, muusa_fiscalyear mf, muusa_scholarships ms) ";
       $query .= "LEFT JOIN muusa_charges mrr ON mc.camperid=mrr.camperid AND mrr.chargetypeid=1003 AND mrr.fiscalyear=mf.fiscalyear ";
-      $query .= "LEFT JOIN muusa_charges mrh ON mc.camperid=mrh.camperid AND mrh.chargetypeid=1000 AND mrh.fiscalyear=mf.fiscalyear ";
+      $query .= "LEFT JOIN muusa_charges mrh ON mc.camperid=mrh.camperid AND mrh.chargetypeid IN (1000,1004) AND mrh.fiscalyear=mf.fiscalyear ";
       $query .= "WHERE  mc.camperid=mf.camperid AND mf.fiscalyearid=ms.fiscalyearid AND mc.familyid=$familyid $where ORDER BY mc.birthdate";
       $db->setQuery($query);
       return $db->loadObjectList();
+   }
+
+   function getIndScholarships($fiscalyearid, $ismuusa) {
+      $db =& JFactory::getDBO();
+      $query = "SELECT scholarshipid, registration_pct, housing_pct FROM muusa_scholarships WHERE fiscalyearid=$fiscalyearid AND is_muusa=$ismuusa";
+      $db->setQuery($query);
+      return $db->loadObject();
+   }
+
+   function upsertScholarship($obj) {
+      $db =& JFactory::getDBO();
+      $user =& JFactory::getUser();
+      $obj->registration_pct =$obj->registration_pct / 100;
+      $obj->housing_pct =$obj->housing_pct / 100;
+      if($obj->scholarshipid < 1000) {
+         unset($obj->scholarshipid);
+         $db->insertObject("muusa_scholarships", $obj);
+      } else {
+         $db->updateObject("muusa_scholarships", $obj, "scholarshipid");
+      }
+   }
+
+   function deleteScholarship($scholarshipid) {
+      $db =& JFactory::getDBO();
+      $query = "DELETE FROM muusa_scholarships WHERE scholarshipid=$scholarshipid";
+      $db->setQuery($query);
+      $db->query();
+      if($db->getErrorNum()) {
+         JError::raiseError(500, $db->stderr());
+      }
    }
 
    function calculateCharges($familyid) {
@@ -509,11 +539,12 @@ class muusla_applicationModelapplication extends JModel
       }
    }
 
-   function upsertCharge($obj) {
+   function upsertCharge($obj, $camperid) {
       $db =& JFactory::getDBO();
       $user =& JFactory::getUser();
       if($obj->chargetypeid != "delete") {
-         $query = "SELECT chargeid FROM muusa_charges WHERE fiscalyear=$obj->fiscalyear AND timestamp='$obj->timestamp' AND amount=$obj->amount AND chargetypeid=$obj->chargetypeid AND camperid=$obj->camperid";
+         $query = "SELECT chargeid FROM muusa_charges WHERE camperid=$camperid AND timestamp='$obj->timestamp' AND amount=$obj->amount AND chargetypeid=$obj->chargetypeid AND memo='$obj->memo'";
+         $obj->camperid = $camperid;
          $obj->amount = preg_replace("/,/", "", $obj->amount);
          $obj->fiscalyear = "&&(SELECT year FROM muusa_currentyear)";
          $obj->timestamp = "&&STR_TO_DATE('$obj->timestamp', '%m/%d/%Y')";
