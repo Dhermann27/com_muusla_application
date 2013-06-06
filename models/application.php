@@ -59,7 +59,7 @@ class muusla_applicationModelapplication extends JModel
 
    function getPositions($isshown) {
       $db =& JFactory::getDBO();
-      $query = "SELECT positionid, name FROM muusa_positions WHERE is_shown=$isshown ORDER BY name";
+      $query = "SELECT mp.positionid, mp.name FROM muusa_positions mp, muusa_currentyear my WHERE mp.start_year<=my.year AND mp.end_year>my.year AND is_shown=$isshown ORDER BY name";
       $db->setQuery($query);
       return $db->loadAssocList("positionid");
    }
@@ -443,9 +443,9 @@ class muusla_applicationModelapplication extends JModel
    function getScholarships($familyid, $where) {
       $db =& JFactory::getDBO();
       $query = "SELECT mf.fiscalyear, IF(ms.is_muusa,'MUUSA Scholarship','YMCA Scholarship') positionname, ROUND(ms.registration_pct * mrr.amount, 2) registration_amount, ";
-      $query .= "IF(ms.housing_pct>0,GREATEST(ROUND(ms.housing_pct * mrh.amount, 2), 50),0) housing_amount FROM	(muusa_campers mc, muusa_fiscalyear mf, muusa_scholarships ms) ";
+      $query .= "ROUND(ms.housing_pct * mrh.amount, 2) housing_amount FROM (muusa_campers mc, muusa_fiscalyear mf, muusa_scholarships ms) ";
       $query .= "LEFT JOIN muusa_charges mrr ON mc.camperid=mrr.camperid AND mrr.chargetypeid=1003 AND mrr.fiscalyear=mf.fiscalyear ";
-      $query .= "LEFT JOIN muusa_charges mrh ON mc.camperid=mrh.camperid AND mrh.chargetypeid IN (1000,1004) AND mrh.fiscalyear=mf.fiscalyear ";
+      $query .= "LEFT JOIN muusa_charges mrh ON mc.camperid=mrh.camperid AND mrh.chargetypeid=1000 AND mrh.fiscalyear=mf.fiscalyear ";
       $query .= "WHERE  mc.camperid=mf.camperid AND mf.fiscalyearid=ms.fiscalyearid AND mc.familyid=$familyid $where ORDER BY mc.birthdate";
       $db->setQuery($query);
       return $db->loadObjectList();
@@ -484,7 +484,7 @@ class muusla_applicationModelapplication extends JModel
    function calculateCharges($familyid) {
       $db =& JFactory::getDBO();
       $user =& JFactory::getUser();
-      $query = "SELECT camperid, firstname, lastname, birthdate, age, gradeoffset, IFNULL(roomid,0) roomid FROM muusa_campers_v WHERE familyid=$familyid";
+      $query = "SELECT camperid, firstname, lastname, birthdate, age, gradeoffset, days, IFNULL(roomid,0) roomid FROM muusa_campers_v WHERE familyid=$familyid";
       $db->setQuery($query);
       $campers = $db->loadObjectList();
       $camperids = $db->loadColumn(0);
@@ -505,7 +505,7 @@ class muusla_applicationModelapplication extends JModel
          foreach($campers as $camper) {
             $obj = new stdClass;
             $obj->camperid = $camper->camperid;
-            $obj->amount = "&&muusa_programs_fee_f(STR_TO_DATE('$camper->birthdate', '%m/%d/%Y'), $camper->gradeoffset)";
+            $obj->amount = "&&LEAST(muusa_programs_fee_f(STR_TO_DATE('$camper->birthdate', '%m/%d/%Y'), $camper->gradeoffset),($camper->days*30))";
             $obj->memo = $camper->firstname . " " . $camper->lastname;
             $obj->chargetypeid = "1003";
             $obj->timestamp = date("Y-m-d");

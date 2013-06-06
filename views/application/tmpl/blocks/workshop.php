@@ -3,8 +3,9 @@
  * workshop.php
  * XHTML Block containing the workshop selection block
  *
- * @param   object  $index  -1 for hidden
- * @param   object  $camper     The database camper object if the camper exists
+ * @param   object  $index           -1 for hidden
+ * @param   object  $camper          The database camper object if the camper exists
+ * @param   object  $scholarshipNum  The dummy number for scholarship IDs
  *
  */
 $user =& JFactory::getUser();
@@ -130,7 +131,7 @@ $user =& JFactory::getUser();
       <div class="scholarshiplist">
          <table>
             <tr>
-               <?php $muusaid = $camper->scholarshipMuusa->scholarshipid > 0 ? $camper->scholarshipMuusa->scholarshipid : 0;?>
+               <?php $muusaid = $camper->scholarshipMuusa->scholarshipid > 0 ? $camper->scholarshipMuusa->scholarshipid : $scholarshipNum++;?>
                <td><strong>MUUSA Scholarship</strong></td>
                <td>Registration Percentage: <input type="text"
                   name="scholarships-registration_pct-<?php echo $muusaid;?>"
@@ -152,7 +153,7 @@ $user =& JFactory::getUser();
                   value="1" />
                </td>
             </tr>
-            <?php $ymcaid = $camper->scholarshipYmca->scholarshipid > 0 ? $camper->scholarshipYmca->scholarshipid : 1;?>
+            <?php $ymcaid = $camper->scholarshipYmca->scholarshipid > 0 ? $camper->scholarshipYmca->scholarshipid : $scholarshipNum++;?>
             <tr>
                <td><strong>YMCA Scholarship</strong></td>
                <td>Registration Percentage: <input type="text"
