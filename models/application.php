@@ -444,10 +444,11 @@ class muusla_applicationModelapplication extends JModel
 
    function getScholarships($familyid, $where) {
       $db =& JFactory::getDBO();
-      $query = "SELECT mf.fiscalyear, IF(ms.is_muusa,'MUUSA Scholarship','YMCA Scholarship') positionname, ROUND(ms.registration_pct * mrr.amount, 2) registration_amount, ROUND(ms.housing_pct * (SELECT muusa_ymcafees_f(mc.camperid)) +";
-      $query .= "IF(ms.is_muusa=1,IFNULL((SELECT mss.housing_pct * GREATEST(mrh.amount - muusa_ymcafees_f(mc.camperid), 0) FROM muusa_scholarships mss WHERE ms.fiscalyearid=mss.fiscalyearid AND mss.is_muusa=0),0),0), 2) housing_amount FROM (muusa_campers mc, muusa_fiscalyear mf, muusa_scholarships ms) ";
+      $query = "SELECT mf.fiscalyear, IF(ms.is_muusa,'MUUSA Scholarship','YMCA Scholarship') positionname, ROUND(ms.registration_pct * mrr.amount, 2) registration_amount, ";
+      $query .= "ROUND(IF(ms.is_muusa=0,ms.housing_pct * (SELECT muusa_ymcafees_f(mc.camperid)),ms.housing_pct * mrh.amount + IFNULL(mss.housing_pct * (mrh.amount - muusa_ymcafees_f(mc.camperid)),0)), 2) housing_amount FROM (muusa_campers mc, muusa_fiscalyear mf, muusa_scholarships ms) ";
       $query .= "LEFT JOIN muusa_charges mrr ON mc.camperid=mrr.camperid AND mrr.chargetypeid=1003 AND mrr.fiscalyear=mf.fiscalyear ";
       $query .= "LEFT JOIN muusa_charges mrh ON mc.camperid=mrh.camperid AND mrh.chargetypeid=1000 AND mrh.fiscalyear=mf.fiscalyear ";
+      $query .= "LEFT JOIN muusa_scholarships mss ON ms.fiscalyearid=mss.fiscalyearid AND mss.is_muusa=0 ";
       $query .= "WHERE  mc.camperid=mf.camperid AND mf.fiscalyearid=ms.fiscalyearid AND mc.familyid=$familyid $where ORDER BY mc.birthdate";
       $db->setQuery($query);
       return $db->loadObjectList();
