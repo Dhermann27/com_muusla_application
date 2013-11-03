@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <metadata>
-        <layout title="Application: Workshop">
+        <layout title="Room Selection">
                 <message>
                         <![CDATA[COM_MUUSA_APPLICATION_ROOMSELECTION_VIEW_DEFAULT_DESC]]>
                 </message>
