@@ -46,20 +46,6 @@ jQuery(document)
 						setTimeout("jQuery('#paypalForm').submit();", 1000);
 					}
 					$(".radios").buttonset();
-					$(".add").button({
-						icons : {
-							primary : "ui-icon-plus"
-						},
-						text : false
-					}).click(function() {
-						addRow($(this), "tr");
-						return false;
-					});
-					$(".birthday").datepicker({
-						yearRange : (thisyear - 100) + ":" + thisyear,
-						changeMonth : true,
-						changeYear : true
-					});
 					$(".roomtypes").accordion({
 						collapsible : true,
 						heightStyle : "content",
@@ -85,15 +71,6 @@ jQuery(document)
 								$(this).dialog("close");
 							}
 						}
-					});
-					$(".delete").button({
-						icons : {
-							primary : "ui-icon-minus"
-						},
-						text : false
-					}).click(function() {
-						hideThis($(this).parents("tr"));
-						return false;
 					});
 					$("#nextCamper").button().click(function() {
 						$("#muusaApp").tabs({
@@ -168,17 +145,11 @@ jQuery(document)
 				});
 
 function switchNextRow(obj) {
-	obj.parents("tr").next().is(":visible") ? obj.parents("tr").next().hide()
-			: obj.parents("tr").next().show();
+	obj.parents("tr").next().toggle();
 }
 
 function openLink(obj) {
 	eval("jQuery(\"#room-" + obj.parents("li").val() + "\").dialog(\"open\");");
-}
-
-function addRow(obj, type) {
-	hiddenRow = obj.parents(type).nextAll(type + ".hidden").first();
-	hiddenRow.clone(true).removeClass("hidden").insertBefore(hiddenRow).show();
 }
 
 function trap($, event, ui) {
@@ -194,33 +165,6 @@ function trap($, event, ui) {
 			function() {
 				if (!errorCheck(event, $(this), $(this).val() == 0,
 						"Please select a value")) {
-					return false;
-				}
-			});
-	$(".onlydigits:visible", panel).each(
-			function() {
-				if (!errorCheck(event, $(this), !/^\d*$/.test($(this).val()
-						.replace(/-/g, "")), "Only numbers are allowed")) {
-					return false;
-				}
-			});
-	$(".validday:visible", panel)
-			.each(
-					function() {
-						if (!errorCheck(
-								event,
-								$(this),
-								!/^([1-9]|0[1-9]|1[012])\/([1-9]|0[1-9]|[12][0-9]|3[01])\/[0-9]{4}$/
-										.test($(this).val()),
-								"Must be a valid date in MM/DD/YYYY format")) {
-							return false;
-						}
-					});
-	$(".validphone:visible", panel).each(
-			function() {
-				if (!errorCheck(event, $(this), !/^\d{0,10}$/.test($(this)
-						.val().replace(/\D/g, "")),
-						"Must be a valid 10-digit phone number")) {
 					return false;
 				}
 			});
@@ -404,12 +348,6 @@ function submit($) {
 	$("#muusaApp").closest("form").submit();
 }
 
-function incName(obj, count) {
-	if (obj.attr("name") != undefined && !obj.attr("name").match(/\d+$/)) {
-		obj.attr("name", obj.attr("name") + count);
-	}
-}
-
 function addHidden($, fieldname, selector) {
 	var arr = new Array();
 	selector.each(function() {
@@ -437,28 +375,4 @@ function findFee(birthday, grade) {
 		}
 	}
 	return 0.0;
-}
-
-function getAge(dateString) {
-	var birthDate = new Date(dateString);
-	var age = campDate.getFullYear() - birthDate.getFullYear();
-	var m = campDate.getMonth() - birthDate.getMonth();
-	if (m < 0 || (m === 0 && campDate.getDate() < birthDate.getDate())) {
-		age--;
-	}
-	return age;
-}
-
-function hideThis(obj) {
-	obj.remove();
-}
-
-function pInt(val) {
-	return val != undefined && val != "" ? parseInt(val.replace(/[^0-9\.-]+/g,
-			""), 10) : 0;
-}
-
-function pFloat(val) {
-	return val != undefined && val != "" ? parseFloat(val.replace(
-			/[^0-9\.-]+/g, "")) : 0.0;
 }
