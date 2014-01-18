@@ -18,7 +18,7 @@ input.spinner {
 </style>
 <div id="ja-content">
    <div class="componentheading">MUUSA Camp Cost Calculator</div>
-   <table class="blog" cellpadding="0" cellspacing="0">
+   <table class="blog">
       <tr>
          <td valign="top">
             <div>
@@ -28,7 +28,7 @@ input.spinner {
                   costs and volunteer credits. You should <i>not</i> use
                   this page to precisely determine your camp costs.
                </h3>
-               <table width="100%">
+               <table>
                   <tr align="center">
                      <td>&nbsp;</td>
                      <td>Number<br /> Attending
@@ -42,7 +42,7 @@ input.spinner {
                      <td align="center"><input id="muusa_adults_num"
                         class="spinner" /></td>
                      <td><select id="muusa_adults_hou"
-                        class="ui-corner-all" onchange="muusaCalc();">
+                        class="ui-corner-all" onchange="muusaCalc(jQuery);">
                            <option value="0" selected>Select one</option>
                            <option value="1">Guestroom, Cabin, or Loft
                               ($520+)</option>
@@ -58,7 +58,7 @@ input.spinner {
                      <td align="center"><input id="muusa_ya_num"
                         class="spinner" /></td>
                      <td><select id="muusa_ya_hou" class="ui-corner-all"
-                        onchange="muusaCalc();">
+                        onchange="muusaCalc(jQuery);">
                            <option value="0" selected>Select one</option>
                            <option value="1">YA Cabin ($355)</option>
                            <option value="2">Tent Camping ($282)</option>

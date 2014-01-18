@@ -1,12 +1,12 @@
-$(window).load(function() {
+jQuery(document).ready(function($) {
 	$(".spinner").spinner({
 		stop : function() {
-			muusaCalc();
+			muusaCalc($);
 		}
 	});
 });
 
-function muusaCalc() {
+function muusaCalc($) {
 	var duereg = 0.0;
 	var duearr = 0.0;
 	var adults_num = $("#muusa_adults_num").spinner("value");
