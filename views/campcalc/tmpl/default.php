@@ -1,11 +1,4 @@
 <?php defined('_JEXEC') or die('Restricted access'); ?>
-<link type="text/css"
-   href="<?php echo JURI::root(true);?>/components/com_muusla_application/css/jquery-ui-1.10.0.custom.min.css"
-   rel="stylesheet" />
-<script
-   src="<?php echo JURI::root(true);?>/components/com_muusla_application/js/jquery-1.9.1.min.js"></script>
-<script
-   src="<?php echo JURI::root(true);?>/components/com_muusla_application/js/jquery-ui-1.10.0.custom.min.js"></script>
 <script
    type="text/javascript"
    src="<?php echo JURI::root(true);?>/components/com_muusla_application/js/campcost.js"></script>

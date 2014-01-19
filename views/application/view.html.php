@@ -17,7 +17,7 @@ class muusla_applicationViewapplication extends JView
    function display($tpl = null) {
       $model =& $this->getModel();
       $user =& JFactory::getUser();
-      $editcamper = JRequest::getVar($this->getSafe("editcamper"));
+      $editcamper = $this->getSafe(JRequest::getVar("editcamper"));
       $admin = $editcamper && (in_array("8", $user->groups) || in_array("10", $user->groups));
       $calls[][] = array();
       foreach(JRequest::get() as $key=>$value) {
