@@ -38,10 +38,10 @@ input.spinner {
                         class="ui-corner-all" onchange="muusaCalc(jQuery);">
                            <option value="0" selected>Select one</option>
                            <option value="1">Guestroom, Cabin, or Loft
-                              ($520+)</option>
+                              ($540+)</option>
                            <option value="3">Camp Lakewood (dorm style,
-                              $385)</option>
-                           <option value="4">Tent Camping ($282)</option>
+                              $395)</option>
+                           <option value="4">Tent Camping ($288)</option>
                      </select></td>
                      <td align="right" id="muusa_adults_feereg">$0.00</td>
                      <td align="right" id="muusa_adults_feehouse">$0.00</td>
@@ -53,8 +53,8 @@ input.spinner {
                      <td><select id="muusa_ya_hou" class="ui-corner-all"
                         onchange="muusaCalc(jQuery);">
                            <option value="0" selected>Select one</option>
-                           <option value="1">YA Cabin ($355)</option>
-                           <option value="2">Tent Camping ($282)</option>
+                           <option value="1">YA Cabin ($370)</option>
+                           <option value="2">Tent Camping ($288)</option>
                      </select></td>
                      <td align="right" id="muusa_ya_feereg">$0.00</td>
                      <td align="right" id="muusa_ya_feehouse">$0.00</td>
@@ -63,7 +63,7 @@ input.spinner {
                      <td><b>Jr./Sr. High School</b></td>
                      <td align="center"><input id="muusa_burt_num"
                         class="spinner" /></td>
-                     <td>Burt/Meyer Cabins ($330)</td>
+                     <td>Burt/Meyer Cabins ($350)</td>
                      <td align="right" id="muusa_burt_feereg">$0.00</td>
                      <td align="right" id="muusa_burt_feehouse">$0.00</td>
                   </tr>
@@ -71,7 +71,7 @@ input.spinner {
                      <td><b>Children</b> (5 years old and older)</td>
                      <td align="center"><input id="muusa_child_num"
                         class="spinner" /></td>
-                     <td>Must room with parents ($252/$156)</td>
+                     <td>Must room with parents ($264/$162)</td>
                      <td align="right" id="muusa_child_feereg">$0.00</td>
                      <td align="right" id="muusa_child_feehouse">$0.00</td>
                   </tr>

@@ -7,29 +7,32 @@
  * @param   object  $phonenumber The database phone number object if the number exists
  *
  */
-$nbrid = $phonenumber->phonenbrid > 0 ? $phonenumber->phonenbrid : "";
+$nbrid = $phonenumber->id > 0 ? $phonenumber->id : "";
 ?>
-<tr class="phonenbrs<?echo $nbrindex == -1 ? " hidden" : "";?>">
+<tr class="phonenbrs">
    <td><?php echo $nbrindex == 0 ? "Phone Numbers" : "&nbsp;";?></td>
-   <td colspan="3"><select
-      name="phonenumbers-phonetypeid-<?php echo $nbrid;?>"
+   <td colspan="2"><select
+      name="phonenumber-phonetypeid-<?php echo $nbrid;?>"
       class="ui-corner-all">
          <?php
          foreach($this->phonetypes as $phonetype) {
-            $selected = $phonenumber->phonetypeid == $phonetype->phonetypeid ? " selected" : "";
-            echo "      <option value='$phonetype->phonetypeid'$selected>$phonetype->name</option>\n";
+            $selected = $phonenumber->phonetypeid == $phonetype->id ? " selected" : "";
+            echo "      <option value='$phonetype->id'$selected>$phonetype->name</option>\n";
          }
          ?>
    </select> <input type="text"
-      name="phonenumbers-phonenbr-<?php echo $nbrid; ?>" maxlength="14"
+      name="phonenumber-phonenbr-<?php echo $nbrid; ?>"
       class="inputtextshort validphone ui-corner-all"
-      value="<?php echo $phonenumber->phonenbr;?>" /> <input
-      type="hidden" name="phonenumbers-phonenbrid-<?php echo $nbrid; ?>"
-      value="<?php echo $phonenumber->phonenbrid?>" /><input
-      type="hidden" name="phonenumbers-camperid-<?php echo $nbrid; ?>"
+      value="<?php echo $phonenumber->phonenbr;?>" /> <?php if($nbrid >= 1000) { ?>
+      <input type="hidden" name="phonenumber-id-<?php echo $nbrid; ?>"
+      value="<?php echo $phonenumber->id?>" /> <?php }?><input
+      type="hidden" name="phonenumber-camperid-<?php echo $nbrid; ?>"
       value="<?php echo $camperid?>" />
+   </td>
+   <td>
       <button
          class="<?php echo $nbrindex == 0 ? "add" :"delete";?> help">
          <?php echo $nbrindex == 0 ? "Add Phone Number" : "Delete Phone Number";?>
-      </button></td>
+      </button>
+   </td>
 </tr>

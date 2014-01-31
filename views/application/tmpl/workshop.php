@@ -3,24 +3,15 @@
    <link type="text/css"
       href="<?php echo JURI::root(true);?>/components/com_muusla_application/css/application.css"
       rel="stylesheet" />
-   <link type="text/css"
-      href="<?php echo JURI::root(true);?>/components/com_muusla_application/css/jquery-ui-1.10.0.custom.min.css"
-      rel="stylesheet" />
-   <script
-      src="<?php echo JURI::root(true);?>/components/com_muusla_application/js/jquery-1.9.1.min.js"></script>
-   <script
-      src="<?php echo JURI::root(true);?>/components/com_muusla_application/js/jquery-ui-1.10.0.custom.min.js"></script>
    <script
       src='<?php echo JURI::root(true);?>/components/com_muusla_application/js/workshop.js'></script>
-   <form
-      action="http://<? echo $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];?>"
-      method="post">
+   <form method="post">
       <?php if($this->editcamper) {
          echo "<input type='hidden' name='editcamper' value='$this->editcamper' />\n";
          //echo "<div style='float: right;'><button id='forwardRoom'>Do not Save<br />Proceed to Room Selection</button></div>\n";
          echo "<div><button id='backDetails'>Return<br />to Camper Details</button></div>\n";
       }?>
-      <table class="blog" cellpadding="0" cellspacing="0">
+      <table class="blog">
          <tr>
             <td valign='top'>
                <div>
@@ -40,8 +31,8 @@
                         <span class="ui-icon ui-icon-info"
                            style="float: left; margin: 1em;"></span> You
                         have successfully signed up for workshops! Be
-                        sure to pay your balance to be assigned housing
-                        by clicking on the Register Online link above.<br />
+                        sure to pay your balance by clicking on the
+                        Register Online link above.<br />
                      </p>
                   </div>
                   <p>&nbsp;</p>

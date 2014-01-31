@@ -22,15 +22,6 @@ jQuery(document)
 						heightStyle : "content",
 						header : "h4"
 					});
-					$(".info").button({
-						icons : {
-							primary : "ui-icon-info"
-						},
-						text : false
-					}).click(function() {
-						switchNextRow($(this));
-						return false;
-					});
 					$(".link").button({
 						icons : {
 							primary : "ui-icon-image"
@@ -52,16 +43,16 @@ jQuery(document)
 						header : "h4",
 						active : false
 					});
-					$(".roomtypeSave").button().click(function() {
-						$(this).closest("div.roomtypes").accordion({
-							active : false
-						});
-						return false;
-					});
-					$(".roomtype-yes, .roomtype-no").sortable({
-						placeholder : "ui-state-highlight",
-						connectWith : ".connectedRoomtype"
-					}).disableSelection();
+					// $(".roomtypeSave").button().click(function() {
+					// $(this).closest("div.roomtypes").accordion({
+					// active : false
+					// });
+					// return false;
+					// });
+					// $(".roomtype-yes, .roomtype-no").sortable({
+					// placeholder : "ui-state-highlight",
+					// connectWith : ".connectedRoomtype"
+					// }).disableSelection();
 					$(".dialog-message").dialog({
 						modal : true,
 						autoOpen : false,
@@ -78,23 +69,16 @@ jQuery(document)
 						});
 						return false;
 					});
-					$("#addCamper").button().click(
-							function() {
-								$("#appCamper tbody.camperBody:hidden :first")
-										.show().find(
-												".roomtype-yes, .roomtype-no")
-										.sortable({
-											placeholder : "ui-state-highlight",
-											connectWith : ".connectedRoomtype"
-										}).disableSelection();
-								return false;
-							});
-					$(".removeCamper").button().click(
-							function() {
-								$(this).parents("tbody").hide().find(
-										".firstname").val("");
-								return false;
-							});
+					$("#addCamper").button().click(function() {
+						addRow($("tbody.camperBody :first"), "tbody", false);
+						return false;
+					});
+					$("#removeCamper").button().click(function() {
+						var tbody = $("tbody.camperBody");
+						if (tbody.length > 1 && !tbody.last().attr("id"))
+							tbody.last().remove();
+						return false;
+					});
 					$("#nextPayment").button().click(function() {
 						$("#muusaApp").tabs({
 							active : 2
@@ -108,7 +92,7 @@ jQuery(document)
 							.button()
 							.click(
 									function() {
-										window.location.href = "http://muusa.org/index.php?Itemid=222";
+										window.location.href = "http://muusa.org/registration/workshops";
 										return false;
 									});
 					$("#backDetails")
@@ -130,7 +114,7 @@ jQuery(document)
 							})
 							.click(
 									function() {
-										window.location.href = "http://muusa.org/index.php?Itemid=222";
+										window.location.href = "http://muusa.org/registration/workshops";
 										return false;
 									});
 					$("#finishPaypal").button().click(function() {
@@ -196,11 +180,8 @@ function errorCheck(event, obj, check, msg) {
 
 function recalc($, event, ui) {
 	if (ui.newPanel.attr("id") == "appPayment") {
-		$("#appPayment tr.dummy").remove();
+		$("#payments" + thisyear + " tr.pending").remove();
 		$("#noattending").hide();
-		var dummy = $("#paymentDummy");
-		var now = $.datepicker.formatDate('m/dd/yy', new Date());
-		var deposit = 0.0;
 		var total = totalCharges($);
 		var registered = new Array();
 		$("#payments" + thisyear + " tr").filter(
@@ -222,24 +203,22 @@ function recalc($, event, ui) {
 									+ " " + $(".lastname", $(this)).val();
 							var grade = pInt($(".grade", $(this)).val());
 							if ($.inArray(campername, registered) == -1) {
-								var newrow = dummy.clone(true).removeAttr("id")
-										.addClass("dummy").insertBefore(dummy);
+								var newrow = $("<tr class='pending'><td class='chargetype'></td><td class='amount' align='right'></td><td class='date' align='center'></td><td class='memo'></td></tr>");
 								$(".chargetype", newrow).text(
 										"Registration Fee");
 								var fee = findFee(
 										$(".birthday", $(this)).val(), grade);
+								total += fee;
 								$(".amount", newrow).text("$" + fee.toFixed(2));
-								$(".date", newrow).text(now);
+								$(".date", newrow).html("<i>Pending</i>");
 								$(".memo", newrow).text(campername);
-								newrow.show();
+								$("#payments" + thisyear + " tr").first()
+										.after(newrow);
 							}
 							registered = jQuery.grep(registered,
 									function(value) {
 										return value != campername;
 									});
-							if (grade > 6) {
-								deposit += 50.0;
-							}
 						});
 
 		$("#payments" + thisyear + " tr").filter(
@@ -249,25 +228,6 @@ function recalc($, event, ui) {
 							&& $.inArray($("td.memo", $(this)).text(),
 									registered) != -1;
 				}).remove();
-		if (deposit == 0.0) {
-			$("#noattending").show();
-		} else if ($(
-				"#payments" + thisyear
-						+ " td.chargetype:contains('Housing Fee')").size() == 0) {
-			var housingdepo = $("#payments" + thisyear + " tr").filter(
-					function() {
-						return $("td.chargetype", $(this)).text().contains(
-								"Housing Deposit");
-					});
-			if (housingdepo.size() == 0) {
-				var housingdepo = dummy.clone(true).removeAttr("id").addClass(
-						"dummy").insertBefore(dummy);
-				$(".chargetype", housingdepo).text("Housing Deposit");
-				$(".date", housingdepo).text(now);
-				housingdepo.show();
-			}
-			$(".amount", housingdepo).text("$" + deposit.toFixed(2));
-		}
 		total += Math.abs(pFloat($("#donation").val()));
 		$("#amountNow").text("$" + total.toFixed(2));
 		$("#paypalAmt").val(total.toFixed(2));
@@ -301,48 +261,31 @@ function totalCharges($) {
 function submit($) {
 	var camperCount = 100;
 	var phoneCount = 200;
-	$("#appCamper tbody.camperBody")
-			.filter(
-					function() {
-						return $(".attending", $(this)).val() != 0
-								&& $(".firstname", $(this)).val() != "";
-					})
+	$("#appCamper tbody.camperBody").filter(
+			function() {
+				return $(".attending", $(this)).val() != 0
+						&& $(".firstname", $(this)).val() != "";
+			})
 			.each(
 					function() {
-						$(".phonenbrs", $(this))
-								.filter(
-										function() {
-											return $("input[type=text]",
-													$(this)).val() != ""
-													&& $(
-															"input[name*='phonenumbers-phonenbrid']",
-															$(this)).val() == "";
-										})
-								.each(
-										function() {
-											$("select,input", $(this)).each(
-													function() {
-														incName($(this),
-																phoneCount);
-													});
-											$(
-													"input[name*='phonenumbers-phonenbrid']",
-													$(this)).val(phoneCount++);
-										});
-						var camperid = $("input[name*='campers-camperid']",
-								$(this)).val();
+						$(".phonenbrs", $(this)).each(function() {
+							$("select,input", $(this)).each(function() {
+								incName($(this), phoneCount);
+							});
+							phoneCount++;
+						});
+						var camperid = $("input[name*='camper-id']", $(this))
+								.val();
 						if (camperid == undefined) {
 							camperid = camperCount++;
 						}
-						$("select[name*='campers'],input[name*='campers']",
+						$("select[name*='camper'],input[name*='camper']",
 								$(this)).each(function() {
 							incName($(this), camperid);
 						});
-						$("input[name*='phonenumbers-camperid']", $(this)).val(
+						$("input[name*='phonenumber-camperid']", $(this)).val(
 								camperid);
-						addHidden($, "roomtype_preferences-buildingids-"
-								+ camperid, $(".roomtype-yes li", $(this)));
-						addHidden($, "roommate_preferences-names-" + camperid,
+						addHidden($, "roommatepreference-names-" + camperid,
 								$("input.roommates", $(this)));
 					});
 	$("#muusaApp").closest("form").submit();
@@ -368,9 +311,9 @@ function addHidden($, fieldname, selector) {
 function findFee(birthday, grade) {
 	var age = getAge(birthday);
 	for ( var i = 0; i < feeTable.fees.length; i++) {
-		if (age < feeTable.fees[i].agemax && age > feeTable.fees[i].agemin
-				&& grade < feeTable.fees[i].grademax
-				&& grade > feeTable.fees[i].grademin) {
+		if (age <= feeTable.fees[i].agemax && age >= feeTable.fees[i].agemin
+				&& grade <= feeTable.fees[i].grademax
+				&& grade >= feeTable.fees[i].grademin) {
 			return feeTable.fees[i].fee;
 		}
 	}

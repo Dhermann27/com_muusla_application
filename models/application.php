@@ -22,117 +22,110 @@ class muusla_applicationModelapplication extends JModel
 
    // DATA FUNCTIONS
 
-   function getBuildings() {
-      $db =& JFactory::getDBO();
-      $query = "SELECT buildingid, name, introtext FROM muusa_buildings LEFT JOIN jml_content ON title LIKE CONCAT('%', name, '%') ORDER BY name";
-      $db->setQuery($query);
-      return $db->loadAssocList("buildingid");
-   }
-
    function getChargetypes() {
       $db =& JFactory::getDBO();
-      $query = "SELECT chargetypeid, name FROM muusa_chargetypes ORDER BY name";
+      $query = "SELECT id, name FROM muusa_chargetype WHERE is_shown=1 ORDER BY name";
       $db->setQuery($query);
       return $db->loadObjectList();
    }
 
    function getChurches() {
       $db =& JFactory::getDBO();
-      $query = "SELECT churchid, name, city, statecd FROM muusa_churches ORDER BY statecd, city, name";
+      $query = "SELECT id, name, city, statecd FROM muusa_church ORDER BY statecd, city, name";
       $db->setQuery($query);
       return $db->loadObjectList();
    }
 
    function getFoodoptions() {
       $db =& JFactory::getDBO();
-      $query = "SELECT foodoptionid, name FROM muusa_foodoptions ORDER BY foodoptionid";
+      $query = "SELECT id, name FROM muusa_foodoption ORDER BY id";
       $db->setQuery($query);
       return $db->loadObjectList();
    }
 
    function getPhonetypes() {
       $db =& JFactory::getDBO();
-      $query = "SELECT phonetypeid, name FROM muusa_phonetypes";
+      $query = "SELECT id, name FROM muusa_phonetype";
       $db->setQuery($query);
       return $db->loadObjectList();
    }
 
-   function getPositions($isshown) {
+   function getVolunteerPositions() {
       $db =& JFactory::getDBO();
-      $query = "SELECT mp.positionid, mp.name FROM muusa_positions mp, muusa_currentyear my WHERE mp.start_year<=my.year AND mp.end_year>my.year AND is_shown=$isshown ORDER BY name";
+      $query = "SELECT vp.id, vp.name FROM muusa_volunteerposition vp, muusa_year y WHERE vp.start_year<=y.year AND vp.end_year>y.year ORDER BY name";
       $db->setQuery($query);
-      return $db->loadAssocList("positionid");
+      return $db->loadAssocList("id");
    }
 
    function getPrograms() {
       $db =& JFactory::getDBO();
-      $query = "SELECT name, agemax, agemin, grademax, grademin, registration_fee FROM muusa_programs";
+      $query = "SELECT p.name, p.agemax, p.agemin, p.grademax, p.grademin, p.registration_fee FROM muusa_program p, muusa_year y WHERE y.year>=p.start_year AND y.year<=p.end_year AND y.is_current=1";
       $db->setQuery($query);
       return $db->loadObjectList();
    }
 
    function getStates() {
       $db =& JFactory::getDBO();
-      $query = "SELECT statecd, name FROM muusa_states ORDER BY name";
+      $query = "SELECT code, name FROM muusa_statecode ORDER BY name";
       $db->setQuery($query);
       return $db->loadObjectList();
    }
 
    function getYear() {
       $db =& JFactory::getDBO();
-      $query = "SELECT DATE_FORMAT(date, '%M %d, %Y') date, year FROM muusa_currentyear";
+      $query = "SELECT DATE_FORMAT(date, '%M %d, %Y') date, year FROM muusa_year WHERE is_current=1";
       $db->setQuery($query);
       return $db->loadAssoc();
    }
 
    function getTimes() {
       $db =& JFactory::getDBO();
-      $query = "SELECT timeid, name, TIME_FORMAT(starttime, '%l:%i %p') start, TIME_FORMAT(ADDTIME(starttime, CONCAT(REPLACE(TRUNCATE(length, 1), '.', ':'), '0:00')), '%l:%i %p') end FROM muusa_times ORDER BY display_order";
+      $query = "SELECT id, name, TIME_FORMAT(starttime, '%l:%i %p') start, TIME_FORMAT(ADDTIME(starttime, CONCAT(REPLACE(TRUNCATE(length, 1), '.', ':'), '0:00')), '%l:%i %p') end FROM muusa_timeslot ORDER BY display_order";
       $db->setQuery($query);
-      return $db->loadAssocList("timeid");
+      return $db->loadAssocList("id");
    }
 
    function getWorkshops() {
       $db =& JFactory::getDBO();
-      $query = "SELECT timeid, CONCAT(IF(su,'S',''),IF(m,'M',''),IF(t,'Tu',''),IF(w,'W',''),IF(th,'Th',''),IF(f,'F',''),IF(sa,'S','')) days, eventid, name, introtext FROM muusa_events LEFT JOIN jml_content ON REPLACE(title, '&', '') LIKE CONCAT('%', REPLACE(name, '&', ''), '%') AND STATE=1 ORDER BY name";
+      $query = "SELECT w.timeslotid, CONCAT(IF(w.su,'S',''),IF(w.m,'M',''),IF(w.t,'Tu',''),IF(w.w,'W',''),IF(w.th,'Th',''),IF(w.f,'F',''),IF(w.sa,'S','')) days, w.id, w.name, w.subname FROM muusa_workshop w LEFT JOIN jml_content jc ON REPLACE(jc.title, '&', '') LIKE CONCAT('%', REPLACE(w.name, '&', ''), '%') AND jc.state=1 ORDER BY w.name";
       $db->setQuery($query);
-      return $db->loadAssocList("eventid");
+      return $db->loadAssocList("id");
    }
 
    // CAMPER FUNCTIONS
 
    function getFamily($where) {
       $db =& JFactory::getDBO();
-      $query = "SELECT mf.familyid, mf.familyname, mf.address1, mf.address2, mf.city, mf.statecd, mf.zipcd, mf.country FROM muusa_family mf, muusa_campers mc WHERE mf.familyid=mc.familyid AND $where";
+      $query = "SELECT f.id, f.name, f.address1, f.address2, f.city, f.statecd, f.zipcd, f.country FROM muusa_family f, muusa_camper c WHERE f.id=c.familyid AND $where";
       $db->setQuery($query);
       return $db->loadObject();
    }
 
    function upsertFamily($obj) {
       $db =& JFactory::getDBO();
-      if($obj->familyid < 1000) {
-         unset($obj->familyid);
-         $query = "SELECT familyid FROM muusa_family WHERE familyname='$obj->familyname' AND address1='$obj->address1' AND city='$obj->city'";
+      if($obj->id < 1000) {
+         unset($obj->id);
+         $query = "SELECT id FROM muusa_family WHERE name='$obj->name' AND address1='$obj->address1' AND city='$obj->city'";
          $db->setQuery($query);
          $familyid = $db->loadResult();
          if($familyid > 0) {
-            $obj->familyid = $familyid;
-            $db->updateObject("muusa_family", $obj, "familyid");
+            $obj->id = $familyid;
+            $db->updateObject("muusa_family", $obj, "id");
             return $familyid;
          } else {
-            $db->insertObject("muusa_family", $obj, "familyid");
-            return $obj->familyid;
+            $db->insertObject("muusa_family", $obj, "id");
+            return $obj->id;
          }
       } else {
-         $db->updateObject("muusa_family", $obj, "familyid");
-         return $obj->familyid;
+         $db->updateObject("muusa_family", $obj, "id");
+         return $obj->id;
       }
    }
 
    function getCampers($familyid) {
       $db =& JFactory::getDBO();
       $user =& JFactory::getUser();
-      $query = "SELECT mc.camperid, mc.firstname, mc.lastname, mc.sexcd, mc.email, DATE_FORMAT(mc.birthdate, '%m/%d/%Y') birthday, (muusa_age_f(mc.birthdate)+mc.gradeoffset) grade, mc.sponsor, mc.is_handicap, mc.foodoptionid, mc.churchid, mp.name programname, IFNULL(mv.days,0) days, IFNULL(mv.postmark,'') postmark FROM muusa_campers mc LEFT JOIN muusa_campers_v mv ON mc.camperid=mv.camperid LEFT JOIN muusa_programs mp ON muusa_age_f(mc.birthdate)<mp.agemax AND muusa_age_f(mc.birthdate)>mp.agemin AND muusa_age_f(mc.birthdate)+mc.gradeoffset<mp.grademax AND muusa_age_f(mc.birthdate)+mc.gradeoffset>mp.grademin WHERE mc.familyid=$familyid ORDER BY IF(mc.email='$user->email',0,1), mc.birthdate";
+      $query = "SELECT c.id, IFNULL(ya.id,0) yearattendingid, c.firstname, c.lastname, c.sexcd, c.email, DATE_FORMAT(c.birthdate, '%m/%d/%Y') birthday, (muusa_getage(c.birthdate, y.year)+c.gradeoffset) grade, c.sponsor, c.is_handicap, c.foodoptionid, c.churchid, p.name programname, IFNULL(ya.days,0) days FROM (muusa_camper c, muusa_program p, muusa_year y) LEFT JOIN muusa_yearattending ya ON c.id=ya.camperid AND y.year=ya.year WHERE p.id=muusa_getprogramid(c.id, y.year) AND c.familyid=$familyid AND y.is_current=1 ORDER BY IF(c.email='$user->email',0,1), c.birthdate";
       $db->setQuery($query);
       return $db->loadObjectList();
    }
@@ -140,7 +133,7 @@ class muusla_applicationModelapplication extends JModel
    function getRegisteredCampersByFamily($where) {
       $db =& JFactory::getDBO();
       $user =& JFactory::getUser();
-      $query = "SELECT mc.camperid, mc.firstname, mc.lastname, mc.fiscalyearid, IF(mc.grade<13,0,1) shops, mc.programname FROM muusa_campers_v mc, muusa_family_v mf WHERE mf.familyid=mc.familyid AND $where ORDER BY STR_TO_DATE(mc.birthdate, '%m/%d/%Y')";
+      $query = "SELECT id, firstname, lastname, yearattendingid, IF(grade<13,0,1) shops, programname FROM muusa_thisyear_camper WHERE $where ORDER BY STR_TO_DATE(c.birthdate, '%m/%d/%Y')";
       $db->setQuery($query);
       return $db->loadObjectList();
    }
@@ -148,7 +141,7 @@ class muusla_applicationModelapplication extends JModel
    function getRegisteredCampersByCamper($where) {
       $db =& JFactory::getDBO();
       $user =& JFactory::getUser();
-      $query = "SELECT mcc.camperid, mcc.firstname, mcc.lastname, mcc.fiscalyearid, IF(mcc.grade<13,0,1) shops, mcc.programname FROM muusa_campers mc, muusa_family_v mf, muusa_campers_v mcc  WHERE mc.familyid=mf.familyid AND mf.familyid=mcc.familyid AND $where ORDER BY STR_TO_DATE(mc.birthdate, '%m/%d/%Y')";
+      $query = "SELECT tc.id, tc.firstname, tc.lastname, tc.yearattendingid, IF(tc.grade<13,0,1) shops, tc.programname FROM muusa_thisyear_camper tc, muusa_camper c WHERE tc.familyid=c.familyid AND $where ORDER BY STR_TO_DATE(tc.birthdate, '%m/%d/%Y')";
       $db->setQuery($query);
       return $db->loadObjectList();
    }
@@ -156,121 +149,55 @@ class muusla_applicationModelapplication extends JModel
    function upsertCamper($obj) {
       $db =& JFactory::getDBO();
       unset($obj->attending);
-      $obj->gradeoffset = $obj->grade < 13 ? "&&$obj->grade-muusa_age_f(STR_TO_DATE('$obj->birthdate', '%m/%d/%Y'))" : "-5";
+      $obj->gradeoffset = $obj->grade != "13" ? "&&" . $obj->grade . "-muusa_getage(STR_TO_DATE('$obj->birthdate', '%m/%d/%Y'), (SELECT year FROM muusa_year WHERE is_current=1))" : "-5";
       unset($obj->grade);
       $obj->birthdate = "&&STR_TO_DATE('$obj->birthdate', '%m/%d/%Y')";
-      if($obj->camperid < 1000) {
-         unset($obj->camperid);
-         $query = "SELECT camperid FROM muusa_campers WHERE firstname='$obj->firstname' AND lastname='$obj->lastname' AND email='$obj->email'";
+      if($obj->id < 1000) {
+         unset($obj->id);
+         $query = "SELECT id FROM muusa_camper WHERE firstname='$obj->firstname' AND lastname='$obj->lastname' AND email='$obj->email'";
          $db->setQuery($query);
          $camperid = $db->loadResult();
          if($camperid > 0) {
-            $obj->camperid = $camperid;
-            $db->updateObject("muusa_campers", $obj, "camperid");
+            $obj->id = $camperid;
+            $db->updateObject("muusa_camper", $obj, "id");
             return $camperid;
          } else {
-            $db->insertObject("muusa_campers", $obj, "camperid");
-            return $obj->camperid;
+            $db->insertObject("muusa_camper", $obj, "id");
+            return $obj->id;
          }
       } else {
-         $db->updateObject("muusa_campers", $obj, "camperid");
-         return $obj->camperid;
+         $db->updateObject("muusa_camper", $obj, "id");
+         return $obj->id;
       }
    }
 
    function getPhonenumbers($camperid) {
       $db =& JFactory::getDBO();
-      $query = "SELECT mp.phonenbrid, mt.phonetypeid phonetypeid, mt.name phonetypename, CONCAT(left(mp.phonenbr,3) , '-' , mid(mp.phonenbr,4,3) , '-', right(mp.phonenbr,4)) phonenbr FROM muusa_phonenumbers mp, muusa_phonetypes mt WHERE mp.phonetypeid=mt.phonetypeid AND camperid=$camperid ORDER BY phonenbrid";
+      $query = "SELECT n.id, nt.id phonetypeid, nt.name phonetypename, CONCAT(left(n.phonenbr,3) , '-' , mid(n.phonenbr,4,3) , '-', right(n.phonenbr,4)) phonenbr FROM muusa_phonenumber n, muusa_phonetype nt WHERE n.phonetypeid=nt.id AND n.camperid=$camperid ORDER BY id";
       $db->setQuery($query);
       return $db->loadObjectList();
    }
 
-   function getFiscalyear($camperid) {
-      $db =& JFactory::getDBO();
-      $query = "SELECT mf.fiscalyearid FROM muusa_fiscalyear mf, muusa_currentyear my WHERE mf.fiscalyear=my.year AND mf.camperid=$camperid";
-      $db->setQuery($query);
-      return $db->loadResult();
-   }
-
-   function upsertFiscalyear($camperid, $postmark) {
+   function upsertYearattending($camperid) {
       $db =& JFactory::getDBO();
       $user =& JFactory::getUser();
-      $query = "SELECT mf.fiscalyearid FROM muusa_fiscalyear mf, muusa_currentyear my WHERE mf.fiscalyear=my.year AND mf.camperid=$camperid";
+      $query = "SELECT IFNULL(ya.id, 0), y.year FROM muusa_year y LEFT JOIN muusa_yearattending ya ON ya.year=y.year AND ya.camperid=$camperid WHERE y.is_current=1";
       $db->setQuery($query);
-      $fiscalyearid = $db->loadResult();
-      if(!$fiscalyearid) {
+      $yearattending = $db->loadRow();
+      if($yearattending[0] == 0) {
          $obj = new stdClass;
          $obj->camperid = $camperid;
-         $obj->fiscalyear = "&&(SELECT year FROM muusa_currentyear)";
-         $obj->days = 6;
-         $obj->postmark = $postmark != "" ? "&&STR_TO_DATE('$postmark', '%m/%d/%Y')" : "&&CURRENT_TIMESTAMP";
+         $obj->year = $yearattending[1];
          $obj->created_by = $user->username;
-         $obj->created_at = "&&CURRENT_TIMESTAMP";
-         $db->insertObject("muusa_fiscalyear", $obj, "fiscalyearid");
-         $fiscalyearid = $obj->fiscalyearid;
-      } else {
-         $obj = new stdClass;
-         $obj->fiscalyearid = $fiscalyearid;
-         if ($postmark != "") {
-            $obj->postmark =  "&&STR_TO_DATE('$postmark', '%m/%d/%Y')";
-         }
-         $obj->modified_by = $user->username;
-         $obj->modified_at = "&&CURRENT_TIMESTAMP";
-         $db->updateObject("muusa_fiscalyear", $obj, "fiscalyearid");
+         $db->insertObject("muusa_yearattending", $obj, "id");
+         $yearattending[0] = $obj->id;
       }
-      return $fiscalyearid;
+      return $yearattending[0];
    }
 
-   function removeFiscalyear($camperid) {
+   function deleteYearattending($camperid) {
       $db =& JFactory::getDBO();
-      $query = "SELECT mf.fiscalyearid FROM muusa_fiscalyear mf, muusa_currentyear my WHERE mf.fiscalyear=my.year AND mf.camperid=$camperid";
-      $db->setQuery($query);
-      $fiscalyearid = $db->loadResult();
-
-      if($fiscalyearid > 0) {
-         $query = "DELETE FROM muusa_fiscalyear WHERE fiscalyearid=$fiscalyearid";
-         $db->setQuery($query);
-         $db->query();
-         if($db->getErrorNum()) {
-            JError::raiseError(500, $db->stderr());
-         }
-
-         $query = "DELETE FROM muusa_charges WHERE camperid=$camperid AND fiscalyear=(SELECT year FROM muusa_currentyear)";
-         $db->setQuery($query);
-         $db->query();
-         if($db->getErrorNum()) {
-            JError::raiseError(500, $db->stderr());
-         }
-
-         $query = "DELETE FROM muusa_volunteers WHERE fiscalyearid=$fiscalyearid";
-         $db->setQuery($query);
-         $db->query();
-         if($db->getErrorNum()) {
-            JError::raiseError(500, $db->stderr());
-         }
-
-         $query = "DELETE FROM muusa_attendees WHERE fiscalyearid=$fiscalyearid";
-         $db->setQuery($query);
-         $db->query();
-         if($db->getErrorNum()) {
-            JError::raiseError(500, $db->stderr());
-
-         }
-         $this->deleteRoomtypepreferences($fiscalyearid);
-         $this->deleteRoommatepreferences($fiscalyearid);
-      }
-   }
-
-   function getRoomtypepreferences($fiscalyearid) {
-      $db =& JFactory::getDBO();
-      $query = "SELECT buildingid FROM muusa_roomtype_preferences WHERE fiscalyearid=$fiscalyearid ORDER BY choicenbr";
-      $db->setQuery($query);
-      return $db->loadColumn(0);
-   }
-
-   function deleteRoomtypepreferences($fiscalyearid) {
-      $db =& JFactory::getDBO();
-      $query = "DELETE FROM muusa_roomtype_preferences WHERE fiscalyearid=$fiscalyearid";
+      $query = "DELETE ya FROM muusa_yearattending ya INNER JOIN muusa_year y ON ya.year=y.year AND y.is_current=1 WHERE camperid=$camperid";
       $db->setQuery($query);
       $db->query();
       if($db->getErrorNum()) {
@@ -278,28 +205,45 @@ class muusla_applicationModelapplication extends JModel
       }
    }
 
-   function insertRoomtypepreferences($fiscalyearid, $choicenbr, $buildingid) {
-      $db =& JFactory::getDBO();
-      $user =& JFactory::getUser();
-      $obj = new stdClass;
-      $obj->fiscalyearid = $fiscalyearid;
-      $obj->choicenbr = $choicenbr;
-      $obj->buildingid = $buildingid;
-      $obj->created_by = $user->username;
-      $obj->created_at = "&&CURRENT_TIMESTAMP";
-      $db->insertObject("muusa_roomtype_preferences", $obj);
-   }
+   //    function getRoomtypepreferences($fiscalyearid) {
+   //       $db =& JFactory::getDBO();
+   //       $query = "SELECT buildingid FROM muusa_roomtype_preferences WHERE fiscalyearid=$fiscalyearid ORDER BY choicenbr";
+   //       $db->setQuery($query);
+   //       return $db->loadColumn(0);
+   //    }
 
-   function getRoommatepreferences($fiscalyearid) {
+   //    function deleteRoomtypepreferences($fiscalyearid) {
+   //       $db =& JFactory::getDBO();
+   //       $query = "DELETE FROM muusa_roomtype_preferences WHERE fiscalyearid=$fiscalyearid";
+   //       $db->setQuery($query);
+   //       $db->query();
+   //       if($db->getErrorNum()) {
+   //          JError::raiseError(500, $db->stderr());
+   //       }
+   //    }
+
+   //    function insertRoomtypepreferences($fiscalyearid, $choicenbr, $buildingid) {
+   //       $db =& JFactory::getDBO();
+   //       $user =& JFactory::getUser();
+   //       $obj = new stdClass;
+   //       $obj->fiscalyearid = $fiscalyearid;
+   //       $obj->choicenbr = $choicenbr;
+   //       $obj->buildingid = $buildingid;
+   //       $obj->created_by = $user->username;
+   //       $obj->created_at = "&&CURRENT_TIMESTAMP";
+   //       $db->insertObject("muusa_roomtype_preference", $obj);
+   //    }
+
+   function getRoommatepreferences($yearattendingid) {
       $db =& JFactory::getDBO();
-      $query = "SELECT name FROM muusa_roommate_preferences WHERE fiscalyearid=$fiscalyearid ORDER BY choicenbr";
+      $query = "SELECT name FROM muusa_roommatepreference WHERE yearattendingid=$yearattendingid ORDER BY choicenbr";
       $db->setQuery($query);
       return $db->loadColumn(0);
    }
 
-   function deleteRoommatepreferences($fiscalyearid) {
+   function deleteRoommatepreferences($yearattendingid) {
       $db =& JFactory::getDBO();
-      $query = "DELETE FROM muusa_roommate_preferences WHERE fiscalyearid=$fiscalyearid";
+      $query = "DELETE FROM muusa_roommatepreference WHERE yearattendingid=$yearattendingid";
       $db->setQuery($query);
       $db->query();
       if($db->getErrorNum()) {
@@ -307,28 +251,27 @@ class muusla_applicationModelapplication extends JModel
       }
    }
 
-   function insertRoommatepreferences($fiscalyearid, $choicenbr, $name) {
+   function insertRoommatepreferences($yearattendingid, $choicenbr, $name) {
       $db =& JFactory::getDBO();
       $user =& JFactory::getUser();
       $obj = new stdClass;
-      $obj->fiscalyearid = $fiscalyearid;
+      $obj->yearattendingid = $yearattendingid;
       $obj->choicenbr = $choicenbr;
       $obj->name = $name;
       $obj->created_by = $user->username;
-      $obj->created_at = "&&CURRENT_TIMESTAMP";
-      $db->insertObject("muusa_roommate_preferences", $obj);
+      $db->insertObject("muusa_roommatepreference", $obj);
    }
 
-   function getAttendees($fiscalyearid) {
+   function getAttendees($yearattendingid) {
       $db =& JFactory::getDBO();
-      $query = "SELECT eventid FROM muusa_attendees WHERE fiscalyearid=$fiscalyearid ORDER BY choicenbr";
+      $query = "SELECT workshopid FROM muusa_yearattending__workshop WHERE yearattendingid=$yearattendingid ORDER BY choicenbr";
       $db->setQuery($query);
       return $db->loadColumn(0);
    }
 
-   function deleteAttendees($fiscalyearid) {
+   function deleteAttendees($yearattendingid) {
       $db =& JFactory::getDBO();
-      $query = "DELETE FROM muusa_attendees WHERE fiscalyearid=$fiscalyearid";
+      $query = "DELETE FROM muusa_yearattending__workshop WHERE yearattendingid=$yearattendingid";
       $db->setQuery($query);
       $db->query();
       if($db->getErrorNum()) {
@@ -338,10 +281,7 @@ class muusla_applicationModelapplication extends JModel
 
    function insertAttendee($attendee) {
       $db =& JFactory::getDBO();
-      $user =& JFactory::getUser();
-      $attendee->created_by = $user->username;
-      $attendee->created_at = date("Y-m-d H:i:s");
-      $db->insertObject("muusa_attendees", $attendee);
+      $db->insertObject("muusa_yearattending__workshop", $attendee);
       if($db->getErrorNum()) {
          JError::raiseError(500, $db->stderr());
       }
@@ -349,23 +289,17 @@ class muusla_applicationModelapplication extends JModel
 
    function getVolunteers($camperid) {
       $db =& JFactory::getDBO();
-      $user =& JFactory::getUser();
-      $query = "SELECT positionid FROM muusa_volunteers_v WHERE camperid=$camperid ORDER BY name";
-      $db->setQuery($query);
-      return $db->loadColumn(0);
-   }
-
-   function getStaff($camperid) {
-      $db =& JFactory::getDBO();
-      $user =& JFactory::getUser();
-      $query = "SELECT positionid FROM muusa_positions_v WHERE camperid=$camperid ORDER BY positionname";
+      $query = "SELECT volunteerpositionid FROM muusa_thisyear_volunteer WHERE camperid=$camperid ORDER BY volunteerpositionname";
       $db->setQuery($query);
       return $db->loadColumn(0);
    }
 
    function deleteOldPhonenumbers($camperids, $numbers) {
       $db =& JFactory::getDBO();
-      $query = "DELETE FROM muusa_phonenumbers WHERE camperid IN ($camperids) AND phonenbrid NOT IN ($numbers)";
+      $query = "DELETE FROM muusa_phonenumber WHERE camperid IN ($camperids)";
+      if($numbers != "") {
+         $query .= " AND id NOT IN ($numbers)";
+      }
       $db->setQuery($query);
       $db->query();
       if($db->getErrorNum()) {
@@ -374,34 +308,28 @@ class muusla_applicationModelapplication extends JModel
    }
 
    function upsertPhonenumber($obj) {
-      $phone = array('/\\(/', '/ /', '/\\)/', '/-/');
+      $phone = array('/\\(/', '/ /', '/\\)/', '/-/', '/_/');
       $db =& JFactory::getDBO();
       $obj->phonenbr = preg_replace($phone, "", $obj->phonenbr);
-      if($obj->phonenbrid < 1000) {
-         unset($obj->phonenbrid);
-         $query = "SELECT phonenbrid FROM muusa_phonenumbers WHERE camperid=$obj->camperid AND phonenbr=$obj->phonenbr";
+      if($obj->id < 1000) {
+         unset($obj->id);
+         $query = "SELECT id FROM muusa_phonenumber WHERE camperid=$obj->camperid AND phonenbr=$obj->phonenbr";
          $db->setQuery($query);
          $phonenbrid = $db->loadResult();
          if($phonenbrid > 0) {
-            $obj->phonenbrid = $phonenbrid;
-            $obj->modified_by = $user->username;
-            $obj->modified_at = "&&CURRENT_TIMESTAMP";
-            $db->updateObject("muusa_campers", $obj, "phonenbrid");
+            $obj->id = $phonenbrid;
+            $db->updateObject("muusa_phonenumber", $obj, "id");
          } else {
-            $obj->created_by = $user->username;
-            $obj->created_at = "&&CURRENT_TIMESTAMP";
-            $db->insertObject("muusa_phonenumbers", $obj);
+            $db->insertObject("muusa_phonenumber", $obj);
          }
       } else {
-         $obj->modified_by = $user->username;
-         $obj->modified_at = "&&CURRENT_TIMESTAMP";
-         $db->updateObject("muusa_phonenumbers", $obj, "phonenbrid");
+         $db->updateObject("muusa_phonenumber", $obj, "id");
       }
    }
 
-   function deleteOldVolunteers($fiscalyearid) {
+   function deleteOldVolunteers($yearattendingid) {
       $db =& JFactory::getDBO();
-      $query = "DELETE FROM muusa_volunteers WHERE fiscalyearid=$fiscalyearid";
+      $query = "DELETE FROM muusa_yearattending__volunteer WHERE yearattendingid=$yearattendingid";
       $db->setQuery($query);
       $db->query();
       if($db->getErrorNum()) {
@@ -412,51 +340,22 @@ class muusla_applicationModelapplication extends JModel
    function insertVolunteer($volunteer) {
       $db =& JFactory::getDBO();
       $user =& JFactory::getUser();
-      $volunteer->created_by = $user->username;
-      $volunteer->created_at = date("Y-m-d H:i:s");
-      $db->insertObject("muusa_volunteers", $volunteer);
+      $db->insertObject("muusa_yearattending__volunteer", $volunteer);
       if($db->getErrorNum()) {
          JError::raiseError(500, $db->stderr());
       }
    }
 
-   function getCharges($familyid, $where) {
+   function getCharges($familyid, $table) {
       $db =& JFactory::getDBO();
-      $query = "SELECT mc.chargeid, mc.fiscalyear, mc.chargetypeid, mt.name, FORMAT(mc.amount,2) amount, DATE_FORMAT(mc.timestamp, '%m/%d/%Y') timestamp, mc.chargetypeid, mc.memo FROM muusa_campers ma, muusa_charges mc, muusa_chargetypes mt WHERE mc.chargetypeid=mt.chargetypeid AND mc.camperid=ma.camperid AND ma.familyid=$familyid $where ORDER BY mc.fiscalyear DESC, mc.timestamp, mc.chargetypeid, mc.camperid";
+      $query = "SELECT h.id, h.year, h.chargetypeid, h.chargetypename, FORMAT(h.amount,2) amount, DATE_FORMAT(h.timestamp, '%m/%d/%Y') timestamp, h.memo FROM muusa_" . $table . "_charge h WHERE h.familyid=$familyid ORDER BY h.year DESC, h.timestamp, h.chargetypeid, h.camperid";
       $db->setQuery($query);
       return $db->loadObjectList();
    }
 
-   function getCredits($familyid, $where) {
+   function getScholarships($yearattendingid, $ismuusa) {
       $db =& JFactory::getDBO();
-      $query = "SELECT 	mf.fiscalyear, IF((SELECT COUNT(*) FROM muusa_volunteers mvv, muusa_positions mpp WHERE mf.fiscalyearid=mvv.fiscalyearid AND mvv.positionid=mpp.positionid AND mpp.is_shown=0)=1,mp.name,'Multiple Credits') positionname, ";
-      $query .= "LEAST(mr.amount - IFNULL(SUM(ms.registration_amount),0), SUM(mp.registration_amount)) registration_amount, ";
-      $query .= "IF(mh.amount>0, LEAST(mh.amount - IFNULL(SUM(ms.housing_amount),0),SUM(mp.housing_amount)), LEAST(50,SUM(mp.housing_amount))) housing_amount ";
-      $query .= "FROM (muusa_campers mc, muusa_fiscalyear mf, muusa_volunteers mv, muusa_positions mp) ";
-      $query .= "LEFT JOIN muusa_charges mr ON mc.camperid=mr.camperid AND mf.fiscalyear=mr.fiscalyear AND mr.chargetypeid=1003 ";
-      $query .= "LEFT JOIN muusa_charges mh ON mc.camperid=mh.camperid AND mf.fiscalyear=mh.fiscalyear AND mh.chargetypeid=1000 ";
-      $query .= "LEFT JOIN muusa_scholarships_v ms ON mc.camperid=ms.camperid ";
-      $query .= "WHERE  mc.camperid=mf.camperid AND mv.fiscalyearid=mf.fiscalyearid AND mc.camperid=mf.camperid AND mv.positionid=mp.positionid AND mc.familyid=$familyid $where ";
-      $query .= "AND mf.fiscalyear>=mp.start_year AND mf.fiscalyear<=mp.end_year AND (mp.housing_amount>0 OR mp.registration_amount>0) GROUP BY mf.fiscalyear, mf.camperid ORDER BY mc.birthdate";
-      $db->setQuery($query);
-      return $db->loadObjectList();
-   }
-
-   function getScholarships($familyid, $where) {
-      $db =& JFactory::getDBO();
-      $query = "SELECT mf.fiscalyear, IF(ms.is_muusa,'MUUSA Scholarship','YMCA Scholarship') positionname, ROUND(ms.registration_pct * mrr.amount, 2) registration_amount, ";
-      $query .= "ROUND(IF(ms.is_muusa=0,ms.housing_pct * (SELECT muusa_ymcafees_f(mc.camperid)),ms.housing_pct * mrh.amount + IFNULL(mss.housing_pct * (mrh.amount - muusa_ymcafees_f(mc.camperid)),0)), 2) housing_amount FROM (muusa_campers mc, muusa_fiscalyear mf, muusa_scholarships ms) ";
-      $query .= "LEFT JOIN muusa_charges mrr ON mc.camperid=mrr.camperid AND mrr.chargetypeid=1003 AND mrr.fiscalyear=mf.fiscalyear ";
-      $query .= "LEFT JOIN muusa_charges mrh ON mc.camperid=mrh.camperid AND mrh.chargetypeid=1000 AND mrh.fiscalyear=mf.fiscalyear ";
-      $query .= "LEFT JOIN muusa_scholarships mss ON ms.fiscalyearid=mss.fiscalyearid AND mss.is_muusa=0 ";
-      $query .= "WHERE  mc.camperid=mf.camperid AND mf.fiscalyearid=ms.fiscalyearid AND mc.familyid=$familyid $where ORDER BY mc.birthdate";
-      $db->setQuery($query);
-      return $db->loadObjectList();
-   }
-
-   function getIndScholarships($fiscalyearid, $ismuusa) {
-      $db =& JFactory::getDBO();
-      $query = "SELECT scholarshipid, registration_pct, housing_pct FROM muusa_scholarships WHERE fiscalyearid=$fiscalyearid AND is_muusa=$ismuusa";
+      $query = "SELECT id, registration_pct, housing_pct FROM muusa_scholarship WHERE yearattendingid=$yearattendingid AND is_muusa=$ismuusa";
       $db->setQuery($query);
       return $db->loadObject();
    }
@@ -465,18 +364,18 @@ class muusla_applicationModelapplication extends JModel
       $db =& JFactory::getDBO();
       $user =& JFactory::getUser();
       $obj->registration_pct =$obj->registration_pct / 100;
-      $obj->housing_pct =$obj->housing_pct / 100;
-      if($obj->scholarshipid < 1000) {
+      $obj->housing_pct = $obj->housing_pct / 100;
+      if($obj->id < 1000) {
          unset($obj->scholarshipid);
-         $db->insertObject("muusa_scholarships", $obj);
+         $db->insertObject("muusa_scholarship", $obj);
       } else {
-         $db->updateObject("muusa_scholarships", $obj, "scholarshipid");
+         $db->updateObject("muusa_scholarship", $obj, "id");
       }
    }
 
    function deleteScholarship($scholarshipid) {
       $db =& JFactory::getDBO();
-      $query = "DELETE FROM muusa_scholarships WHERE scholarshipid=$scholarshipid";
+      $query = "DELETE FROM muusa_scholarship WHERE id=$scholarshipid";
       $db->setQuery($query);
       $db->query();
       if($db->getErrorNum()) {
@@ -484,91 +383,26 @@ class muusla_applicationModelapplication extends JModel
       }
    }
 
-   function calculateCharges($familyid) {
-      $db =& JFactory::getDBO();
-      $user =& JFactory::getUser();
-      $query = "SELECT camperid, firstname, lastname, birthdate, age, gradeoffset, days, IFNULL(roomid,0) roomid FROM muusa_campers_v WHERE familyid=$familyid";
-      $db->setQuery($query);
-      $campers = $db->loadObjectList();
-      $camperids = $db->loadColumn(0);
-      if($db->getErrorNum()) {
-         JError::raiseError(500, $db->stderr());
-      }
-
-      if(count($campers) > 0) {
-         $query = "DELETE FROM muusa_charges WHERE fiscalyear=(SELECT year FROM muusa_currentyear) AND camperid IN (" . implode(",", $camperids) . ") AND chargetypeid IN (1003,1004)";
-         $db->setQuery($query);
-         $db->query();
-         if($db->getErrorNum()) {
-            JError::raiseError(500, $db->stderr());
-         }
-
-         $housingdepo = 0;
-
-         foreach($campers as $camper) {
-            $obj = new stdClass;
-            $obj->camperid = $camper->camperid;
-            $obj->amount = "&&LEAST(muusa_programs_fee_f(STR_TO_DATE('$camper->birthdate', '%m/%d/%Y'), $camper->gradeoffset),($camper->days*30))";
-            $obj->memo = $camper->firstname . " " . $camper->lastname;
-            $obj->chargetypeid = "1003";
-            $obj->timestamp = date("Y-m-d");
-            $obj->fiscalyear = "&&(SELECT year FROM muusa_currentyear)";
-            $obj->created_by = $user->username;
-            $obj->created_at = date("Y-m-d H:i:s");
-            $db->insertObject("muusa_charges", $obj);
-            if($db->getErrorNum()) {
-               JError::raiseError(500, $db->stderr());
-            }
-            if($camper->roomid == 0 && ($camper->age > 16 || ($camper->age+$camper->gradeoffset) > 6)) {
-               $housingdepo += 50;
-            }
-         }
-
-         if($housingdepo > 0) {
-            $obj = new stdClass;
-            $obj->camperid = $campers[0]->camperid;
-            $obj->amount = $housingdepo;
-            $obj->memo = "Housing Deposit";
-            $obj->chargetypeid = "1004";
-            $obj->timestamp = date("Y-m-d");
-            $obj->fiscalyear = "&&(SELECT year FROM muusa_currentyear)";
-            $obj->created_by = $user->username;
-            $obj->created_at = date("Y-m-d H:i:s");
-            $db->insertObject("muusa_charges", $obj);
-            if($db->getErrorNum()) {
-               JError::raiseError(500, $db->stderr());
-            }
-         }
-      }
-   }
-
    function upsertCharge($obj, $camperid) {
       $db =& JFactory::getDBO();
       $user =& JFactory::getUser();
       if($obj->chargetypeid != "delete") {
-         $query = "SELECT chargeid FROM muusa_charges WHERE camperid=$camperid AND timestamp='$obj->timestamp' AND amount=$obj->amount AND chargetypeid=$obj->chargetypeid AND memo='$obj->memo'";
+         $query = "SELECT IFNULL(h.id, 0), y.year FROM muusa_year y LEFT JOIN muusa_charge h ON h.camperid=$camperid AND h.timestamp=STR_TO_DATE('$obj->timestamp', '%m/%d/%Y') AND h.amount=$obj->amount AND h.chargetypeid=$obj->chargetypeid AND h.memo='$obj->memo' WHERE y.is_current=1";
          $obj->camperid = $camperid;
          $obj->amount = preg_replace("/,/", "", $obj->amount);
-         $obj->fiscalyear = "&&(SELECT year FROM muusa_currentyear)";
          $obj->timestamp = "&&STR_TO_DATE('$obj->timestamp', '%m/%d/%Y')";
-         if($obj->chargeid < 1000) {
-            $db->setQuery($query);
-            $chargeid = $db->loadResult();
-            if($chargeid > 0) {
-               $obj->chargeid = $chargeid;
-               $obj->modified_by = $user->username;
-               $obj->modified_at = "&&CURRENT_TIMESTAMP";
-               $db->updateObject("muusa_charges", $obj, "chargeid");
-            } else {
-               $db->insertObject("muusa_charges", $obj);
-            }
+         $db->setQuery($query);
+         $charge = $db->loadRow();
+         $obj->year = $charge[1];
+         if($charge[0] > 0) {
+            $obj->id = $charge[0];
+            $db->updateObject("muusa_charge", $obj, "id");
          } else {
-            $obj->modified_by = $user->username;
-            $obj->modified_at = "&&CURRENT_TIMESTAMP";
-            $db->updateObject("muusa_charges", $obj, "chargeid");
+            unset($obj->id);
+            $db->insertObject("muusa_charge", $obj);
          }
       } else {
-         $query = "DELETE FROM muusa_charges WHERE chargeid=$obj->chargeid";
+         $query = "DELETE FROM muusa_charge WHERE id=$obj->id";
          $db->setQuery($query);
          $db->query();
       }

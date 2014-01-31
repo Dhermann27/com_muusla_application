@@ -8,14 +8,18 @@
  *
  */
 ?>
-<tr <?echo $mateindex == -1 ? "class='hidden'" : "";?>>
-   <td><?php echo $mateindex == 0 ? "Roommate Preferences" : "&nbsp;";?>
+<tr class="roomates">
+   <td><?php echo $mateindex == 0 ? "Roommate Preferences" : "";?>
    </td>
-   <td colspan="3"><input type="text" maxlength="50"
-      class="inputtext roommates ui-corner-all"
-      value="<?php echo $name?>" />
+   <td colspan="2"><input type="text" maxlength="50"
+      class="inputtext roommates ui-corner-all tooltip"
+      value="<?php echo $name?>"
+      title="You do not need to add family members to this list." />
+   </td>
+   <td>
       <button
          class="<?php echo $mateindex == 0 ? "add" :"delete";?> help">
          <?php echo $mateindex == 0 ? "Add Roommate" : "Delete Roommate";?>
-      </button></td>
+      </button>
+   </td>
 </tr>

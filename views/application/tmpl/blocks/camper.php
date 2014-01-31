@@ -6,16 +6,14 @@
  * @param   object  $camper  The database camper object
  *
  */
-$firstcamper = $camper->camperid == 1;
-$camperid = $camper->camperid >= 1000 ? $camper->camperid : "";
+$camperid = $camper->id >= 1000 ? $camper->id : "";
 $user =& JFactory::getUser();
 ?>
 <tbody
-<?php echo $camper->camperid >= 1000 ? " id='$camper->camperid'" : "";?>
-   class="camperBody<?php echo $camper->camperid < 1000 && !$firstcamper ? " hidden" : "";?>">
+   id="<?php echo $camperid;?>" class="camperBody">
    <tr valign="bottom">
       <td width="25%"><select
-         name="campers-sexcd-<?php echo $camperid;?>"
+         name="camper-sexcd-<?php echo $camperid;?>"
          class="notzero ui-corner-all">
             <option value="0">Gender</option>
             <option value="M"
@@ -23,16 +21,16 @@ $user =& JFactory::getUser();
             <option value="F"
             <?php echo $camper->sexcd == "F" ? " selected" : "";?>>Female</option>
       </select> <?php
-      if($camper->camperid >= 1000) {
-         echo "<input type='hidden' name='campers-camperid-$camperid' value='$camperid' />";
+      if($camper->id >= 1000) {
+         echo "<input type='hidden' name='camper-id-$camperid' value='$camperid' />";
       }
       ?>
       </td>
       <td colspan="3" width="75%" align="right">
          <button class="help info">Show Attending Help</button> <select
-         name="campers-attending-<?php echo $camperid;?>"
+         name="camper-attending-<?php echo $camperid;?>"
          class="attending ui-corner-all">
-            <option value="7"
+            <option value="6"
             <?php echo $camper->days > 0 || $this->sumdays == 0 ? " selected" : "";?>>Attending</option>
             <option value="0"
             <?php echo $camper->days == 0 && $this->sumdays > 0 ? " selected" : "";?>>Not
@@ -54,7 +52,7 @@ $user =& JFactory::getUser();
    <tr>
       <td>First Name</td>
       <td colspan="3"><input type="text"
-         name="campers-firstname-<?php echo $camperid;?>" maxlength="30"
+         name="camper-firstname-<?php echo $camperid;?>" maxlength="30"
          class="inputtext firstname notempty ui-corner-all"
          value="<?php echo $camper->firstname;?>" />
       </td>
@@ -62,13 +60,13 @@ $user =& JFactory::getUser();
    <tr>
       <td>Last Name</td>
       <td colspan="3"><input type="text"
-         name="campers-lastname-<?php echo $camperid;?>" maxlength="30"
+         name="camper-lastname-<?php echo $camperid;?>" maxlength="30"
          class="inputtext lastname notempty ui-corner-all"
          value="<?php echo $camper->lastname;?>" />
       </td>
    </tr>
    <?php
-   if(!$this->editcamper && ($firstcamper || ($camperid >= 1000 && $camper->email == $user->email))) {
+   if(!$this->editcamper && ($camperid == "" || ($camperid >= 1000 && $camper->email == $user->email))) {
       ?>
    <tr>
       <td>
@@ -77,7 +75,7 @@ $user =& JFactory::getUser();
       </td>
       <?php 
       echo "								<td colspan='3'>$user->email\n";
-      echo "                                 <input type='hidden' name='campers-email-$camperid' value='$user->email' class='email' />\n";
+      echo "                                 <input type='hidden' name='camper-email-$camperid' value='$user->email' class='email' />\n";
       echo "                              </td>\n";
       ?>
    </tr>
@@ -96,7 +94,7 @@ $user =& JFactory::getUser();
    <tr>
       <td>Email Address</td>
       <td colspan="3"><input type="text"
-         name="campers-email-<?php echo $camperid;?>"
+         name="camper-email-<?php echo $camperid;?>"
          value="<?php echo $camper->email;?>"
          class="inputtextshort email ui-corner-all" /></td>
    </tr>
@@ -111,20 +109,17 @@ $user =& JFactory::getUser();
          include 'phonenumber.php';
       }
    }
-   $nbrindex = -1;
-   $phonenumber = new stdClass;
-   include 'phonenumber.php';
    ?>
    <tr>
       <td>Birthday</td>
       <td><input type="text" maxlength="10"
-         name="campers-birthdate-<?php echo $camperid;?>"
-         class="birthday validday ui-corner-all"
+         name="camper-birthdate-<?php echo $camperid;?>"
+         class="birthday validday notempty ui-corner-all"
          value="<?php echo $camper->birthday;?>" />
       </td>
       <td align="right">Grade Entering in Fall <?php echo $this->year["year"]?>
       </td>
-      <td><select name="campers-grade-<?php echo $camperid;?>"
+      <td><select name="camper-grade-<?php echo $camperid;?>"
          class="grade ui-corner-all">
             <?php 						
             echo "                        <option value='13'>Not Applicable</option>\n";
@@ -138,54 +133,54 @@ $user =& JFactory::getUser();
       </select>
       </td>
    </tr>
-   <tr>
-      <td>Room Type Preferences</td>
-      <td colspan="3">
-         <div class="roomtypes">
-            <h4>Click here, then drag in order of preference from right
-               to left.</h4>
-            <div>
-               <div class="right">
-                  <h5>Unselected Room Type</h5>
-                  <ul class="connected connectedRoomtype roomtype-no">
-                     <?php 
-                     foreach($this->buildings as $buildingid => $building) {
-                        if(!$camper->roomtypes || !in_array($buildingid, $camper->roomtypes)) {
-                           echo "                  <li value='$buildingid' class='ui-state-default'>\n";
-                           if(!$this->editcamper && $building["introtext"]) {
-                              echo "                     <button class='help link right'>Show $building->name Information</button>\n";
-                           }
-                           echo "                     " . $building["name"] . "\n";
-                           echo "                  </li>\n";
-                        }
-                     }
-                     ?>
-                  </ul>
-               </div>
-               <div>
-                  <h5>Preferred Room Type</h5>
-                  <ul class="connected connectedRoomtype roomtype-yes">
-                     <?php
-                     if($camper->roomtypes) {
-                        foreach($camper->roomtypes as $roomtype) {
-                           echo "                  <li value='$roomtype' class='ui-state-default'>\n";
-                           if(!$this->editcamper && $this->buildings[$roomtype]["introtext"]) {
-                              echo "                     <button class='help link right'>Show " . $this->buildings[$roomtype]->name . " Information</button>\n";
-                           }
-                           echo "                     " . $this->buildings[$roomtype]["name"] . "\n";
-                           echo "                  </li>\n";
-                        }
-                     }
-                     ?>
-                     <li class="ui-state-default">No Preference</li>
-                  </ul>
-               </div>
-               <button class="roomtypeSave clearboth right">Close
-                  Preferences</button>
-            </div>
-         </div>
-      </td>
-   </tr>
+   <!--    <tr> -->
+   <!--       <td>Room Type Preferences</td> -->
+   <!--       <td colspan="3"> -->
+   <!--          <div class="roomtypes"> -->
+   <!--             <h4>Click here, then drag in order of preference from right -->
+   <!--                to left.</h4> -->
+   <!--             <div> -->
+   <!--                <div class="right"> -->
+   <!--                   <h5>Unselected Room Type</h5> -->
+   <!--                   <ul class="connected connectedRoomtype roomtype-no"> -->
+   <?php 
+   //                      foreach($this->buildings as $buildingid => $building) {
+   //                         if(!$camper->roomtypes || !in_array($buildingid, $camper->roomtypes)) {
+   //                            echo "                  <li value='$buildingid' class='ui-state-default'>\n";
+   //                            if(!$this->editcamper && $building["introtext"]) {
+   //                               echo "                     <button class='help link right'>Show $building->name Information</button>\n";
+   //                            }
+   //                            echo "                     " . $building["name"] . "\n";
+   //                            echo "                  </li>\n";
+   //                         }
+   //                      }
+   //                      ?>
+   <!--                   </ul> -->
+   <!--                </div> -->
+   <!--                <div> -->
+   <!--                   <h5>Preferred Room Type</h5> -->
+   <!--                   <ul class="connected connectedRoomtype roomtype-yes"> -->
+   <?php
+   //                      if($camper->roomtypes) {
+   //                         foreach($camper->roomtypes as $roomtype) {
+   //                            echo "                  <li value='$roomtype' class='ui-state-default'>\n";
+   //                            if(!$this->editcamper && $this->buildings[$roomtype]["introtext"]) {
+   //                               echo "                     <button class='help link right'>Show " . $this->buildings[$roomtype]->name . " Information</button>\n";
+   //                            }
+   //                            echo "                     " . $this->buildings[$roomtype]["name"] . "\n";
+   //                            echo "                  </li>\n";
+   //                         }
+   //                      }
+   //                      ?>
+   <!--                      <li class="ui-state-default">No Preference</li> -->
+   <!--                   </ul> -->
+   <!--                </div> -->
+   <!--                <button class="roomtypeSave clearboth right">Close -->
+   <!--                   Preferences</button> -->
+   <!--             </div> -->
+   <!--          </div> -->
+   <!--       </td> -->
+   <!--    </tr> -->
    <?php
    if(count($camper->roommates) == 0) {
       $mateindex = 0;
@@ -196,20 +191,17 @@ $user =& JFactory::getUser();
          include 'roommate.php';
       }
    }
-   $mateindex = -1;
-   $name = "";
-   include 'roommate.php';
    ?>
    <tr>
       <td>Accessibility</td>
       <td colspan="2" valign="middle">Do you require a room accessible
          by the disabled?</td>
-      <td><select name="campers-is_handicap-<?php echo $camperid;?>"
+      <td><select name="camper-is_handicap-<?php echo $camperid;?>"
          class="ui-corner-all">
-            <option value="1"
-            <?php echo $camper->is_handicap == "1" ? " selected" : "";?>>Yes</option>
             <option value="0"
             <?php echo $camper->is_handicap == "1" ? "" : " selected";?>>No</option>
+            <option value="1"
+            <?php echo $camper->is_handicap == "1" ? " selected" : "";?>>Yes</option>
       </select>
       </td>
    </tr>
@@ -217,12 +209,12 @@ $user =& JFactory::getUser();
       <td>Food Options</td>
       <td colspan="2" valign="middle">Which option best describes your
          eating restrictions?</td>
-      <td><select name="campers-foodoptionid-<?php echo $camperid;?>"
+      <td><select name="camper-foodoptionid-<?php echo $camperid;?>"
          class="ui-corner-all">
             <?php
             foreach ($this->foodoptions as $foodoption) {
-               $selected = $camper->foodoptionid == $foodoption->foodoptionid ? " selected" : "";
-               echo "                  <option value='$foodoption->foodoptionid'$selected>$foodoption->name</option>\n";
+               $selected = $camper->foodoptionid == $foodoption->id ? " selected" : "";
+               echo "                  <option value='$foodoption->id'$selected>$foodoption->name</option>\n";
             }
             ?>
       </select>
@@ -234,7 +226,7 @@ $user =& JFactory::getUser();
          Sponsor (if applicable)
       </td>
       <td colspan="3"><input type="text" maxlength="30"
-         name="campers-sponsor-<?php echo $camperid;?>"
+         name="camper-sponsor-<?php echo $camperid;?>"
          class="inputtext ui-corner-all"
          value="<?php echo $camper->sponsor;?>" />
       </td>
@@ -258,27 +250,16 @@ $user =& JFactory::getUser();
    <tr>
       <td>Church Affiliation</td>
       <td colspan="3"><?php
-      echo "                     <select name='campers-churchid-$camperid' class='ui-corner-all'>\n";
+      echo "                     <select name='camper-churchid-$camperid' class='ui-corner-all'>\n";
       echo "                     <option value='0'>No Affiliation</option>\n";
       foreach ($this->churches as $church) {
-         $selected = $camper->churchid == $church->churchid ? " selected" : "";
-         echo "                  <option value='$church->churchid'$selected>$church->statecd - $church->city: $church->name</option>\n";
+         $selected = $camper->churchid == $church->id ? " selected" : "";
+         echo "                  <option value='$church->id'$selected>$church->statecd - $church->city: $church->name</option>\n";
       }
       echo "                  </select></td>\n";
       ?>
       </td>
    </tr>
-   <?php
-   if($camperid < 1000 && !$firstcamper) {
-      ?>
-   <tr>
-      <td colspan="4" align="right">
-         <button class="removeCamper">Remove This Camper</button>
-      </td>
-   </tr>
-   <?php
-   }
-   ?>
    <tr>
       <td colspan="4"><hr /></td>
    </tr>

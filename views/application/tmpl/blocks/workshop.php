@@ -10,7 +10,7 @@
  */
 $user =& JFactory::getUser();
 ?>
-<span id="<?php echo $camper->fiscalyearid;?>" class="camper">
+<span id="<?php echo $camper->yearattendingid;?>" class="camper">
    <h4>
       <?php echo $camper->firstname . " " . $camper->lastname;?>
    </h4>
@@ -71,7 +71,7 @@ $user =& JFactory::getUser();
             <h6>Available Volunteer Positions</h6>
             <ul class="connected connectedWorkshop workshop-no">
                <?php
-               foreach($this->positions as $positionid => $position) {
+               foreach($this->volunteerpositions as $positionid => $position) {
                   if(!$camper->volunteers || !in_array($positionid, $camper->volunteers)) {
                      echo "                              <li value='$positionid' class='ui-state-default'>\n";
                      echo "                                 " . $position["name"] . "\n";
@@ -88,7 +88,7 @@ $user =& JFactory::getUser();
                if($camper->volunteers) {
                   foreach($camper->volunteers as $positionid) {
                      echo "                              <li value='$positionid' class='ui-state-default'>\n";
-                     echo "                                 " . $this->positions[$positionid]["name"] . "\n";
+                     echo "                                 " . $this->volunteerpositions[$positionid]["name"] . "\n";
                      echo "                              </li>\n";
                   }
                }
@@ -96,37 +96,8 @@ $user =& JFactory::getUser();
             </ul>
          </div>
       </div>
-      <h5>Paid Positions</h5>
-      <div class="paidpositionlist">
-         <div class="right">
-            <h6>Available Paid Positions</h6>
-            <ul class="connected connectedWorkshop workshop-no">
-               <?php
-               foreach($this->paidpositions as $positionid => $position) {
-                  if(!$camper->staff || !in_array($positionid, $camper->staff)) {
-                     echo "                              <li value='$positionid' class='ui-state-default'>\n";
-                     echo "                                 " . $position["name"] . "\n";
-                     echo "                              </li>\n";
-                  }
-               }
-               ?>
-            </ul>
-         </div>
-         <div class="paid">
-            <h6 class="0">Assigned Positions</h6>
-            <ul class="connected connectedWorkshop workshop-yes">
-               <?php
-               if($camper->staff) {
-                  foreach($camper->staff as $positionid) {
-                     echo "                              <li value='$positionid' class='ui-state-default'>\n";
-                     echo "                                 " . $this->paidpositions[$positionid]["name"] . "\n";
-                     echo "                              </li>\n";
-                  }
-               }
-               ?>
-            </ul>
-         </div>
-      </div>
+      <?php 
+      if($this->editcamper) {?>
       <h5>Scholarships</h5>
       <div class="scholarshiplist">
          <table>
@@ -178,5 +149,6 @@ $user =& JFactory::getUser();
             </tr>
          </table>
       </div>
+      <?php }?>
    </div>
 </span>

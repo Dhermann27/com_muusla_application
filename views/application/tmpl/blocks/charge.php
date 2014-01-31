@@ -8,10 +8,10 @@
  */
 ?>
 <tr>
-   <td><select name="charges-chargetypeid-<? echo $charge->chargeid;?>"
+   <td><select name="charge-chargetypeid-<? echo $charge->id;?>"
       class="ui-corner-all">
          <option value="0">Charge Type</option>
-         <?php if($charge->chargeid > 0) {
+         <?php if($charge->id > 0) {
             echo "          <option value='delete' style='background-color: indianred'>Delete Charge</option>\n";
          }
          foreach($this->chargetypes as $chargetype) {
@@ -19,19 +19,18 @@
             echo "          <option value='$chargetype->chargetypeid'$selected>$chargetype->name</option>\n";
          }?>
    </select><input type="hidden"
-      name="charges-chargeid-<?php echo $charge->chargeid;?>"
-      value="<?php echo $charge->chargeid;?>" /></td>
+      name="charge-id-<?php echo $charge->id;?>"
+      value="<?php echo $charge->id;?>" /></td>
    <td align="right"><input type="text"
-      name="charges-amount-<? echo $charge->chargeid;?>"
+      name="charge-amount-<? echo $charge->id;?>"
       class="inputtexttiny onlymoney recalc ui-corner-all"
       value="<?php echo $charge->amount;?>" /></td>
    <td align="center"><input type="text"
-      name="charges-timestamp-<? echo $charge->chargeid;?>"
+      name="charge-timestamp-<? echo $charge->id;?>"
       class="inputtexttiny birthday ui-corner-all"
       value="<?php echo $charge->timestamp != "" ? $charge->timestamp : date(" m/d/Y");?>" />
    </td>
-   <td><input type="text"
-      name="charges-memo-<? echo $charge->chargeid;?>"
+   <td><input type="text" name="charge-memo-<? echo $charge->id;?>"
       class="inputtext ui-corner-all"
       value="<?php echo $charge->memo;?>" /></td>
 </tr>

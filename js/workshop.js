@@ -1,6 +1,6 @@
-$(window)
-		.load(
-				function() {
+jQuery(document)
+		.ready(
+				function($) {
 					$(".workshopSelection").accordion({
 						heightStyle : "content",
 						header : "h4"
@@ -15,7 +15,7 @@ $(window)
 						},
 						text : false
 					}).click(function() {
-						openLink($(this));
+						openLink($, $(this));
 						return false;
 					});
 					$(".workshop-yes, .workshop-no").sortable({
@@ -23,7 +23,7 @@ $(window)
 						connectWith : ".connectedWorkshop"
 					}).disableSelection();
 					$("#submitWorkshops").button().click(function() {
-						submit();
+						submit($);
 						return false;
 					});
 					$(".dialog-message").dialog({
@@ -49,56 +49,46 @@ $(window)
 									});
 				});
 
-function openLink(obj) {
+function openLink($, obj) {
 	eval("$(\"#room-" + obj.parents("li").val() + "\").dialog(\"open\");");
 }
 
-function submit() {
+function submit($) {
 	var attendeeCount = 0;
 	$("#muusaApp span.camper").each(
 			function() {
 				var fid = $(this).attr("id");
 				$("div.desired", $(this)).each(
 						function() {
-							var prefs = $(".workshop-yes li", $(this));
-							var tid = $("h6", $(this)).attr("class");
-							if (prefs.size() > 0) {
-								prefs.each(function(index, val) {
-									addHidden("attendees-eventid-"
-											+ attendeeCount, $(this).val());
-									addHidden("attendees-fiscalyearid-"
-											+ attendeeCount, fid);
-									addHidden("attendees-timeid-"
-											+ attendeeCount, tid);
-									addHidden("attendees-choicenbr-"
-											+ attendeeCount++, index + 1);
-								});
-
-							}
+							$(".workshop-yes li", $(this)).each(
+									function(index, val) {
+										addHidden($,
+												"yearattending__workshop-workshopid-"
+														+ attendeeCount,
+												$(this).val());
+										addHidden($,
+												"yearattending__workshop-yearattendingid-"
+														+ attendeeCount, fid);
+										addHidden($,
+												"yearattending__workshop-choicenbr-"
+														+ attendeeCount++,
+												index + 1);
+									});
 						});
-				var prefs = $(".volunteers li", $(this));
-				if (prefs.size() > 0) {
-					prefs.each(function() {
-						addHidden("volunteers-positionid-" + attendeeCount, $(
-								this).val());
-						addHidden("volunteers-fiscalyearid-" + attendeeCount++,
-								fid);
-					});
-				}
-				prefs = $(".paid li", $(this));
-				if (prefs.size() > 0) {
-					prefs.each(function() {
-						addHidden("volunteers-positionid-" + attendeeCount, $(
-								this).val());
-						addHidden("volunteers-fiscalyearid-" + attendeeCount++,
-								fid);
-					});
-				}
+				$(".volunteers li", $(this)).each(
+						function() {
+							addHidden($,
+									"yearattending__volunteer-volunteerpositionid-"
+											+ attendeeCount, $(this).val());
+							addHidden($,
+									"yearattending__volunteer-yearattendingid-"
+											+ attendeeCount++, fid);
+						});
 			});
-	$("#muusaApp").closest("form").submit();
+	 $("#muusaApp").closest("form").submit();
 }
 
-function addHidden(fieldname, fieldvalue) {
+function addHidden($, fieldname, fieldvalue) {
 	$("<input>").attr({
 		type : "hidden",
 		name : fieldname,

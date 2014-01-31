@@ -25,7 +25,7 @@ $serverCharges = array("1000", "1002", "1003", "1004");
          if($year != $this->year["year"] || !$this->editcamper || in_array($charge->chargetypeid, $serverCharges)) {
             echo "           <tr>\n";
             $total += (float)preg_replace("/,/", "",  $charge->amount);
-            echo "                   <td class='chargetype'>$charge->name</td>\n";
+            echo "                   <td class='chargetype' nowrap='nowrap'>$charge->chargetypename</td>\n";
             echo "                   <td class='amount' align='right'>\$$charge->amount</td>\n";
             echo "                   <td class='date' align='center'>$charge->timestamp</td>\n";
             echo "                   <td class='memo'>$charge->memo</td>\n";
@@ -34,50 +34,28 @@ $serverCharges = array("1000", "1002", "1003", "1004");
             include 'charge.php';
          }
       }
-      if($credits) {
-         foreach($credits as $credit) {
-            echo "           <tr>\n";
-            echo "               <td class='chargetype'>Credit</td>\n";
-            $total -= (float)preg_replace("/,/", "",  $credit->housing_amount+$credit->registration_amount);
-            echo "                <td class='amount' align='right'>\$-" . number_format($credit->housing_amount+$credit->registration_amount, 2) . "</td>\n";
-            echo "                <td>&nbsp;</td>\n";
-            echo "                <td class='memo'><i>$credit->positionname</i></td>\n";
-            echo "           </tr>\n";
-         }
-      }
    }
-   if($year == $this->year["year"]) {?>
-   <tr id="paymentDummy" class="hidden">
-      <td class="chargetype"></td>
-      <td class="amount" align="right"></td>
-      <td class="date" align="center"></td>
-      <td class="memo"></td>
-   </tr>
-   <?php }
    if(!$this->editcamper) {?>
    <tr>
       <td class="chargetype">Donation <input type="hidden"
-         name="charges-chargetypeid-0" value="1008" />
+         name="charge-chargetypeid-0" value="1008" />
       </td>
       <td align="right"><input type="text" id="donation"
-         name="charges-amount-0"
+         name="charge-amount-0"
          class="inputtexttiny onlymoney recalc ui-corner-all" />
       </td>
       <td colspan='2' class="memo padleft">Please consider at least a
          $10.00 donation to the MUUSA Scholarship fund. <input
-         type="hidden" name="charges-timestamp-0"
+         type="hidden" name="charge-timestamp-0"
          value="<?php echo date("m/d/Y");?>" /> <input type="hidden"
-         name="charges-memo-0" value="Thank you for your donation" />
+         name="charge-memo-0" value="Thank you for your donation" />
       </td>
    </tr>
    <?php
    } else if($year == $this->year["year"]) {
       $charge = new stdClass;
-      $charge->chargeid = 0;
+      $charge->id = 0;
       include 'charge.php';
-      echo "   <tr>\n";
-      echo "      <td colspan='4'><strong>$year Registration Postmark</strong> <input type='text' name='fiscalyear-postmark-0' class='birthday ui-corner-all' value='" . ($this->campers[0]->postmark != "" ? $this->campers[0]->postmark : date("m/d/Y")) . "' /></td>\n";
-      echo "   </tr>\n";
    }
    echo "           <tr align='right'>\n";
    echo "              <td><strong>Amount Due Now:</strong></td>\n";
@@ -92,7 +70,7 @@ $serverCharges = array("1000", "1002", "1003", "1004");
       echo "           </tr>\n";
    } else {
       echo "           <tr>\n";
-      echo "              <td colspan='4'><i>Does not include your remaining housing fees, which are due on the first day of camp. Housing to be assigned at a later date</i>.</td>\n";
+      echo "              <td colspan='4'><i>Does not include your remaining housing fees, which are due on the first day of camp.</i>.</td>\n";
       echo "           </tr>\n";
    }
    ?>
@@ -102,8 +80,10 @@ $serverCharges = array("1000", "1002", "1003", "1004");
    <tr valign="bottom">
       <td colspan="2" align="center"><div>
             Make checks payable to: <strong>MUUSA, Inc.</strong><br />
-            Mail check by May 31, 2013 to<br /> MUUSA, Inc.<br />6501
-            Amber Crest<br />Indianapolis, IN 46220<br /> <br />
+            Mail check by May 31,
+            <?php echo $this->year["year"]?>
+            to<br /> MUUSA, Inc.<br />616 W. Fulton #705<br />Chicago,
+            IL 60661<br /> <br />
          </div></td>
       <td align="center" style="border-left: 2px dashed black"><div>
             <img src="images/muusa/secure-paypal-logo.png"
@@ -120,7 +100,7 @@ $serverCharges = array("1000", "1002", "1003", "1004");
                <td><input type="text" id="paypalAmt"
                   class="inputtexttiny ui-corner-all"
                   name="paypal-amount"
-                  value="<?php echo number_format($total, 2, '.', '');?>" />
+                  value="<?php echo number_format(max($total, 0.0), 2, '.', '');?>" />
                </td>
             </tr>
          </table>
@@ -131,15 +111,6 @@ $serverCharges = array("1000", "1002", "1003", "1004");
       </td>
    </tr>
 </table>
-<div class="padtop ui-state-highlight ui-corner-all">
-   <p>
-      <span class="space left ui-icon ui-icon-info"></span> If you are
-      expecting a staff position credit but do not see it here, it will
-      be entered after your registration is complete. Please contact the
-      Registrar by phone or using the Contact Us link above if you are
-      uncertain about the status of your staff credit.
-   </p>
-</div>
 <?php } else {?>
 <div align="right">
    <button class="finishWorkshop">Save</button>
