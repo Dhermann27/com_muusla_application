@@ -30,8 +30,8 @@ class muusla_applicationModelroomselection extends JModel
 
    function getPriorityRooms() {
       $db =& JFactory::getDBO();
-      $query = "SELECT r.id, b.id buildingid, b.name buildingname, r.roomnbr, r.is_handicap, r.capacity, r.xcoord, r.ycoord, r.pixelsize, rp.roomnbr connected, (SELECT IF(ya.roomid!=0,'1',GROUP_CONCAT(c.firstname, ' ', c.lastname SEPARATOR '<br />')) FROM muusa_camper c, muusa_yearattending ya, muusa_year y WHERE c.id=ya.camperid AND r.id=ya.roomid AND y.year-1=ya.year AND muusa_isprereg(c.id, y.year)>0 AND y.is_current=1) AS occupants FROM muusa_building b, muusa_room r LEFT JOIN muusa_room rp ON r.connected_with=rp.id WHERE b.id=r.buildingid AND r.xcoord>0 AND r.ycoord>0";
-      //       $query = "SELECT r.id, b.id buildingid, b.name buildingname, r.roomnbr, r.is_handicap, r.capacity, r.xcoord, r.ycoord, r.pixelsize, rp.roomnbr connected, (SELECT IF(ya.is_private=1,'1',GROUP_CONCAT(c.firstname, ' ', c.lastname SEPARATOR '<br />')) FROM muusa_camper c, muusa_yearattending ya, muusa_year y WHERE c.id=ya.camperid AND r.id=ya.roomid AND y.year-1=ya.year AND muusa_isprereg(c.id, y.year)>0 AND y.is_current=1) AS occupants FROM muusa_building b, muusa_room r LEFT JOIN muusa_room rp ON r.connected_with=rp.id WHERE b.id=r.buildingid AND r.xcoord>0 AND r.ycoord>0";
+      //       $query = "SELECT r.id, b.id buildingid, b.name buildingname, r.roomnbr, r.is_handicap, r.capacity, r.xcoord, r.ycoord, r.pixelsize, rp.roomnbr connected, (SELECT IF(ya.is_private=1,'1',GROUP_CONCAT(c.firstname, ' ', c.lastname SEPARATOR '<br />')) FROM muusa_camper c, muusa_yearattending ya, muusa_year y WHERE c.id=ya.camperid AND r.id=ya.roomid AND y.year=ya.year AND y.is_current=1) AS occupants, (SELECT IF(ya.roomid!=0,'1',GROUP_CONCAT(c.firstname, ' ', c.lastname SEPARATOR '<br />')) FROM (muusa_camper c, muusa_yearattending ya, muusa_year y) LEFT OUTER JOIN muusa_thisyear_camper tc ON tc.id=c.id AND tc.roomid!=0 WHERE c.id=ya.camperid AND r.id=ya.roomid AND y.year-1=ya.year AND muusa_isprereg(c.id, y.year)>0 AND y.is_current=1 AND tc.id IS NULL) AS locked FROM muusa_building b, muusa_room r LEFT JOIN muusa_room rp ON r.connected_with=rp.id WHERE b.id=r.buildingid AND r.xcoord>0 AND r.ycoord>0";
+      $query = "SELECT r.id, b.id buildingid, b.name buildingname, r.roomnbr, r.is_handicap, r.capacity, r.xcoord, r.ycoord, r.pixelsize, rp.roomnbr connected, (SELECT IF(ya.is_private=1,'1',GROUP_CONCAT(c.firstname, ' ', c.lastname SEPARATOR '<br />')) FROM muusa_camper c, muusa_yearattending ya, muusa_year y WHERE c.id=ya.camperid AND r.id=ya.roomid AND y.year=ya.year AND y.is_current=1) AS occupants, (SELECT IF(ya.is_private=1,'1',GROUP_CONCAT(c.firstname, ' ', c.lastname SEPARATOR '<br />')) FROM (muusa_camper c, muusa_yearattending ya, muusa_year y) LEFT OUTER JOIN muusa_thisyear_camper tc ON tc.id=c.id AND tc.roomid!=0 WHERE c.id=ya.camperid AND r.id=ya.roomid AND y.year-1=ya.year AND muusa_isprereg(c.id, y.year)>0 AND y.is_current=1 AND tc.id IS NULL) AS locked FROM muusa_building b, muusa_room r LEFT JOIN muusa_room rp ON r.connected_with=rp.id WHERE b.id=r.buildingid AND r.xcoord>0 AND r.ycoord>0";
       $db->setQuery($query);
       return $db->loadObjectList();
    }
@@ -39,15 +39,7 @@ class muusla_applicationModelroomselection extends JModel
    function getPreregistered() {
       $db =& JFactory::getDBO();
       $user =& JFactory::getUser();
-      $query = "SELECT muusa_isprereg(tc.id, y.year), IF(tc.roomid!=0,tc.roomid,ya.roomid) FROM muusa_thisyear_camper tc, muusa_yearattending ya, muusa_year y WHERE tc.email='$user->email' AND tc.id=ya.camperid AND y.year-1=ya.year AND y.is_current=1";
-      $db->setQuery($query);
-      return $db->loadRow();
-   }
-
-   function getRegistered() {
-      $db =& JFactory::getDBO();
-      $user =& JFactory::getUser();
-      $query = "SELECT 0, tc.roomid FROM muusa_thisyear_camper tc WHERE tc.email='$user->email'";
+      $query = "SELECT IF(ya.id!=0,1,0), IF(muusa_isprereg(c.id, y.year)>0,1,0), IF(yap.id!=0,1,0), IFNULL(IF(yap.roomid!=0,yap.roomid,ya.roomid),0), IF((SELECT SUM(th.amount) FROM muusa_thisyear_charge th WHERE c.familyid=th.familyid AND th.chargetypeid!=1000)<=0,1,0), IFNULL(IF(yap.is_private=1,1,0),0) FROM (muusa_camper c, muusa_year y) LEFT JOIN muusa_yearattending ya ON c.id=ya.camperid AND y.year-1=ya.year LEFT JOIN muusa_yearattending yap ON c.id=yap.camperid AND y.year=yap.year WHERE c.email='$user->email' AND y.is_current=1";
       $db->setQuery($query);
       return $db->loadRow();
    }

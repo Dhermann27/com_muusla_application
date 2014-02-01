@@ -6,15 +6,69 @@
    <script
       src="<?php echo JURI::root(true);?>/components/com_muusla_application/js/jquery.imagemapster.min.js"></script>
    <form id="muusaApp" method="post">
+      <?php if($this->msg) {?>
+      <div class="ui-state-highlight ui-corner-all">
+         <p style="margin-top: 1em;">
+            <span class="ui-icon ui-icon-info"
+               style="float: left; margin: 1em;"></span> You have
+            successfully chosen your room! Click the links above to
+            review your bill or alter your workshop preferences.
+         </p>
+      </div>
+      <?php }?>
       <div align="center">
+         <?php if($this->reg == null || $this->reg[2] == "0") {?>
+         <div class="ui-state-error ui-corner-all">
+            <p style="margin-top: 1em;">
+               <span class="ui-icon ui-icon-alert"
+                  style="float: left; margin: 1em;"></span>
+               <?php if($this->reg == null || $this->reg[1] == "0") {?>
+               You have not yet registered for MUUSA in
+               <?php echo $this->year[0]; ?>
+               . In order to choose a room, you will first need to
+               complete your registration form and pay any registration
+               and workshop fees due.
+               <?php } else {?>
+               Although you have successfully preregistered for MUUSA
+               <?php echo $this->year[0]; ?>
+               , you have not yet completed your registration form. In
+               order to choose a room, you will first need to complete
+               your registration form and pay any registration and
+               workshop fees due remaining after your preregistration
+               deposit has been applied.
+               <?php } ?>
+               <br />
+               <button id="nextRegister">Proceed to Registration Form</button>
+            </p>
+         </div>
+         <?php } else if($this->reg[4] == "0") {?>
+         <div class="ui-state-error ui-corner-all">
+            <p style="margin-top: 1em;">
+               <span class="ui-icon ui-icon-alert"
+                  style="float: left; margin: 1em;"></span> Although you
+               have successfully registered for MUUSA
+               <?php echo $this->year[0]; ?>
+               , you have not yet paid your registration and workshop
+               fees. Please recheck the Statement &amp; Payment tab of
+               the Registration Form for the link to remit payment via
+               PayPal. You will need a zero balance before being allowed
+               to select a room. <i>Unfortunately, this also applies if
+                  you are participating in the MUUSA scholarship process</i>.<br />
+               <button id="nextRegister">Proceed to Registration Form</button>
+            </p>
+         </div>
+         <?php } else {?>
          <h5>
-            <?php if($this->year[1] == "0" || $this->reg[0] != 0) {?>
+            <?php if($this->year[1] == "0" || $this->reg[1] == "1") {?>
             Instructions: Please choose the unoccupied that you would
             like your family to occupy for
             <?php echo $this->year[0]; ?>
-            . Those requiring handicapped-accessible rooms or roommates
-            will be assigned by the Registrar per their selections on
-            the Registration Form.
+            . Families with campers in Meyer, Burt or Young Adult
+            (18-20) programs do not need to select housing for their
+            youth, as this will be assigned automatically. Campers
+            requiring handicapped-accessible rooms or roommates will be
+            assigned by the Registrar per their selections on the
+            Registration Form.
             <?php } else {?>
             Priority Registration is only available to those that
             preregistered for
@@ -37,18 +91,25 @@
                $fillcolor = "daa520";
                $roomname = $room->buildingid < 1007 ? ", Room $room->roomnbr" : "";
                $roomname .= $room->connected ? ($room->buildingid==1000 ? "<br /><i>Double Privacy Door with Room $room->connected</i>" : "<br /><i>Shares common area with Room $room->connected</i>") : "";
-               if($this->reg[1] == $room->id) {
+               if($this->reg[3] == $room->id) {
                   $selected = "true";
-                  $roomname .= "<br /><strong>Your Room From " . ($this->year[0]-1) . "</strong></br><i>Please note that changing from this room will make it available to other campers!</i>";
-               } else if($room->occupants) {
+                  $roomname .= "<br /><strong>Your Current Selection</strong>";
+                  if($room->capacity < 10) {
+                     $roomname .= "<br />Please note that changing from this room will make it available to other campers.<br /><i>This cannot be undone!</i>";
+                  }
+               } else if($room->occupants || $room->locked) {
                   if($room->capacity < 10) {
                      $selected = "true";
                      $deselectable = "false";
                      $fillcolor = "2f2f2f";
                   }
-                  $roomname .= $room->occupants == "1" ?"<br /><strong>Private Occupants</strong>" : "<br />Current Occupants:<br /><strong>$room->occupants</strong>";
+                  if($room->occupants) {
+                     $roomname .= $room->occupants == "1" ?"<br /><strong>Private Occupants</strong>" : "<br />Current Occupants:<br /><strong>$room->occupants</strong>";
+                  } else {
+                     $roomname .= $room->locked == "1" ?"<br /><strong>Locked by Preregistered Campers</strong>" : "<br />Locked by:<br /><strong>$room->locked</strong>";
+                  }
                }
-               if($this->year[1] == "1" && $this->reg[0] == 0) {
+               if($this->year[1] == "1" && $this->reg[1] == "0") {
                   $selectable = "false";
                }
                echo "<area shape='rect' data-key='$room->id' coords='$room->xcoord, $room->ycoord, " . ($room->xcoord+$room->pixelsize) . ", " . ($room->ycoord+$room->pixelsize) . "' href='#' />\n";
@@ -56,7 +117,7 @@
             }?>
          </map>
          <?php 
-         if($this->year[1] == "0" || $this->reg[0] != 0) {?>
+         if($this->year[1] == "0" || $this->reg[1] == "1") {?>
          <div align="center">
             <strong>Privacy Setting</strong>: <select
                name="yearattending-is_private-0" class="ui-corner-all">
@@ -65,14 +126,15 @@
                   <?php echo $this->year[0];?>
                   MUUSA campers.
                </option>
-               <option value="1">
+               <option value="1"
+               <?php echo $this->reg[5]==1 ? " selected" : "";?>>
                   Keep my room selection private from other
                   <?php echo $this->year[0];?>
                   MUUSA campers.
                </option>
             </select> <input id="roomid" type="hidden"
                name="yearattending-roomid-0"
-               value="<?php echo $this->reg[1];?>" />
+               value="<?php echo $this->reg[3];?>" />
          </div>
          <div align="right">
             <button class="save">Save Room Selection</button>
@@ -80,14 +142,12 @@
          <?php }?>
          <script lang="text/javascript">
                   jQuery("#roomselection").mapster({
-                          fillOpacity: 0.75,
                 		    render_highlight: {
                 		        fillColor: '67b021',
-                		        stroke: false
+                	            strokeWidth: 2
                 		    },
                 		    render_select: {
-                		        fillColor: 'daa520',
-                		        stroke: false
+                		        fillColor: 'daa520'
                 		    },
                 		    fadeInterval: 100,
                 		    mapKey: 'data-key',
@@ -105,13 +165,14 @@
           		      }).mapster('set', false);
       		      }
                   jQuery(document).ready(function ($) {
-              	    $("#muusaApp .save").button().click(function (event) {
-              	    	$("#muusaApp").submit();
-              	        event.preventDefault();
-              	        return false;
-              	    });
+                  	    $("#muusaApp .save").button().click(function (event) {
+                      	    $("#muusaApp").submit();
+                      	    event.preventDefault();
+                      	    return false;
+                      	});
                   });
          </script>
+         <?php }?>
       </div>
 
    </form>
