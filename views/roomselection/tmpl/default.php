@@ -3,68 +3,116 @@
    <link type="text/css"
       href="<?php echo JURI::root(true);?>/components/com_muusla_application/css/application.css"
       rel="stylesheet" />
-   <link type="text/css"
-      href="<?php echo JURI::root(true);?>/components/com_muusla_application/css/jquery-ui-1.10.0.custom.min.css"
-      rel="stylesheet" />
-   <script
-      src="<?php echo JURI::root(true);?>/components/com_muusla_application/js/jquery-1.9.1.min.js"></script>
-   <script
-      src="<?php echo JURI::root(true);?>/components/com_muusla_application/js/jquery-ui-1.10.0.custom.min.js"></script>
    <script
       src="<?php echo JURI::root(true);?>/components/com_muusla_application/js/jquery.imagemapster.min.js"></script>
-   <form
-      action="http://<? echo $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];?>"
-      method="post">
+   <form id="muusaApp" method="post">
       <div align="center">
+         <h5>
+            <?php if($this->year[1] == "0" || $this->reg[0] != 0) {?>
+            Instructions: Please choose the unoccupied that you would
+            like your family to occupy for
+            <?php echo $this->year[0]; ?>
+            . Those requiring handicapped-accessible rooms or roommates
+            will be assigned by the Registrar per their selections on
+            the Registration Form.
+            <?php } else {?>
+            Priority Registration is only available to those that
+            preregistered for
+            <?php echo $this->year[0];?>
+            . Please contact the Registrar if you believe that this is
+            in error, or return 30 days after registration begins to
+            choose your room.
+            <?php }?>
+         </h5>
          <img id="roomselection"
             src="<?php echo JURI::root(true);?>/images/muusa/rooms.png"
             usemap="#rooms" />
          <map name="rooms">
-            <area shape="rect" coords="143,58,213,128" href="#"
-               title="Camp Lakewood Cabins" />
-            <area shape="rect" coords="356,349,426,419" href="#"
-               title="Tent Camping" />
-            <area shape="rect" coords="417,723,487,793" href="#"
-               title="Commuter" />
-            <?php foreach(range(121, 246, 31) as $yco) { 
-               foreach(range(387, 502, 38) as $xco) {
-                  echo "<area shape='rect' coords='$xco, $yco, " . ($xco+25) . ", " . ($yco+25) . "' href='#' title='Lakeview Cabin' />\n";
+            <?php
+            $areas = array();
+            foreach($this->rooms as $room) {
+               $selected = "false";
+               $selectable = "true";
+               $deselectable = "true";
+               $fillcolor = "daa520";
+               $roomname = $room->buildingid < 1007 ? ", Room $room->roomnbr" : "";
+               $roomname .= $room->connected ? ($room->buildingid==1000 ? "<br /><i>Double Privacy Door with Room $room->connected</i>" : "<br /><i>Shares common area with Room $room->connected</i>") : "";
+               if($this->reg[1] == $room->id) {
+                  $selected = "true";
+                  $roomname .= "<br /><strong>Your Room From " . ($this->year[0]-1) . "</strong></br><i>Please note that changing from this room will make it available to other campers!</i>";
+               } else if($room->occupants) {
+                  if($room->capacity < 10) {
+                     $selected = "true";
+                     $deselectable = "false";
+                     $fillcolor = "2f2f2f";
+                  }
+                  $roomname .= $room->occupants == "1" ?"<br /><strong>Private Occupants</strong>" : "<br />Current Occupants:<br /><strong>$room->occupants</strong>";
                }
-            }
-            foreach(range(236, 383, 31) as $yco) {
-               foreach(range(113, 252, 38) as $xco) {
-                  echo "<area shape='rect' coords='$xco, $yco, " . ($xco+25) . ", " . ($yco+25) . "' href='#' title='Forestview Cabin' />\n";
+               if($this->year[1] == "1" && $this->reg[0] == 0) {
+                  $selectable = "false";
                }
-            }
-            foreach(range(211, 481, 30.5) as $yco) {
-               foreach(range(769, 870, 38) as $xco) {
-                  echo "<area shape='rect' coords='$xco, $yco, " . ($xco+25) . ", " . ($yco+25) . "' href='#' title='Trout Lodge Guest Suite' />\n";
-               }
-            }
-            foreach(range(516, 869, 30.5) as $yco) {
-               foreach(range(769, 870, 38) as $xco) {
-                  echo "<area shape='rect' coords='$xco, $yco, " . ($xco+25) . ", " . ($yco+25) . "' href='#' title='Trout Lodge Guest Suite' />\n";
-               }
-            }
-            foreach(range(211, 481, 30.5) as $yco) {
-               echo "<area shape='rect' coords='670, $yco, 695, " . ($yco+25) . "' href='#' title='Trout Lodge Loft Suite' />\n";
-            }
-            foreach(range(547, 869, 30.5) as $yco) {
-               echo "<area shape='rect' coords='670, $yco, 695, " . ($yco+25) . "' href='#' title='Trout Lodge Loft Suite' />\n";
+               echo "<area shape='rect' data-key='$room->id' coords='$room->xcoord, $room->ycoord, " . ($room->xcoord+$room->pixelsize) . ", " . ($room->ycoord+$room->pixelsize) . "' href='#' />\n";
+               array_push($areas, "{ key: '$room->id', toolTip: '$room->buildingname$roomname', selected: $selected, isSelectable: $selectable, isDeselectable: $deselectable, render_select: { fillColor: '$fillcolor' } }");
             }?>
          </map>
-         <div>
-            <a href="javascript:populate();">Test Data</a>
+         <?php 
+         if($this->year[1] == "0" || $this->reg[0] != 0) {?>
+         <div align="center">
+            <strong>Privacy Setting</strong>: <select
+               name="yearattending-is_private-0" class="ui-corner-all">
+               <option value="0">
+                  Share my room selection with other
+                  <?php echo $this->year[0];?>
+                  MUUSA campers.
+               </option>
+               <option value="1">
+                  Keep my room selection private from other
+                  <?php echo $this->year[0];?>
+                  MUUSA campers.
+               </option>
+            </select> <input id="roomid" type="hidden"
+               name="yearattending-roomid-0"
+               value="<?php echo $this->reg[1];?>" />
          </div>
+         <div align="right">
+            <button class="save">Save Room Selection</button>
+         </div>
+         <?php }?>
          <script lang="text/javascript">
-                  $("#roomselection").mapster();
-                  //$("area").tooltip({hide: {duration: 200}, show: {duration: 200}, track: true});
-                  function populate() {
-                      $("area").get().sort(function() { 
-                    	  return Math.round(Math.random())-0.5
-                      }).slice(0,25).css("background-color", "black");
-                  }
+                  jQuery("#roomselection").mapster({
+                          fillOpacity: 0.75,
+                		    render_highlight: {
+                		        fillColor: '67b021',
+                		        stroke: false
+                		    },
+                		    render_select: {
+                		        fillColor: 'daa520',
+                		        stroke: false
+                		    },
+                		    fadeInterval: 100,
+                		    mapKey: 'data-key',
+                		    toolTipContainer: '<div class="ui-state-highlight ui-corner-all" style="padding: 5px 10px 5px 10px;"></div>',
+                		    showToolTip: true,
+                		    areas: [
+                		    <?php echo implode(",\n", $areas); ?>
+                		    ],
+                		    onClick: unselectAll
+                		    });
+      		      function unselectAll(data) {
+          		      jQuery("#roomid").val(data.key);
+          		      jQuery('area').filter(function() {
+              		      return jQuery(this).attr("data-key") != data.key && jQuery("#roomselection").mapster('get_options', jQuery(this).attr("data-key")).isDeselectable; 
+          		      }).mapster('set', false);
+      		      }
+                  jQuery(document).ready(function ($) {
+              	    $("#muusaApp .save").button().click(function (event) {
+              	    	$("#muusaApp").submit();
+              	        event.preventDefault();
+              	        return false;
+              	    });
+                  });
          </script>
       </div>
+
    </form>
 </div>

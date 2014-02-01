@@ -28,17 +28,17 @@ class muusla_applicationModelpaypal extends JModel
       $obj->amount = $amount;
       $obj->timestamp = date("Y-m-d");
       $obj->memo = $txn;
-      $obj->fiscalyear = "&&(SELECT year FROM muusa_currentyear)";
+      $obj->year = "&&(SELECT year FROM muusa_year WHERE is_current=1)";
       $obj->created_by = "paypal";
       $obj->created_at = date("Y-m-d H:i:s");
-      $query = "SELECT chargeid FROM muusa_charges WHERE chargetypeid=1005 AND timestamp='$obj->timestamp' AND camperid=$camperid";
+      $query = "SELECT id FROM muusa_charge WHERE chargetypeid=1005 AND timestamp='$obj->timestamp' AND camperid=$camperid";
       $db->setQuery($query);
       $chargeid = $db->loadResult();
       if($chargeid > 0) {
-         $obj->chargeid = $chargeid;
-         $db->updateObject("muusa_charges", $obj, "chargeid");
+         $obj->id = $chargeid;
+         $db->updateObject("muusa_charge", $obj, "id");
       }else {
-         $db->insertObject("muusa_charges", $obj);
+         $db->insertObject("muusa_charge", $obj);
       }
       if($db->getErrorNum()) {
          JError::raiseError(500, $db->stderr());
