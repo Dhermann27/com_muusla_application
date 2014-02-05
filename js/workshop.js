@@ -47,6 +47,13 @@ jQuery(document)
 										window.location.href = "http://muusa.org/index.php/administration/database/campers";
 										return false;
 									});
+					$("#nextHousing")
+							.button()
+							.click(
+									function(event) {
+										window.location.href = "http://muusa.org/index.php/registration/room-selection";
+										return false;
+									});
 				});
 
 function openLink($, obj) {
@@ -85,7 +92,7 @@ function submit($) {
 											+ attendeeCount++, fid);
 						});
 			});
-	 $("#muusaApp").closest("form").submit();
+	$("#muusaApp").closest("form").submit();
 }
 
 function addHidden($, fieldname, fieldvalue) {

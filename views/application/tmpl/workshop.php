@@ -25,14 +25,23 @@
                      workshops for the same timeslot if they are offered
                      on different days. List all in your choices.
                   </div>
+                  <div align="center">
+                     <h5>To select your workshops, click and drag them
+                        from the right to the left side, then put them
+                        in order of preference.</h5>
+                  </div>
                   <?php if($this->msg) {?>
                   <div class="ui-state-highlight ui-corner-all">
                      <p style="margin: 1em;">
                         <span class="ui-icon ui-icon-info"
                            style="float: left; margin: 1em;"></span> You
-                        have successfully signed up for workshops! Be
-                        sure to pay your balance by clicking on the
-                        Register Online link above.<br />
+                        have successfully signed up for workshops! If
+                        your balance is paid, proceed to the Room
+                        Selection tool.<br /> <i>Note: only possible
+                           during the Priority Registration period to
+                           those that preregistered.</i><br />
+                        <button id="nextHousing">Proceed to Room
+                           Selection</button>
                      </p>
                   </div>
                   <p>&nbsp;</p>

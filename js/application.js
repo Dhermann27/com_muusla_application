@@ -31,11 +31,17 @@ jQuery(document)
 						openLink($(this));
 						return false;
 					});
-					var pp = $("#paypalRedirect");
-					if (pp != undefined) {
-						pp.dialog();
-						setTimeout("jQuery('#paypalForm').submit();", 1000);
-					}
+					$("#paypalRedirect").dialog({
+						modal : true,
+						minWidth : 800,
+						buttons : [ {
+							text : "Proceed to PayPal.com",
+							click : function() {
+								jQuery("#paypalForm").submit();
+								return false;
+							}
+						} ]
+					});
 					$(".radios").buttonset();
 					$(".roomtypes").accordion({
 						collapsible : true,
@@ -53,16 +59,6 @@ jQuery(document)
 					// placeholder : "ui-state-highlight",
 					// connectWith : ".connectedRoomtype"
 					// }).disableSelection();
-					$(".dialog-message").dialog({
-						modal : true,
-						autoOpen : false,
-						minWidth : 800,
-						buttons : {
-							Ok : function() {
-								$(this).dialog("close");
-							}
-						}
-					});
 					$("#nextCamper").button().click(function() {
 						$("#muusaApp").tabs({
 							active : 1
@@ -243,7 +239,7 @@ function donationCalc($) {
 	total += donation;
 	$("#donation").val(donation.toFixed(2));
 	$("#amountNow").text("$" + total.toFixed(2));
-	$("#paypalAmt").val(total.toFixed(2));
+	$("#paypalAmt").val(Math.max(total, 0).toFixed(2));
 }
 
 function totalCharges($) {
@@ -285,8 +281,8 @@ function submit($) {
 						});
 						$("input[name*='phonenumber-camperid']", $(this)).val(
 								camperid);
-						addHidden($, "roommatepreference-names-" + camperid,
-								$("input.roommates", $(this)));
+						addHidden($, "roommatepreference-names-" + camperid, $(
+								"input.roommates", $(this)));
 					});
 	$("#muusaApp").closest("form").submit();
 }

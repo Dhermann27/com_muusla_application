@@ -21,9 +21,14 @@ $user =& JFactory::getUser();
    </div>
    <p>&nbsp;</p>
    <?php } elseif ($this->redirectAmt) {?>
-   <div id="paypalRedirect" class="dialog-message" title="PayPal">
-      <strong>Redirecting to PayPal. Please let your transaction
-         complete and do not hit the Back button.</strong>
+   <div id="paypalRedirect" title="PayPal">
+      <span class="fa-stack fa-2x" style="float: left;"> <i
+         class="fa fa-arrow-circle-left fa-stack-1x"></i> <i
+         class="fa fa-ban fa-stack-2x" style="color: indianred;"></i>
+      </span> <strong>Redirecting to PayPal. After you complete your
+         transtion, <i>do not hit the Back button on your web browser</i>.
+         The website will redirect you back to muusa.org automatically.
+      </strong>
       <form id="paypalForm" name="_xclick"
          action="https://www.paypal.com/cgi-bin/webscr" method="post">
          <input type="hidden" name="amount"

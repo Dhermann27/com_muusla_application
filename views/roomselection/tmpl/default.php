@@ -58,8 +58,8 @@
             </p>
          </div>
          <?php } else {?>
+         <?php if($this->year[1] == "0" || $this->reg[1] == "1") {?>
          <h5>
-            <?php if($this->year[1] == "0" || $this->reg[1] == "1") {?>
             Instructions: Please choose the unoccupied that you would
             like your family to occupy for
             <?php echo $this->year[0]; ?>
@@ -69,17 +69,25 @@
             requiring handicapped-accessible rooms or roommates will be
             assigned by the Registrar per their selections on the
             Registration Form.
-            <?php } else {?>
-            Priority Registration is only available to those that
-            preregistered for
-            <?php echo $this->year[0];?>
-            . Please contact the Registrar if you believe that this is
-            in error, or return 30 days after registration begins to
-            choose your room.
-            <?php }?>
          </h5>
+         <?php } else {?>
+         <div class="ui-state-highlight ui-corner-all">
+            <p style="margin-top: 1em;">
+               <span class="ui-icon ui-icon-info"
+                  style="float: left; margin: 1em;"></span> Priority
+               Registration is only available to those that
+               preregistered for
+               <?php echo $this->year[0];?>
+               . Please contact the Registrar if you believe that this
+               is in error, or return 30 days after registration begins
+               to choose your room. Feel free to browse this tool in <i>read-only
+                  mode</i> until then.
+            </p>
+         </div>
+
+         <?php }?>
          <img id="roomselection"
-            src="<?php echo JURI::root(true);?>/images/muusa/rooms.png"
+            src="<?php echo JURI::root(true);?>/images/muusa/rooms.jpg"
             usemap="#rooms" />
          <map name="rooms">
             <?php
@@ -141,36 +149,35 @@
          </div>
          <?php }?>
          <script lang="text/javascript">
-                  jQuery("#roomselection").mapster({
-                		    render_highlight: {
-                		        fillColor: '67b021',
-                	            strokeWidth: 2
-                		    },
-                		    render_select: {
-                		        fillColor: 'daa520'
-                		    },
-                		    fadeInterval: 100,
-                		    mapKey: 'data-key',
-                		    toolTipContainer: '<div class="ui-state-highlight ui-corner-all" style="padding: 5px 10px 5px 10px;"></div>',
-                		    showToolTip: true,
-                		    areas: [
-                		    <?php echo implode(",\n", $areas); ?>
-                		    ],
-                		    onClick: unselectAll
-                		    });
-      		      function unselectAll(data) {
-          		      jQuery("#roomid").val(data.key);
-          		      jQuery('area').filter(function() {
-              		      return jQuery(this).attr("data-key") != data.key && jQuery("#roomselection").mapster('get_options', jQuery(this).attr("data-key")).isDeselectable; 
-          		      }).mapster('set', false);
-      		      }
-                  jQuery(document).ready(function ($) {
-                  	    $("#muusaApp .save").button().click(function (event) {
-                      	    $("#muusaApp").submit();
-                      	    event.preventDefault();
-                      	    return false;
-                      	});
-                  });
+         jQuery(document).ready(function ($) {
+             $("#muusaApp .save").button().click(function (event) {
+                 $("#muusaApp").submit();
+                 event.preventDefault();
+                 return false;
+             });
+             $("#roomselection").mapster({
+                 render_highlight: {
+                     fillColor: '67b021',
+                     strokeWidth: 2
+                 },
+                 render_select: {
+                     fillColor: 'daa520'
+                 },
+                 fadeInterval: 100,
+                 mapKey: 'data-key',
+                 toolTipContainer: '<div class="ui-state-highlight ui-corner-all" style="padding: 5px 10px 5px 10px;"></div>',
+                 showToolTip: true,
+                 areas: [ <?php echo implode(",\n", $areas); ?> ],
+                 onClick: unselectAll
+             });
+         });
+
+         function unselectAll(data) {
+             jQuery("#roomid").val(data.key);
+             jQuery('area').filter(function () {
+                 return jQuery(this).attr("data-key") != data.key && jQuery("#roomselection").mapster('get_options', jQuery(this).attr("data-key")).isDeselectable;
+             }).mapster('set', false);
+         }
          </script>
          <?php }?>
       </div>
