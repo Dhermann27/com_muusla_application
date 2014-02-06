@@ -130,16 +130,14 @@
             <strong>Privacy Setting</strong>: <select
                name="yearattending-is_private-0" class="ui-corner-all">
                <option value="0">
-                  Share my room selection with other
+                  Show other
                   <?php echo $this->year[0];?>
-                  MUUSA campers.
+                  MUUSA Campers where I'll be staying.
                </option>
                <option value="1"
-               <?php echo $this->reg[5]==1 ? " selected" : "";?>>
-                  Keep my room selection private from other
-                  <?php echo $this->year[0];?>
-                  MUUSA campers.
-               </option>
+               <?php echo $this->reg[5]==1 ? " selected" : "";?>>I
+                  will share where I'll be staying with other MUUSA
+                  Campers myself.</option>
             </select> <input id="roomid" type="hidden"
                name="yearattending-roomid-0"
                value="<?php echo $this->reg[3];?>" />
