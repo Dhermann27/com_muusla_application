@@ -20,9 +20,11 @@ $serverCharges = array("1000", "1002", "1003", "1004");
    </tr>
    <?php
    $total = 0.0;
+   $housing = false;
    if($charges) {
       foreach($charges as $charge) {
          if($year != $this->year["year"] || !$this->editcamper || in_array($charge->chargetypeid, $serverCharges)) {
+            $housing = $housing || $charge->chargetypeid == 1000;
             echo "           <tr>\n";
             $total += (float)preg_replace("/,/", "",  $charge->amount);
             echo "                   <td class='chargetype' nowrap='nowrap'>$charge->chargetypename</td>\n";
@@ -62,7 +64,7 @@ $serverCharges = array("1000", "1002", "1003", "1004");
    echo "              <td id='amountNow'>$" . number_format($total, 2, '.', '') . "</td>\n";
    echo "              <td colspan='2'>&nbsp;</td>\n";
    echo "           </tr>\n";
-   if($this->room != 0) {
+   if($housing) {
       echo "           <tr align='right'>\n";
       echo "              <td><strong>Amount Due Upon Arrival:</strong></td>\n";
       echo "              <td id='amountArrival'>$" . number_format($total, 2, '.', '') . "</td>\n";
@@ -70,7 +72,7 @@ $serverCharges = array("1000", "1002", "1003", "1004");
       echo "           </tr>\n";
    } else {
       echo "           <tr>\n";
-      echo "              <td colspan='4'><i>Does not include your remaining housing fees, which are due on the first day of camp.</i>.</td>\n";
+      echo "              <td colspan='4'><i>Does not include your remaining housing fees, which are due on the first day of camp</i>.</td>\n";
       echo "           </tr>\n";
    }
    ?>
@@ -107,7 +109,7 @@ $serverCharges = array("1000", "1002", "1003", "1004");
          <button id="finishPaypal">Pay Now via PayPal</button>
       </td>
       <td align="right">
-         <button class="finishWorkshop">Save Changes Only</button>
+         <button id="finishWorkshop">Save Changes Only</button>
       </td>
    </tr>
 </table>

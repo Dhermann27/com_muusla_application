@@ -1,4 +1,4 @@
-#muusaApp table {
+#muusaApp table, table#muusaApp {
 	width: 95%;
 	align: center;
 }

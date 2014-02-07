@@ -117,7 +117,7 @@ jQuery(document)
 						submit($);
 						return false;
 					});
-					$(".finishWorkshop").button().click(function() {
+					$("#finishWorkshop").button().click(function() {
 						$("#paypalAmt").val("0");
 						submit($);
 						return false;
@@ -178,7 +178,6 @@ function recalc($, event, ui) {
 	if (ui.newPanel.attr("id") == "appPayment") {
 		$("#payments" + thisyear + " tr.pending").remove();
 		$("#noattending").hide();
-		var total = totalCharges($);
 		var registered = new Array();
 		$("#payments" + thisyear + " tr").filter(
 				function() {
@@ -204,7 +203,6 @@ function recalc($, event, ui) {
 										"Registration Fee");
 								var fee = findFee(
 										$(".birthday", $(this)).val(), grade);
-								total += fee;
 								$(".amount", newrow).text("$" + fee.toFixed(2));
 								$(".date", newrow).html("<i>Pending</i>");
 								$(".memo", newrow).text(campername);
@@ -224,30 +222,34 @@ function recalc($, event, ui) {
 							&& $.inArray($("td.memo", $(this)).text(),
 									registered) != -1;
 				}).remove();
-		total += Math.abs(pFloat($("#donation").val()));
-		$("#amountNow").text("$" + total.toFixed(2));
-		$("#paypalAmt").val(total.toFixed(2));
+		donationCalc($);
 	}
 }
 
 function donationCalc($) {
-	var total = totalCharges($);
 	var donation = Math.abs(pFloat($("#donation").val()));
 	if (isNaN(donation)) {
 		donation = 0.0;
 	}
-	total += donation;
 	$("#donation").val(donation.toFixed(2));
-	$("#amountNow").text("$" + total.toFixed(2));
-	$("#paypalAmt").val(Math.max(total, 0).toFixed(2));
+
+	var totalNow = totalCharges($, true);
+	$("#amountNow").text("$" + totalNow.toFixed(2));
+	$("#paypalAmt").val(Math.max(totalNow, 0).toFixed(2));
+	var later = $("#amountArrival");
+	if (later.length) {
+		later.text("$" + totalCharges($, false).toFixed(2));
+	}
 }
 
-function totalCharges($) {
+function totalCharges($, isNow) {
 	var total = 0.0;
 	$("#payments" + thisyear + " td.amount").each(function() {
-		total += pFloat($(this).text());
+		if (!isNow || !$(this).prev().text() == "Housing Fee") {
+			total += pFloat($(this).text());
+		}
 	});
-	$("#payments" + thisyear + " input[name*='charges-amount']").each(
+	$("#payments" + thisyear + " input[name*='charge-amount']").each(
 			function() {
 				total += pFloat($(this).val());
 			});

@@ -15,7 +15,7 @@
             echo "          <option value='delete' style='background-color: indianred'>Delete Charge</option>\n";
          }
          foreach($this->chargetypes as $chargetype) {
-            $selected = $charge->chargetypeid == $chargetype->chargetypeid ? " selected" : "";
+            $selected = $charge->chargetypeid == $chargetype->id ? " selected" : "";
             echo "          <option value='$chargetype->chargetypeid'$selected>$chargetype->name</option>\n";
          }?>
    </select><input type="hidden"

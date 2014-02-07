@@ -133,7 +133,7 @@ class muusla_applicationModelapplication extends JModel
    function getRegisteredCampersByFamily($where) {
       $db =& JFactory::getDBO();
       $user =& JFactory::getUser();
-      $query = "SELECT id, firstname, lastname, yearattendingid, IF(grade<13,0,1) shops, programname FROM muusa_thisyear_camper WHERE $where ORDER BY STR_TO_DATE(c.birthdate, '%m/%d/%Y')";
+      $query = "SELECT id, firstname, lastname, yearattendingid, IF(grade<13,0,1) shops, programname FROM muusa_thisyear_camper WHERE $where ORDER BY STR_TO_DATE(birthdate, '%m/%d/%Y')";
       $db->setQuery($query);
       return $db->loadObjectList();
    }
