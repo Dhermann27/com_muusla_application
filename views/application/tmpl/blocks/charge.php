@@ -16,7 +16,7 @@
          }
          foreach($this->chargetypes as $chargetype) {
             $selected = $charge->chargetypeid == $chargetype->id ? " selected" : "";
-            echo "          <option value='$chargetype->chargetypeid'$selected>$chargetype->name</option>\n";
+            echo "          <option value='$chargetype->id'$selected>$chargetype->name</option>\n";
          }?>
    </select><input type="hidden"
       name="charge-id-<?php echo $charge->id;?>"

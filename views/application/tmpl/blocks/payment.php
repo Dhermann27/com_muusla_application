@@ -8,7 +8,7 @@
  * @param   object  $credits  The database credits list for one year
  *
  */
-$serverCharges = array("1000", "1002", "1003", "1004");
+$serverCharges = array("1000", "1001", "1002", "1003", "1004", "1016", "1021");
 ?>
 <table id="payments<?php echo $year;?>">
    <tr>
@@ -70,7 +70,7 @@ $serverCharges = array("1000", "1002", "1003", "1004");
       echo "              <td id='amountArrival'>$" . number_format($total, 2, '.', '') . "</td>\n";
       echo "              <td colspan='2'>&nbsp;</td>\n";
       echo "           </tr>\n";
-   } else {
+   } else if(!$this->editcamper) {
       echo "           <tr>\n";
       echo "              <td colspan='4'><i>Does not include your remaining housing fees, which are due on the first day of camp</i>.</td>\n";
       echo "           </tr>\n";
@@ -109,12 +109,8 @@ $serverCharges = array("1000", "1002", "1003", "1004");
          <button id="finishPaypal">Pay Now via PayPal</button>
       </td>
       <td align="right">
-         <button id="finishWorkshop">Save Changes Only</button>
+         <button id="finishWorkshop">Save Changes</button>
       </td>
    </tr>
 </table>
-<?php } else {?>
-<div align="right">
-   <button class="finishWorkshop">Save</button>
-</div>
 <?php }?>

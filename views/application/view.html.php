@@ -44,14 +44,15 @@ class muusla_applicationViewapplication extends JView
             foreach($calls["family"] as $id => $family) {
                $familyid = $model->upsertFamily($family);
                if($editcamper == "1") {
-                  $editcamper = "($familyid)";
+                  $editcamper = "$familyid";
                }
             }
          }
          if(count($calls["camper"]) > 0) {
             foreach($calls["camper"] as $oldcamperid => $camper) {
-               if($camper->attending != "0" && $camper->firstname != "" && $camper->lastname != "") {
+               if($camper->attending != "-1" && $camper->firstname != "" && $camper->lastname != "") {
                   $camper->familyid = $familyid;
+                  $days = $camper->attending;
                   $newcamperid = $model->upsertCamper($camper);
                   if(count($calls["phonenumber"]) > 0) {
                      foreach($calls["phonenumber"] as $phonenumber) {
@@ -65,14 +66,8 @@ class muusla_applicationViewapplication extends JView
                         $charge->camperid = $newcamperid;
                      }
                   }
-                  $yearattendingid = $model->upsertYearattending($newcamperid);
-                  //                   if(count($calls["roomtype_preferences"][$oldcamperid]->buildingids) > 0) {
-                  //                      foreach(explode(",", $calls["roomtype_preferences"][$oldcamperid]->buildingids) as $choicenbr => $buildingid) {
-                  //                         $model->insertRoomtypepreferences($fiscalyearid, $choicenbr+1, $buildingid);
-                  //                      }
-                  //                   }
-                  $model->deleteRoommatepreferences($yearattendingid);
-                  print_r($calls["roommatepreference"]);
+                  $yearattendingid = $model->upsertYearattending($newcamperid, $days);
+                  $model->deleteRoommatepreferences($yearattendingid, $camper->attending);
                   if(count($calls["roommatepreference"][$oldcamperid]->names) > 0) {
                      foreach(explode(",", $calls["roommatepreference"][$oldcamperid]->names) as $choicenbr => $name) {
                         $model->insertRoommatepreferences($yearattendingid, $choicenbr+1, $this->getSafe(urldecode($name)));

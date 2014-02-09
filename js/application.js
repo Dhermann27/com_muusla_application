@@ -122,6 +122,12 @@ jQuery(document)
 						submit($);
 						return false;
 					});
+					$("#registerAll").button().click(function() {
+						$("#paypalAmt").val("0");
+						$("#appCamper tbody.camperBody .attending").val("6");
+						submit($);
+						return false;
+					});
 				});
 
 function switchNextRow(obj) {
@@ -189,11 +195,12 @@ function recalc($, event, ui) {
 		$("#appCamper tbody.camperBody")
 				.filter(
 						function() {
-							return $(".attending", $(this)).val() != 0
+							return $(".attending", $(this)).val() != -1
 									&& $(".firstname", $(this)).val() != "";
 						})
 				.each(
 						function() {
+							var days = pInt($(".attending", $(this)).val());
 							var campername = $(".firstname", $(this)).val()
 									+ " " + $(".lastname", $(this)).val();
 							var grade = pInt($(".grade", $(this)).val());
@@ -201,13 +208,19 @@ function recalc($, event, ui) {
 								var newrow = $("<tr class='pending'><td class='chargetype'></td><td class='amount' align='right'></td><td class='date' align='center'></td><td class='memo'></td></tr>");
 								$(".chargetype", newrow).text(
 										"Registration Fee");
-								var fee = findFee(
-										$(".birthday", $(this)).val(), grade);
+								var fee = Math.min(findFee($(".birthday",
+										$(this)).val(), grade), 30 * days);
 								$(".amount", newrow).text("$" + fee.toFixed(2));
 								$(".date", newrow).html("<i>Pending</i>");
 								$(".memo", newrow).text(campername);
 								$("#payments" + thisyear + " tr").first()
 										.after(newrow);
+							} else {
+								var fee = Math.min(findFee($(".birthday",
+										$(this)).val(), grade), 30 * days);
+								$("td.memo:contains('" + campername + "')")
+										.parent().find(".amount").text(
+												"$" + fee.toFixed(2));
 							}
 							registered = jQuery.grep(registered,
 									function(value) {
@@ -245,7 +258,7 @@ function donationCalc($) {
 function totalCharges($, isNow) {
 	var total = 0.0;
 	$("#payments" + thisyear + " td.amount").each(function() {
-		if (!isNow || !$(this).prev().text() == "Housing Fee") {
+		if (!isNow || $(this).prev().text() != "Housing Fee") {
 			total += pFloat($(this).text());
 		}
 	});
@@ -261,7 +274,7 @@ function submit($) {
 	var phoneCount = 200;
 	$("#appCamper tbody.camperBody").filter(
 			function() {
-				return $(".attending", $(this)).val() != 0
+				return $(".attending", $(this)).val() != -1
 						&& $(".firstname", $(this)).val() != "";
 			})
 			.each(

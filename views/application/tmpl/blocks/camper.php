@@ -30,11 +30,21 @@ $user =& JFactory::getUser();
          <button class="help info">Show Attending Help</button> <select
          name="camper-attending-<?php echo $camperid;?>"
          class="attending ui-corner-all">
-            <option value="6"
-            <?php echo $camper->days > 0 || $this->sumdays == 0 ? " selected" : "";?>>Attending</option>
-            <option value="0"
-            <?php echo $camper->days == 0 && $this->sumdays > 0 ? " selected" : "";?>>Not
+            <?php if($this->editcamper) {?>
+            <option value="-1"
+            <?php echo $camper == null || $camper->days == -1 ? " selected" : "";?>>Not
                Attending</option>
+            <?php for($i=6; $i>=0; $i--) {
+               $selected = $camper->days == $i ? " selected" : "";
+               echo "                        <option value='$i'$selected>$i nights</option>\n";
+            }
+      } else {?>
+            <option value="6"
+            <?php echo $camper->days > -1 || $this->sumdays == 0 ? " selected" : "";?>>Attending</option>
+            <option value="-1"
+            <?php echo $camper->days == -1 && $this->sumdays > 0 ? " selected" : "";?>>Not
+               Attending</option>
+            <?php }?>
       </select>
       </td>
    </tr>

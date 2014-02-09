@@ -125,7 +125,7 @@ class muusla_applicationModelapplication extends JModel
    function getCampers($familyid) {
       $db =& JFactory::getDBO();
       $user =& JFactory::getUser();
-      $query = "SELECT c.id, IFNULL(ya.id,0) yearattendingid, c.firstname, c.lastname, c.sexcd, c.email, DATE_FORMAT(c.birthdate, '%m/%d/%Y') birthday, (muusa_getage(c.birthdate, y.year)+c.gradeoffset) grade, c.sponsor, c.is_handicap, c.foodoptionid, c.churchid, p.name programname, IFNULL(ya.days,0) days FROM (muusa_camper c, muusa_program p, muusa_year y) LEFT JOIN muusa_yearattending ya ON c.id=ya.camperid AND y.year=ya.year WHERE p.id=muusa_getprogramid(c.id, y.year) AND c.familyid=$familyid AND y.is_current=1 ORDER BY IF(c.email='$user->email',0,1), c.birthdate";
+      $query = "SELECT c.id, IFNULL(ya.id,0) yearattendingid, c.firstname, c.lastname, c.sexcd, c.email, DATE_FORMAT(c.birthdate, '%m/%d/%Y') birthday, (muusa_getage(c.birthdate, y.year)+c.gradeoffset) grade, c.sponsor, c.is_handicap, c.foodoptionid, c.churchid, p.name programname, IFNULL(ya.days,-1) days FROM (muusa_camper c, muusa_program p, muusa_year y) LEFT JOIN muusa_yearattending ya ON c.id=ya.camperid AND y.year=ya.year WHERE p.id=muusa_getprogramid(c.id, y.year) AND c.familyid=$familyid AND y.is_current=1 ORDER BY IF(c.email='$user->email',0,1), c.birthdate";
       $db->setQuery($query);
       return $db->loadObjectList();
    }
@@ -178,7 +178,7 @@ class muusla_applicationModelapplication extends JModel
       return $db->loadObjectList();
    }
 
-   function upsertYearattending($camperid) {
+   function upsertYearattending($camperid, $days) {
       $db =& JFactory::getDBO();
       $user =& JFactory::getUser();
       $query = "SELECT IFNULL(ya.id, 0), y.year FROM muusa_year y LEFT JOIN muusa_yearattending ya ON ya.year=y.year AND ya.camperid=$camperid WHERE y.is_current=1";
@@ -188,11 +188,19 @@ class muusla_applicationModelapplication extends JModel
          $obj = new stdClass;
          $obj->camperid = $camperid;
          $obj->year = $yearattending[1];
+         $obj->days = $days;
          $obj->created_by = $user->username;
          $db->insertObject("muusa_yearattending", $obj, "id");
-         $yearattending[0] = $obj->id;
+         return $obj->id;
+      } else {
+         $query = "UPDATE muusa_yearattending SET days=$days WHERE id=" . $yearattending[0];
+         $db->setQuery($query);
+         $db->query();
+         return $yearattending[0];
       }
-      return $yearattending[0];
+      if($db->getErrorNum()) {
+         JError::raiseError(500, $db->stderr());
+      }
    }
 
    function deleteYearattending($camperid) {
@@ -387,19 +395,26 @@ class muusla_applicationModelapplication extends JModel
       $db =& JFactory::getDBO();
       $user =& JFactory::getUser();
       if($obj->chargetypeid != "delete") {
-         $query = "SELECT IFNULL(h.id, 0), y.year FROM muusa_year y LEFT JOIN muusa_charge h ON h.camperid=$camperid AND h.timestamp=STR_TO_DATE('$obj->timestamp', '%m/%d/%Y') AND h.amount=$obj->amount AND h.chargetypeid=$obj->chargetypeid AND h.memo='$obj->memo' WHERE y.is_current=1";
-         $obj->camperid = $camperid;
-         $obj->amount = preg_replace("/,/", "", $obj->amount);
-         $obj->timestamp = "&&STR_TO_DATE('$obj->timestamp', '%m/%d/%Y')";
-         $db->setQuery($query);
-         $charge = $db->loadRow();
-         $obj->year = $charge[1];
-         if($charge[0] > 0) {
-            $obj->id = $charge[0];
-            $db->updateObject("muusa_charge", $obj, "id");
+         if($obj->id < 1000) {
+            $query = "SELECT IFNULL(h.id, 0), y.year FROM muusa_year y LEFT JOIN muusa_charge h ON h.camperid=$camperid AND h.timestamp=STR_TO_DATE('$obj->timestamp', '%m/%d/%Y') AND h.amount=$obj->amount AND h.chargetypeid=$obj->chargetypeid AND h.memo='$obj->memo' WHERE y.is_current=1";
+            $obj->camperid = $camperid;
+            $obj->amount = preg_replace("/,/", "", $obj->amount);
+            $obj->timestamp = "&&STR_TO_DATE('$obj->timestamp', '%m/%d/%Y')";
+            $db->setQuery($query);
+            $charge = $db->loadRow();
+            $obj->year = $charge[1];
+            if($charge[0] > 0) {
+               $obj->id = $charge[0];
+               $db->updateObject("muusa_charge", $obj, "id");
+            } else {
+               unset($obj->id);
+               $db->insertObject("muusa_charge", $obj);
+            }
          } else {
-            unset($obj->id);
-            $db->insertObject("muusa_charge", $obj);
+            $obj->camperid = $camperid;
+            $obj->amount = preg_replace("/,/", "", $obj->amount);
+            $obj->timestamp = "&&STR_TO_DATE('$obj->timestamp', '%m/%d/%Y')";
+            $db->updateObject("muusa_charge", $obj, "id");
          }
       } else {
          $query = "DELETE FROM muusa_charge WHERE id=$obj->id";

@@ -9,6 +9,9 @@ $user =& JFactory::getUser();
       src='<?php echo JURI::root(true);?>/components/com_muusla_application/js/application.js'></script>
    <script>var thisyear = <?php echo $this->year["year"]?>;</script>
    <?php if($this->msg) {?>
+   <?php if($this->editcamper) {?>
+   <h2>Camper Details Save Successful.</h2>
+   <?php } else {?>
    <div class="ui-state-highlight ui-corner-all">
       <p style="margin-top: 1em;">
          <span class="ui-icon ui-icon-info"
@@ -19,6 +22,7 @@ $user =& JFactory::getUser();
          <button id="nextWorkshop">Proceed to Workshop Selection</button>
       </p>
    </div>
+   <?php }?>
    <p>&nbsp;</p>
    <?php } elseif ($this->redirectAmt) {?>
    <div id="paypalRedirect" title="PayPal">
@@ -247,7 +251,19 @@ $user =& JFactory::getUser();
          } else {
             $year = $this->year["year"];
             include 'blocks/payment.php';
-         }?>
+         }
+         if($this->editcamper) {?>
+         <br />
+         <div class="right">
+            <button id="finishWorkshop">Save Changes</button>
+         </div>
+         <div align="center">
+            <button id="registerAll">
+               Register Entire Family for
+               <?php echo $this->year["year"]?>
+            </button>
+         </div>
+         <?php }?>
       </div>
    </form>
 </div>

@@ -60,8 +60,8 @@
          <?php } else {?>
          <?php if($this->year[1] == "0" || $this->reg[1] == "1") {?>
          <h5>
-            Instructions: Please choose the unoccupied that you would
-            like your family to occupy for
+            Instructions: Please choose the unoccupied room that you
+            would like your family to occupy for
             <?php echo $this->year[0]; ?>
             . Families with campers in Meyer, Burt or Young Adult
             (18-20) programs do not need to select housing for their
