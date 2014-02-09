@@ -39,7 +39,7 @@ class muusla_applicationModelroomselection extends JModel
    function getPreregistered() {
       $db =& JFactory::getDBO();
       $user =& JFactory::getUser();
-      $query = "SELECT IF(ya.id!=0,1,0), IF(muusa_isprereg(c.id, y.year)>0,1,0), IF(yap.id!=0,1,0), IFNULL(IF(yap.roomid!=0,yap.roomid,ya.roomid),0), IF((SELECT SUM(th.amount) FROM muusa_thisyear_charge th WHERE c.familyid=th.familyid AND th.chargetypeid!=1000)<=0,1,0), IFNULL(IF(yap.is_private=1,1,0),0) FROM (muusa_camper c, muusa_year y) LEFT JOIN muusa_yearattending ya ON c.id=ya.camperid AND y.year-1=ya.year LEFT JOIN muusa_yearattending yap ON c.id=yap.camperid AND y.year=yap.year WHERE c.email='$user->email' AND y.is_current=1";
+      $query = "SELECT IF(ya.id!=0,1,0), IF(muusa_isprereg(c.id, y.year)>0,1,0), IF(yap.id!=0,1,0), IFNULL(IF(yap.roomid!=0,yap.roomid,ya.roomid),0), IF((SELECT SUM(th.amount) FROM muusa_thisyear_charge th WHERE c.familyid=th.familyid AND th.chargetypeid!=1000)<=0,1,0), IFNULL(IF(yap.is_private=1,1,0),0), GROUP_CONCAT(jg.group_id) FROM (muusa_camper c, muusa_year y) LEFT JOIN muusa_yearattending ya ON c.id=ya.camperid AND y.year-1=ya.year LEFT JOIN muusa_yearattending yap ON c.id=yap.camperid AND y.year=yap.year LEFT JOIN (jml_users ju, jml_user_usergroup_map jg) ON yap.created_by=ju.username AND ju.id=jg.user_id WHERE c.email='$user->email' AND y.is_current=1";
       $db->setQuery($query);
       return $db->loadRow();
    }

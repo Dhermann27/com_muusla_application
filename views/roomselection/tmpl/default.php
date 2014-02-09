@@ -1,4 +1,6 @@
-<?php defined('_JEXEC') or die('Restricted access'); ?>
+<?php defined('_JEXEC') or die('Restricted access');
+$user =& JFactory::getUser();
+$mod = !(in_array("8", $user->groups) || in_array("10", $user->groups)) && (in_array("8", explode(",", $this->reg[6])) || in_array("8", explode(",", $this->reg[6])));?>
 <div id="ja-content">
    <link type="text/css"
       href="<?php echo JURI::root(true);?>/components/com_muusla_application/css/application.css"
@@ -58,7 +60,19 @@
             </p>
          </div>
          <?php } else {?>
-         <?php if($this->year[1] == "0" || $this->reg[1] == "1") {?>
+         <?php if($mod) {?>
+         <div class="ui-state-error ui-corner-all">
+            <p style="margin-top: 1em;">
+               <span class="ui-icon ui-icon-alert"
+                  style="float: left; margin: 1em;"></span> Although you
+               have successfully registered for MUUSA
+               <?php echo $this->year[0]; ?>
+               , your room has been set by the Registrar. To request
+               another room, please use the Contact Us form above with a
+               specific request about which room you would like.
+            </p>
+         </div>
+         <?php } else if($this->year[1] == "0" || $this->reg[1] == "1") {?>
          <h5>
             Instructions: Please choose the unoccupied room that you
             would like your family to occupy for
@@ -70,7 +84,7 @@
             assigned by the Registrar per their selections on the
             Registration Form.
          </h5>
-         <?php } else {?>
+         <?php } else  {?>
          <div class="ui-state-highlight ui-corner-all">
             <p style="margin-top: 1em;">
                <span class="ui-icon ui-icon-info"
@@ -101,6 +115,9 @@
                $roomname .= $room->connected ? ($room->buildingid==1000 ? "<br /><i>Double Privacy Door with Room $room->connected</i>" : "<br /><i>Shares common area with Room $room->connected</i>") : "";
                if($this->reg[3] == $room->id) {
                   $selected = "true";
+                  if($mod) {
+                     $deselectable = "false";
+                  }
                   $roomname .= "<br /><strong>Your Current Selection</strong>";
                   if($room->capacity < 10) {
                      $roomname .= "<br />Please note that changing from this room will make it available to other campers.<br /><i>This cannot be undone!</i>";
@@ -117,7 +134,7 @@
                      $roomname .= $room->locked == "1" ?"<br /><strong>Locked by Preregistered Campers</strong>" : "<br />Locked by:<br /><strong>$room->locked</strong>";
                   }
                }
-               if($this->year[1] == "1" && $this->reg[1] == "0") {
+               if($this->year[1] == "1" && $this->reg[1] == "0" || $mod) {
                   $selectable = "false";
                }
                echo "<area shape='rect' data-key='$room->id' coords='$room->xcoord, $room->ycoord, " . ($room->xcoord+$room->pixelsize) . ", " . ($room->ycoord+$room->pixelsize) . "' href='#' />\n";
@@ -125,7 +142,7 @@
             }?>
          </map>
          <?php 
-         if($this->year[1] == "0" || $this->reg[1] == "1") {?>
+         if(($this->year[1] == "0" || $this->reg[1] == "1") && !$mod) {?>
          <div align="center">
             <strong>Privacy Setting</strong>: <select
                name="yearattending-is_private-0" class="ui-corner-all">
