@@ -53,11 +53,11 @@ $user =& JFactory::getUser();
    <?php }?>
    <form id="muusaApp" method="post">
       <?php if($this->editcamper) {
-         echo "<input type='hidden' name='editcamper' value='$this->editcamper' />\n";
-         //echo "<div style='float: right;'><button id='forwardWorkshop'>Do not Save<br />Proceed to Workshops</button></div>\n";
-         echo "<div><button id='backDetails'>Return<br />to Camper Details</button></div>\n";
-      }?>
-      <?php $familyid = $this->family->id ? $this->family->id : 0;?>
+         echo "<input type='hidden' id='editcamper' name='editcamper' value='$this->editcamper' />\n";
+         echo "<div style='float: right;'><button id='toWorkshop'>Do not Save<br />Proceed to Workshop Selection</button></div>\n";
+         echo "<div><button id='toSelection'>Return<br />to Camper Selection</button></div>\n";
+      }
+      $familyid = $this->family->id ? $this->family->id : 0;?>
       <ul>
          <li><a
             href="http://<?php echo $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];?>#appFamily">Household

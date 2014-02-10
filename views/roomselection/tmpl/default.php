@@ -40,7 +40,7 @@ $mod = !(in_array("8", $user->groups) || in_array("10", $user->groups)) && (in_a
                deposit has been applied.
                <?php } ?>
                <br />
-               <button id="nextRegister">Proceed to Registration Form</button>
+               <button id="toRegister">Proceed to Registration Form</button>
             </p>
          </div>
          <?php } else if($this->reg[4] == "0") {?>
@@ -56,7 +56,7 @@ $mod = !(in_array("8", $user->groups) || in_array("10", $user->groups)) && (in_a
                PayPal. You will need a zero balance before being allowed
                to select a room. <i>Unfortunately, this also applies if
                   you are participating in the MUUSA scholarship process</i>.<br />
-               <button id="nextRegister">Proceed to Registration Form</button>
+               <button id="toRegister">Proceed to Registration Form</button>
             </p>
          </div>
          <?php } else {?>

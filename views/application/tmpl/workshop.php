@@ -7,9 +7,9 @@
       src='<?php echo JURI::root(true);?>/components/com_muusla_application/js/workshop.js'></script>
    <form method="post">
       <?php if($this->editcamper) {
-         echo "<input type='hidden' name='editcamper' value='$this->editcamper' />\n";
-         //echo "<div style='float: right;'><button id='forwardRoom'>Do not Save<br />Proceed to Room Selection</button></div>\n";
-         echo "<div><button id='backDetails'>Return<br />to Camper Details</button></div>\n";
+         echo "<input type='hidden' id='editcamper' name='editcamper' value='$this->editcamper' />\n";
+         echo "<div style='float: right;'><button id='toAssignRoom'>Do not Save<br />Proceed to Assign Room</button></div>\n";
+         echo "<div><button id='toSelection'>Return<br />to Camper Selection</button></div>\n";
       }?>
       <table class="blog">
          <tr>
@@ -30,7 +30,7 @@
                         from the right to the left side, then put them
                         in order of preference.</h5>
                   </div>
-                  <?php if($this->msg) {?>
+                  <?php if($this->msg && !$this->editcamper) {?>
                   <div class="ui-state-highlight ui-corner-all">
                      <p style="margin: 1em;">
                         <span class="ui-icon ui-icon-info"
