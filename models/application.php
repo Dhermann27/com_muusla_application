@@ -189,6 +189,7 @@ class muusla_applicationModelapplication extends JModel
          $obj->camperid = $camperid;
          $obj->year = $yearattending[1];
          $obj->days = $days;
+         $obj->postmark = date("Y-m-d");
          $obj->created_by = $user->username;
          $db->insertObject("muusa_yearattending", $obj, "id");
          return $obj->id;
