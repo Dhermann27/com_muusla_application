@@ -5,7 +5,7 @@
       rel="stylesheet" />
    <script
       src='<?php echo JURI::root(true);?>/components/com_muusla_application/js/workshop.js'></script>
-   <form method="post">
+   <form id="muusaApp" method="post">
       <?php if($this->editcamper) {
          echo "<input type='hidden' id='editcamper' name='editcamper' value='$this->editcamper' />\n";
          echo "<div style='float: right;'><button id='toAssignRoom'>Do not Save<br />Proceed to Assign Room</button></div>\n";
@@ -40,7 +40,7 @@
                         Selection tool.<br /> <i>Note: only possible
                            during the Priority Registration period to
                            those that preregistered.</i><br />
-                        <button id="nextHousing">Proceed to Room
+                        <button id="toHousing">Proceed to Room
                            Selection</button>
                      </p>
                   </div>
@@ -59,7 +59,7 @@
                      </p>
                   </div>
                   <?php }?>
-                  <div id="muusaApp" class='article-content'>
+                  <div class="article-content">
                      <div class="workshopSelection">
                         <?php
                         if(count($this->regcampers) > 0) {

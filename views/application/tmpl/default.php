@@ -255,7 +255,9 @@ $user =& JFactory::getUser();
          if($this->editcamper) {?>
          <br />
          <div class="right">
-            <button id="finishWorkshop">Save Changes</button>
+            <button id="finishWorkshop">
+               <?php echo $this->sumdays > 0 ? "Save Changes" : "Finish Registration";?>
+            </button>
          </div>
          <div align="center">
             <button id="registerAll">
