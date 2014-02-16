@@ -34,7 +34,12 @@ $user =& JFactory::getUser();
          if(count($time["shops"]) > 0) {
             foreach($time["shops"] as $eventid => $shop) {
                if(!$camper->attendees || !in_array($eventid, $camper->attendees)) {
-                  echo "                              <li value='$eventid' class='ui-state-default'>\n";
+                  $style = "";
+                  if ($shop["enrollment"] >= .75) {
+                     $style = " style='background: " . ($shop["enrollment"] >= 1 ? "#cd0a0a" : "#e3a345") . ";'";
+                     $style .= " title='" . ($shop["enrollment"] >= 1 ? "Waiting list available" : "Filling up fast") . "'";
+                  }
+                  echo "                              <li value='$eventid' class='ui-state-default' title='Check'$style>\n";
                   if($shop["introtext"]) {
                      echo "                     <button class='help link right'>Show " . $shop["name"] . " Information</button>\n";
                   }
@@ -51,7 +56,12 @@ $user =& JFactory::getUser();
          if(count($camper->attendees) > 0) {
             foreach($camper->attendees as $eventid) {
                if(array_key_exists($eventid, $time["shops"])) {
-                  echo "                              <li value='$eventid' class='ui-state-default'>\n";
+                  $style = "";
+                  if ($shop["enrollment"] >= .75) {
+                     $style = " style='background: " . ($shop["enrollment"] >= 1 ? "#cd0a0a" : "#e3a345") . ";'";
+                     $style .= " title='" . ($shop["enrollment"] >= 1 ? "Waiting list available" : "Filling up fast") . "'";
+                  }
+                  echo "                              <li value='$eventid' class='ui-state-default'$style>\n";
                   if($time["shops"][$eventid]["introtext"]) {
                      echo "                     <button class='help link right'>Show " . $time["shops"][$eventid]["name"] . " Information</button>\n";
                   }

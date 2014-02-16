@@ -29,6 +29,19 @@
                      <h5>To select your workshops, click and drag them
                         from the right to the left side, then put them
                         in order of preference.</h5>
+                     <table>
+                        <tr align="center" valign="middle">
+                           <td width="33%"
+                              style="background-color: #327e04; color: #fff;">Plenty
+                              of Room</td>
+                           <td width="33%"
+                              style="background-color: #e3a345; color: #fff; margin: 10px;">Filling
+                              Up Fast!</td>
+                           <td width="33%"
+                              style="background-color: #cd0a0a; color: #fff;">Waiting
+                              List Available</td>
+                        </tr>
+                     </table>
                   </div>
                   <?php if($this->msg && !$this->editcamper) {?>
                   <div class="ui-state-highlight ui-corner-all">
@@ -40,8 +53,7 @@
                         Selection tool.<br /> <i>Note: only possible
                            during the Priority Registration period to
                            those that preregistered.</i><br />
-                        <button id="toHousing">Proceed to Room
-                           Selection</button>
+                        <button id="toHousing">Proceed to Room Selection</button>
                      </p>
                   </div>
                   <p>&nbsp;</p>
@@ -59,7 +71,7 @@
                      </p>
                   </div>
                   <?php }?>
-                  <div class="article-content">
+                  <div class="padtop article-content">
                      <div class="workshopSelection">
                         <?php
                         if(count($this->regcampers) > 0) {
