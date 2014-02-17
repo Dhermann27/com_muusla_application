@@ -116,6 +116,7 @@ $mod = !(in_array("8", $user->groups) || in_array("10", $user->groups)) && (in_a
                if($this->reg[3] == $room->id) {
                   $selected = "true";
                   if($mod) {
+                     $selectable = "false";
                      $deselectable = "false";
                   }
                   $roomname .= "<br /><strong>Your Current Selection</strong>";
@@ -125,6 +126,7 @@ $mod = !(in_array("8", $user->groups) || in_array("10", $user->groups)) && (in_a
                } else if($room->occupants || $room->locked) {
                   if($room->capacity < 10) {
                      $selected = "true";
+                     $selectable = "false";
                      $deselectable = "false";
                      $fillcolor = "2f2f2f";
                   }
@@ -134,7 +136,7 @@ $mod = !(in_array("8", $user->groups) || in_array("10", $user->groups)) && (in_a
                      $roomname .= $room->locked == "1" ?"<br /><strong>Locked by Preregistered Campers</strong>" : "<br />Locked by:<br /><strong>$room->locked</strong>";
                   }
                }
-               if($this->year[1] == "1" && $this->reg[1] == "0" || $mod) {
+               if(($this->year[1] == "1" && $this->reg[1] == "0") || $mod) {
                   $selectable = "false";
                }
                echo "<area shape='rect' data-key='$room->id' coords='$room->xcoord, $room->ycoord, " . ($room->xcoord+$room->pixelsize) . ", " . ($room->ycoord+$room->pixelsize) . "' href='#' />\n";
@@ -188,9 +190,12 @@ $mod = !(in_array("8", $user->groups) || in_array("10", $user->groups)) && (in_a
          });
 
          function unselectAll(data) {
-             jQuery("#roomid").val(data.key);
+             var areamap = jQuery("#roomselection");
+             if(areamap.mapster('get_options', data.key).isSelectable) {
+                 jQuery("#roomid").val(data.key);
+             }
              jQuery('area').filter(function () {
-                 return jQuery(this).attr("data-key") != data.key && jQuery("#roomselection").mapster('get_options', jQuery(this).attr("data-key")).isDeselectable;
+                 return jQuery(this).attr("data-key") != data.key && areamap.mapster('get_options', jQuery(this).attr("data-key")).isDeselectable;
              }).mapster('set', false);
          }
          </script>

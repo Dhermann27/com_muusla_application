@@ -109,7 +109,9 @@ $serverCharges = array("1000", "1001", "1002", "1003", "1004", "1016", "1021");
          <button id="finishPaypal">Pay Now via PayPal</button>
       </td>
       <td align="right">
-         <button id="finishWorkshop">Save Changes</button>
+         <button id="finishWorkshop">
+            <?php echo $this->sumdays > 0 ? "Save Changes" : "Finish Registration";?>
+         </button>
       </td>
    </tr>
 </table>

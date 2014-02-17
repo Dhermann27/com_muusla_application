@@ -32,13 +32,13 @@
                      <table>
                         <tr align="center" valign="middle">
                            <td width="33%"
-                              style="background-color: #327e04; color: #fff;">Plenty
+                              style="background-color: #327e04; color: #fff; padding: 0px;" class="ui-corner-left">Plenty
                               of Room</td>
                            <td width="33%"
-                              style="background-color: #e3a345; color: #fff; margin: 10px;">Filling
+                              style="background-color: #e3a345; color: #fff; padding: 0px;">Filling
                               Up Fast!</td>
                            <td width="33%"
-                              style="background-color: #cd0a0a; color: #fff;">Waiting
+                              style="background-color: #cd0a0a; color: #fff; padding: 0px;" class="ui-corner-right">Waiting
                               List Available</td>
                         </tr>
                      </table>
