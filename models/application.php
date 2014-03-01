@@ -426,4 +426,11 @@ class muusla_applicationModelapplication extends JModel
          JError::raiseError(500, $db->stderr());
       }
    }
+   
+   function callTrigger($familyid) {
+      $db =& JFactory::getDBO();
+      $query = "UPDATE (muusa_charge h, muusa_camper c) SET h.created_at=CURRENT_TIMESTAMP WHERE h.camperid=c.id AND c.familyid=$familyid AND h.chargetypeid IN (1001,1016)";
+      $db->setQuery($query);
+      $db->query();
+   }
 }

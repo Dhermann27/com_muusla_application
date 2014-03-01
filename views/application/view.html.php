@@ -36,7 +36,7 @@ class muusla_applicationViewapplication extends JView
       $valideditor = false;
       if(count($calls["camper"]) > 0) {
          foreach($calls["camper"] as $oldcamperid => $camper) {
-            $valideditor = $valideditor || $user->email == $camper->email;
+            $valideditor = $valideditor || strcasecmp($camper->email, $user->email) == 0;
          }
       }
       if($admin || $valideditor || count($calls["family"]) == 0) {

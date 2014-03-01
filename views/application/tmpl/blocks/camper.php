@@ -76,7 +76,7 @@ $user =& JFactory::getUser();
       </td>
    </tr>
    <?php
-   if(!$this->editcamper && ($camperid == "" || ($camperid >= 1000 && $camper->email == $user->email))) {
+   if(!$this->editcamper && ($camperid == "" || ($camperid >= 1000 && strcasecmp($camper->email, $user->email) == 0))) {
       ?>
    <tr>
       <td>
