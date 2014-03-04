@@ -60,19 +60,33 @@
 
 #muusaApp .inputtext {
 	width: 25em;
+    height: 1em;
+    padding: 0.5em;
 }
 
 #muusaApp .inputtextshort {
 	width: 15em;
+    height: 1em;
+    padding: 0.5em;
 }
 
 #muusaApp .inputtexttiny {
 	width: 5em;
 	text-align: right;
+    height: 1em;
+    padding: 0.5em;
 }
 
 #muusaApp .ui-button .ui-button-text {
 	line-height: 1.1em;
+}
+
+#finishPaypal {
+	margin-left: 0px;
+	border-left: 0px;
+	line-height: 0.8em;
+    height: 2.4em;
+    margin-top:-0.2em;
 }
 
 #muusaApp .connected {

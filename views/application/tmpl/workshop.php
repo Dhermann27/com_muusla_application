@@ -32,18 +32,22 @@
                      <table>
                         <tr align="center" valign="middle">
                            <td width="33%"
-                              style="background-color: #327e04; color: #fff; padding: 0px;" class="ui-corner-left">Plenty
-                              of Room</td>
+                              style="background-color: #327e04; color: #fff; padding: 0px;"
+                              class="ui-corner-left">Plenty of Room</td>
                            <td width="33%"
                               style="background-color: #e3a345; color: #fff; padding: 0px;">Filling
                               Up Fast!</td>
                            <td width="33%"
-                              style="background-color: #cd0a0a; color: #fff; padding: 0px;" class="ui-corner-right">Waiting
-                              List Available</td>
+                              style="background-color: #cd0a0a; color: #fff; padding: 0px;"
+                              class="ui-corner-right">Waiting List
+                              Available</td>
                         </tr>
                      </table>
                   </div>
-                  <?php if($this->msg && !$this->editcamper) {?>
+                  <?php if($this->msg) {
+                     if($this->editcamper) {?>
+                  <h3>Workshop Assignment Successful.</h3>
+                  <?php } else {?>
                   <div class="ui-state-highlight ui-corner-all">
                      <p style="margin: 1em;">
                         <span class="ui-icon ui-icon-info"
@@ -58,6 +62,7 @@
                   </div>
                   <p>&nbsp;</p>
                   <?php }
+                  }
                   if(count($this->regcampers) == 0) {?>
                   <div
                      class="padtop ui-state-error ui-corner-all hidden spaceleft">

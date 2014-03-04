@@ -50,7 +50,7 @@ class muusla_applicationViewapplication extends JView
          }
          if(count($calls["camper"]) > 0) {
             foreach($calls["camper"] as $oldcamperid => $camper) {
-               if($camper->attending != "-1" && $camper->firstname != "" && $camper->lastname != "") {
+               if($camper->firstname != "" && $camper->lastname != "") {
                   $camper->familyid = $familyid;
                   $days = $camper->attending;
                   $newcamperid = $model->upsertCamper($camper);
@@ -66,15 +66,17 @@ class muusla_applicationViewapplication extends JView
                         $charge->camperid = $newcamperid;
                      }
                   }
-                  $yearattendingid = $model->upsertYearattending($newcamperid, $days);
-                  $model->deleteRoommatepreferences($yearattendingid, $camper->attending);
-                  if(count($calls["roommatepreference"][$oldcamperid]->names) > 0) {
-                     foreach(explode(",", $calls["roommatepreference"][$oldcamperid]->names) as $choicenbr => $name) {
-                        $model->insertRoommatepreferences($yearattendingid, $choicenbr+1, $this->getSafe(urldecode($name)));
+                  if($camper->attending != "-1") {
+                     $yearattendingid = $model->upsertYearattending($newcamperid, $days);
+                     $model->deleteRoommatepreferences($yearattendingid, $camper->attending);
+                     if(count($calls["roommatepreference"][$oldcamperid]->names) > 0) {
+                        foreach(explode(",", $calls["roommatepreference"][$oldcamperid]->names) as $choicenbr => $name) {
+                           $model->insertRoommatepreferences($yearattendingid, $choicenbr+1, $this->getSafe(urldecode($name)));
+                        }
                      }
+                  } else {
+                     $model->deleteYearattending($newcamperid);
                   }
-               } else {
-                  $model->deleteYearattending($oldcamperid);
                }
             }
             if(count($calls["charge"]) > 0) {
@@ -84,6 +86,7 @@ class muusla_applicationViewapplication extends JView
                   }
                }
             }
+            $model->callTrigger($familyid);
             if($this->getSafe(JRequest::getVar('paypal-amount')) != 0) {
                $msg = floatval($this->getSafe(JRequest::getVar('paypal-amount')));
                $this->assignRef("redirectAmt", $msg);

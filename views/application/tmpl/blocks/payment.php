@@ -12,11 +12,14 @@ $serverCharges = array("1000", "1001", "1002", "1003", "1004", "1016", "1021");
 ?>
 <table id="payments<?php echo $year;?>">
    <tr>
-      <td width="20%"><strong>Charge Type</strong></td>
+      <td width="20%"><strong>Charge Type</strong>
+      </td>
       <td width="15%" align="right"><strong>Amount</strong>
       </td>
-      <td width="15%" align="center"><strong>Date</strong></td>
-      <td width="50%"><strong>Memo</strong></td>
+      <td width="15%" align="center"><strong>Date</strong>
+      </td>
+      <td width="50%"><strong>Memo</strong>
+      </td>
    </tr>
    <?php
    $total = 0.0;
@@ -58,24 +61,28 @@ $serverCharges = array("1000", "1001", "1002", "1003", "1004", "1016", "1021");
       $charge = new stdClass;
       $charge->id = 0;
       include 'charge.php';
-   }
-   echo "           <tr align='right'>\n";
-   echo "              <td><strong>Amount Due Now:</strong></td>\n";
-   echo "              <td id='amountNow'>$" . number_format($total, 2, '.', '') . "</td>\n";
-   echo "              <td colspan='2'>&nbsp;</td>\n";
-   echo "           </tr>\n";
-   if($housing) {
-      echo "           <tr align='right'>\n";
-      echo "              <td><strong>Amount Due Upon Arrival:</strong></td>\n";
-      echo "              <td id='amountArrival'>$" . number_format($total, 2, '.', '') . "</td>\n";
-      echo "              <td colspan='2'>&nbsp;</td>\n";
-      echo "           </tr>\n";
-   } else if(!$this->editcamper) {
-      echo "           <tr>\n";
-      echo "              <td colspan='4'><i>Does not include your remaining housing fees, which are due on the first day of camp</i>.</td>\n";
-      echo "           </tr>\n";
-   }
-   ?>
+   }?>
+   <tr align="right">
+      <td><strong>Amount Due Now:</strong>
+      </td>
+      <td id="amountNow">$<?php echo number_format($total, 2, '.', '');?>
+      </td>
+      <td colspan="2"></td>
+   </tr>
+   <?php if($housing) {?>
+   <tr align="right">
+      <td><strong>Amount Due Upon Arrival:</strong>
+      </td>
+      <td id="amountArrival">$<?php echo number_format($total, 2, '.', '');?>
+      </td>
+      <td colspan="2">&nbsp;</td>
+   </tr>
+   <?php } else if(!$this->editcamper) {?>
+   <tr>
+      <td colspan="4"><i>Does not include your remaining housing fees,
+            which are due on the first day of camp</i>.</td>
+   </tr>
+   <?php }?>
 </table>
 <?php if(!$this->editcamper) {?>
 <table>
@@ -90,23 +97,10 @@ $serverCharges = array("1000", "1001", "1002", "1003", "1004", "1016", "1021");
       <td align="center" style="border-left: 2px dashed black"><div>
             <img src="images/muusa/secure-paypal-logo.png"
                alt="PayPal - The safer, easier way to pay online!" />
-         </div>
-         <table>
-            <tr align="center">
-               <td class="small"><a
-                  href="http://<?php echo $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];?>#" onclick="switchNextRow(jQuery(this));">+
-                     Pay Another Amount </a>
-               </td>
-            </tr>
-            <tr align="center" class="hidden">
-               <td><input type="text" id="paypalAmt"
-                  class="inputtexttiny ui-corner-all"
-                  name="paypal-amount"
-                  value="<?php echo number_format(max($total, 0.0), 2, '.', '');?>" />
-               </td>
-            </tr>
-         </table>
-         <button id="finishPaypal">Pay Now via PayPal</button>
+         </div> <input type="text" id="paypalAmt"
+         class="inputtexttiny onlymoney ui-corner-left"
+         name="paypal-amount"
+         value="<?php echo number_format(max($total, 0.0), 2, '.', '');?>" /><button id="finishPaypal">Pay Now via PayPal</button>
       </td>
       <td align="right">
          <button id="finishWorkshop">

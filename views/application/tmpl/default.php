@@ -10,7 +10,7 @@ $user =& JFactory::getUser();
    <script>var thisyear = <?php echo $this->year["year"]?>;</script>
    <?php if($this->msg) {?>
    <?php if($this->editcamper) {?>
-   <h2>Camper Details Save Successful.</h2>
+   <h3>Camper Details Save Successful.</h3>
    <?php } else {?>
    <div class="ui-state-highlight ui-corner-all">
       <p style="margin-top: 1em;">

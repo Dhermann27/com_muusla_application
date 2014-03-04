@@ -78,7 +78,20 @@ jQuery(document).ready(function($) {
 		window.location.href = "http://muusa.org/registration/workshops";
 		return false;
 	});
-	$("#finishPaypal").button().click(function() {
+	$("#paypalAmt").css("border-right", "0px").css("margin-right", "0px").focus(function() {
+		$(this).val("");
+		var arr = [ "$0.00 (Pay Another Amount)", "$" + Math.max(pFloat($("#amountNow").text()), 0).toFixed(2) + " (Amount Due Now)" ];
+		var arrival = $("#amountArrival"); 
+		if(arrival.length > 0) {
+			arr.push("$" + Math.max(pFloat(arrival.text()), 0).toFixed(2) + " (Total Amount Due)");	
+		}
+		$(this).autocomplete({
+			minLength: 0,
+			source : arr
+			
+		}).autocomplete("search", "");
+	});
+	$("#finishPaypal").button().removeClass("ui-corner-all").addClass("ui-corner-right").click(function() {
 		submit($);
 		return false;
 	});
