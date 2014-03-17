@@ -1,6 +1,6 @@
 <?php defined('_JEXEC') or die('Restricted access');
 $user =& JFactory::getUser();
-$mod = !(in_array("8", $user->groups) || in_array("10", $user->groups)) && (in_array("8", explode(",", $this->reg[6])) || in_array("8", explode(",", $this->reg[6])));?>
+$setByAdmin = !(in_array("8", $user->groups) || in_array("10", $user->groups)) && (in_array("8", explode(",", $this->reg[6])) || in_array("10", explode(",", $this->reg[6])));?>
 <div id="ja-content">
    <link type="text/css"
       href="<?php echo JURI::root(true);?>/components/com_muusla_application/css/application.css"
@@ -60,7 +60,7 @@ $mod = !(in_array("8", $user->groups) || in_array("10", $user->groups)) && (in_a
             </p>
          </div>
          <?php } else {?>
-         <?php if($mod) {?>
+         <?php if($setByAdmin) {?>
          <div class="ui-state-error ui-corner-all">
             <p style="margin-top: 1em;">
                <span class="ui-icon ui-icon-alert"
@@ -115,7 +115,7 @@ $mod = !(in_array("8", $user->groups) || in_array("10", $user->groups)) && (in_a
                $roomname .= $room->connected ? ($room->buildingid==1000 ? "<br /><i>Double Privacy Door with Room $room->connected</i>" : "<br /><i>Shares common area with Room $room->connected</i>") : "";
                if($this->reg[3] == $room->id) {
                   $selected = "true";
-                  if($mod) {
+                  if($setByAdmin) {
                      $selectable = "false";
                      $deselectable = "false";
                   }
@@ -136,7 +136,7 @@ $mod = !(in_array("8", $user->groups) || in_array("10", $user->groups)) && (in_a
                      $roomname .= $room->locked == "1" ?"<br /><strong>Locked by Preregistered Campers</strong>" : "<br />Locked by:<br /><strong>$room->locked</strong>";
                   }
                }
-               if(($this->year[1] == "1" && $this->reg[1] == "0") || $mod) {
+               if(($this->year[1] == "1" && $this->reg[1] == "0") || $setByAdmin) {
                   $selectable = "false";
                }
                echo "<area shape='rect' data-key='$room->id' coords='$room->xcoord, $room->ycoord, " . ($room->xcoord+$room->pixelsize) . ", " . ($room->ycoord+$room->pixelsize) . "' href='#' />\n";
@@ -144,7 +144,7 @@ $mod = !(in_array("8", $user->groups) || in_array("10", $user->groups)) && (in_a
             }?>
          </map>
          <?php 
-         if(($this->year[1] == "0" || $this->reg[1] == "1") && !$mod) {?>
+         if(($this->year[1] == "0" || $this->reg[1] == "1") && !$setByAdmin) {?>
          <div align="center">
             <strong>Privacy Setting</strong>: <select
                name="yearattending-is_private-0" class="ui-corner-all">

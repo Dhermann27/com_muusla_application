@@ -66,7 +66,7 @@ class muusla_applicationViewapplication extends JView
                         $charge->camperid = $newcamperid;
                      }
                   }
-                  if($camper->attending != "-1") {
+                  if($days != "-1") {
                      $yearattendingid = $model->upsertYearattending($newcamperid, $days);
                      $model->deleteRoommatepreferences($yearattendingid, $camper->attending);
                      if(count($calls["roommatepreference"][$oldcamperid]->names) > 0) {
