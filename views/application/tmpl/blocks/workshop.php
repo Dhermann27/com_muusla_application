@@ -5,7 +5,6 @@
  *
  * @param   object  $index           -1 for hidden
  * @param   object  $camper          The database camper object if the camper exists
- * @param   object  $scholarshipNum  The dummy number for scholarship IDs
  *
  */
 $user =& JFactory::getUser();
@@ -106,59 +105,5 @@ $user =& JFactory::getUser();
             </ul>
          </div>
       </div>
-      <?php 
-      if($this->editcamper) {?>
-      <h5>Scholarships</h5>
-      <div class="scholarshiplist">
-         <table>
-            <tr>
-               <?php $muusaid = $camper->scholarshipMuusa->scholarshipid > 0 ? $camper->scholarshipMuusa->scholarshipid : $scholarshipNum++;?>
-               <td><strong>MUUSA Scholarship</strong></td>
-               <td>Registration Percentage: <input type="text"
-                  name="scholarships-registration_pct-<?php echo $muusaid;?>"
-                  maxlength="7"
-                  class="inputtext inputtexttiny ui-corner-all"
-                  value="<?php echo $camper->scholarshipMuusa->registration_pct * 100;?>" />
-                  %
-               </td>
-               <td>Housing Percentage: <input type="text"
-                  name="scholarships-housing_pct-<?php echo $muusaid;?>"
-                  maxlength="3"
-                  class="inputtext inputtexttiny ui-corner-all"
-                  value="<?php echo $camper->scholarshipMuusa->housing_pct * 100;?>" />
-                  % <input type="hidden"
-                  name="scholarships-fiscalyearid-<?php echo $muusaid;?>"
-                  value="<?php echo $camper->fiscalyearid;?>" /> <input
-                  type="hidden"
-                  name="scholarships-is_muusa-<?php echo $muusaid;?>"
-                  value="1" />
-               </td>
-            </tr>
-            <?php $ymcaid = $camper->scholarshipYmca->scholarshipid > 0 ? $camper->scholarshipYmca->scholarshipid : $scholarshipNum++;?>
-            <tr>
-               <td><strong>YMCA Scholarship</strong></td>
-               <td>Registration Percentage: <input type="text"
-                  name="scholarships-registration_pct-<?php echo $ymcaid;?>"
-                  maxlength="7"
-                  class="inputtext inputtexttiny ui-corner-all"
-                  value="<?php echo $camper->scholarshipYmca->registration_pct * 100;?>" />
-                  %
-               </td>
-               <td>Housing Percentage: <input type="text"
-                  name="scholarships-housing_pct-<?php echo $ymcaid;?>"
-                  maxlength="3"
-                  class="inputtext inputtexttiny ui-corner-all"
-                  value="<?php echo $camper->scholarshipYmca->housing_pct * 100;?>" />
-                  % <input type="hidden"
-                  name="scholarships-fiscalyearid-<?php echo $ymcaid;?>"
-                  value="<?php echo $camper->fiscalyearid;?>" /><input
-                  type="hidden"
-                  name="scholarships-is_muusa-<?php echo $ymcaid;?>"
-                  value="0" />
-               </td>
-            </tr>
-         </table>
-      </div>
-      <?php }?>
    </div>
 </span>

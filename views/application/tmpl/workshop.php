@@ -80,7 +80,6 @@
                      <div class="workshopSelection">
                         <?php
                         if(count($this->regcampers) > 0) {
-                           $scholarshipNum = 0;
                            foreach($this->regcampers as $camper) {
                               include 'blocks/workshop.php';
                            }

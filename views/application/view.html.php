@@ -181,21 +181,9 @@ class muusla_applicationViewapplication extends JView
             $model->insertVolunteer($volunteer);
          }
       }
-      if(count($calls["scholarship"]) > 0) {
-         foreach($calls["scholarship"] as $scholarshipid => $scholarship) {
-            if($scholarship->registration_pct > 0 || $scholarship->housing_pct > 0) {
-               $scholarship->id = $scholarshipid;
-               $model->upsertScholarship($scholarship);
-            } else {
-               $model->deleteScholarship($scholarshipid);
-            }
-         }
-      }
       foreach($regcampers as $camper) {
          $camper->volunteers = $model->getVolunteers($camper->id);
          $camper->attendees = $model->getAttendees($camper->yearattendingid);
-         $camper->scholarshipMuusa = $model->getScholarships($camper->yearattendingid, 1);
-         $camper->scholarshipYmca = $model->getScholarships($camper->yearattendingid, 0);
       }
       $this->assignRef('regcampers', $regcampers);
       $this->assignRef('volunteerpositions', $model->getVolunteerPositions());

@@ -362,36 +362,6 @@ class muusla_applicationModelapplication extends JModel
       return $db->loadObjectList();
    }
 
-   function getScholarships($yearattendingid, $ismuusa) {
-      $db =& JFactory::getDBO();
-      $query = "SELECT id, registration_pct, housing_pct FROM muusa_scholarship WHERE yearattendingid=$yearattendingid AND is_muusa=$ismuusa";
-      $db->setQuery($query);
-      return $db->loadObject();
-   }
-
-   function upsertScholarship($obj) {
-      $db =& JFactory::getDBO();
-      $user =& JFactory::getUser();
-      $obj->registration_pct =$obj->registration_pct / 100;
-      $obj->housing_pct = $obj->housing_pct / 100;
-      if($obj->id < 1000) {
-         unset($obj->scholarshipid);
-         $db->insertObject("muusa_scholarship", $obj);
-      } else {
-         $db->updateObject("muusa_scholarship", $obj, "id");
-      }
-   }
-
-   function deleteScholarship($scholarshipid) {
-      $db =& JFactory::getDBO();
-      $query = "DELETE FROM muusa_scholarship WHERE id=$scholarshipid";
-      $db->setQuery($query);
-      $db->query();
-      if($db->getErrorNum()) {
-         JError::raiseError(500, $db->stderr());
-      }
-   }
-
    function upsertCharge($obj, $camperid) {
       $db =& JFactory::getDBO();
       $user =& JFactory::getUser();
@@ -426,7 +396,7 @@ class muusla_applicationModelapplication extends JModel
          JError::raiseError(500, $db->stderr());
       }
    }
-   
+    
    function callTrigger($familyid) {
       $db =& JFactory::getDBO();
       $query = "UPDATE (muusa_charge h, muusa_camper c) SET h.created_at=CURRENT_TIMESTAMP WHERE h.camperid=c.id AND c.familyid=$familyid AND h.chargetypeid IN (1001,1016)";

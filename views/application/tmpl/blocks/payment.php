@@ -8,7 +8,6 @@
  * @param   object  $credits  The database credits list for one year
  *
  */
-$serverCharges = array("1000", "1001", "1002", "1003", "1004", "1016", "1021");
 ?>
 <table id="payments<?php echo $year;?>">
    <tr>
@@ -24,9 +23,9 @@ $serverCharges = array("1000", "1001", "1002", "1003", "1004", "1016", "1021");
    <?php
    $total = 0.0;
    $housing = false;
-   if($charges) {
+   if(count($charges)>0) {
       foreach($charges as $charge) {
-         if($year != $this->year["year"] || !$this->editcamper || in_array($charge->chargetypeid, $serverCharges)) {
+         if($year != $this->year["year"] || !$this->editcamper || $charge->id == 0) {
             $housing = $housing || $charge->chargetypeid == 1000;
             echo "           <tr>\n";
             $total += (float)preg_replace("/,/", "",  $charge->amount);
@@ -100,7 +99,8 @@ $serverCharges = array("1000", "1001", "1002", "1003", "1004", "1016", "1021");
          </div> <input type="text" id="paypalAmt"
          class="inputtexttiny onlymoney ui-corner-left"
          name="paypal-amount"
-         value="<?php echo number_format(max($total, 0.0), 2, '.', '');?>" /><button id="finishPaypal">Pay Now via PayPal</button>
+         value="<?php echo number_format(max($total, 0.0), 2, '.', '');?>" />
+         <button id="finishPaypal">Pay Now via PayPal</button>
       </td>
       <td align="right">
          <button id="finishWorkshop">
