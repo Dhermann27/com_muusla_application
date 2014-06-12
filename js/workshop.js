@@ -49,6 +49,7 @@ function submit($) {
 				var fid = $(this).attr("id");
 				$("div.desired", $(this)).each(
 						function() {
+							var tid = $("h6", $(this)).attr("class");
 							$(".workshop-yes li", $(this)).each(
 									function(index, val) {
 										addHidden($,
@@ -58,6 +59,9 @@ function submit($) {
 										addHidden($,
 												"yearattending__workshop-yearattendingid-"
 														+ attendeeCount, fid);
+										addHidden($,
+												"yearattending__workshop-timeid-"
+														+ attendeeCount, tid);
 										addHidden($,
 												"yearattending__workshop-choicenbr-"
 														+ attendeeCount++,
