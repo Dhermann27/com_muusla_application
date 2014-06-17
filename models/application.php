@@ -273,9 +273,9 @@ class muusla_applicationModelapplication extends JModel
 
    function getAttendees($yearattendingid) {
       $db =& JFactory::getDBO();
-      $query = "SELECT workshopid FROM muusa_yearattending__workshop WHERE yearattendingid=$yearattendingid ORDER BY choicenbr";
+      $query = "SELECT workshopid, is_leader FROM muusa_yearattending__workshop WHERE yearattendingid=$yearattendingid ORDER BY choicenbr";
       $db->setQuery($query);
-      return $db->loadColumn(0);
+      return $db->loadObjectList();
    }
 
    function deleteAttendees($yearattendingid) {
@@ -396,7 +396,7 @@ class muusla_applicationModelapplication extends JModel
          JError::raiseError(500, $db->stderr());
       }
    }
-    
+
    function callTrigger($familyid) {
       $db =& JFactory::getDBO();
       $query = "UPDATE (muusa_charge h, muusa_camper c) SET h.created_at=CURRENT_TIMESTAMP WHERE h.camperid=c.id AND c.familyid=$familyid AND h.chargetypeid IN (1001,1016)";

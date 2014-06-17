@@ -62,6 +62,11 @@ function submit($) {
 										addHidden($,
 												"yearattending__workshop-timeid-"
 														+ attendeeCount, tid);
+										if($("input:checkbox", $(this)).prop("checked")) {
+											addHidden($,
+													"yearattending__workshop-is_leader-"
+															+ attendeeCount, 1);
+										}
 										addHidden($,
 												"yearattending__workshop-choicenbr-"
 														+ attendeeCount++,

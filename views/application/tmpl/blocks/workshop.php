@@ -27,46 +27,51 @@ $user =& JFactory::getUser();
          }
          echo "</h5>\n";
          echo "                     <div>\n";
-         echo "                        <div class='right'>\n";
-         echo "                           <h6>Available Workshops</h6>\n";
-         echo "                           <ul class='connected connectedWorkshop workshop-no'>\n";
-         if(count($time["shops"]) > 0) {
-            foreach($time["shops"] as $eventid => $shop) {
-               if(!$camper->attendees || !in_array($eventid, $camper->attendees)) {
+         echo "                        <div class='desired left'>\n";
+         echo "                           <h6 class='$timeid'>Desired Workshops (in order of preference)</h6>\n";
+         echo "                           <ul class='connected connectedWorkshop workshop-yes'>\n";
+         if(count($camper->attendees) > 0) {
+            foreach($camper->attendees as $attendee) {
+               if(array_key_exists($attendee->workshopid, $time["shops"])) {
                   $style = "";
-                  if ($shop["enrollment"] >= .75) {
-                     $style = " style='background: " . ($shop["enrollment"] >= 1 ? "#cd0a0a" : "#e3a345") . ";'";
-                     $style .= " title='" . ($shop["enrollment"] >= 1 ? "Waiting list available" : "Filling up fast") . "'";
+                  if ($time["shops"][$attendee->workshopid]["enrollment"] >= .75) {
+                     $style = " style='background: " . ($time["shops"][$attendee->workshopid]["enrollment"] >= 1 ? "#cd0a0a" : "#e3a345") . ";'";
+                     $style .= " title='" . ($time["shops"][$attendee->workshopid]["enrollment"] >= 1 ? "Waiting list available" : "Filling up fast") . "'";
                   }
-                  echo "                              <li value='$eventid' class='ui-state-default' title='Check'$style>\n";
-                  if($shop["introtext"]) {
-                     echo "                     <button class='help link right'>Show " . $shop["name"] . " Information</button>\n";
+                  echo "                              <li value='$attendee->workshopid' class='ui-state-default'$style>\n";
+
+                  if(!$this->editcamper) {
+                     if($time["shops"][$attendee->workshopid]["introtext"]) {
+                        echo "                     <button class='help link right'>Show " . $time["shops"][$attendee->workshopid]["name"] . " Information</button>\n";
+                     }
+                  } else {
+                     $checked = $attendee->is_leader == 1 ? " checked" : "";
+                     echo "                     <input class='right' type='checkbox'$checked title='Is Leader?' />\n";
                   }
-                  echo "                                 " . $shop["name"] . " (" . $shop["days"] . ")\n";
+                  echo "                                 " . $time["shops"][$attendee->workshopid]["name"] . " (" . $time["shops"][$attendee->workshopid]["days"] . ")\n";
                   echo "                              </li>\n";
+                  unset($time["shops"][$attendee->workshopid]);
                }
             }
          }
          echo "                           </ul>\n";
          echo "                        </div>\n";
-         echo "                        <div class='desired'>\n";
-         echo "                           <h6 class='$timeid'>Desired Workshops (in order of preference)</h6>\n";
-         echo "                           <ul class='connected connectedWorkshop workshop-yes'>\n";
-         if(count($camper->attendees) > 0) {
-            foreach($camper->attendees as $eventid) {
-               if(array_key_exists($eventid, $time["shops"])) {
-                  $style = "";
-                  if ($shop["enrollment"] >= .75) {
-                     $style = " style='background: " . ($shop["enrollment"] >= 1 ? "#cd0a0a" : "#e3a345") . ";'";
-                     $style .= " title='" . ($shop["enrollment"] >= 1 ? "Waiting list available" : "Filling up fast") . "'";
-                  }
-                  echo "                              <li value='$eventid' class='ui-state-default'$style>\n";
-                  if($time["shops"][$eventid]["introtext"]) {
-                     echo "                     <button class='help link right'>Show " . $time["shops"][$eventid]["name"] . " Information</button>\n";
-                  }
-                  echo "                                 " . $time["shops"][$eventid]["name"] . " (" . $time["shops"][$eventid]["days"] . ")\n";
-                  echo "                              </li>\n";
+         echo "                        <div>\n";
+         echo "                           <h6>Available Workshops</h6>\n";
+         echo "                           <ul class='connected connectedWorkshop workshop-no'>\n";
+         if(count($time["shops"]) > 0) {
+            foreach($time["shops"] as $eventid => $shop) {
+               $style = "";
+               if ($shop["enrollment"] >= .75) {
+                  $style = " style='background: " . ($shop["enrollment"] >= 1 ? "#cd0a0a" : "#e3a345") . ";'";
+                  $style .= " title='" . ($shop["enrollment"] >= 1 ? "Waiting list available" : "Filling up fast") . "'";
                }
+               echo "                              <li value='$eventid' class='ui-state-default' title='Check'$style>\n";
+               if($shop["introtext"]) {
+                  echo "                     <button class='help link right'>Show " . $shop["name"] . " Information</button>\n";
+               }
+               echo "                                 " . $shop["name"] . " (" . $shop["days"] . ")\n";
+               echo "                              </li>\n";
             }
          }
          echo "                           </ul>\n";
