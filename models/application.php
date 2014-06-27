@@ -73,7 +73,7 @@ class muusla_applicationModelapplication extends JModel
 
    function getYear() {
       $db =& JFactory::getDBO();
-      $query = "SELECT DATE_FORMAT(date, '%M %d, %Y') date, year FROM muusa_year WHERE is_current=1";
+      $query = "SELECT DATE_FORMAT(date, '%M %d, %Y') date, DATE_FORMAT(date, '%Y%M%d') startdate, year FROM muusa_year WHERE is_current=1";
       $db->setQuery($query);
       return $db->loadAssoc();
    }

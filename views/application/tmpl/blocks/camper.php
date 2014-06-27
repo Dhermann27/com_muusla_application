@@ -20,6 +20,8 @@ $user =& JFactory::getUser();
             <?php echo $camper->sexcd == "M" ? " selected" : "";?>>Male</option>
             <option value="F"
             <?php echo $camper->sexcd == "F" ? " selected" : "";?>>Female</option>
+            <option value="X"
+            <?php echo $camper->sexcd == "X" ? " selected" : "";?>>&nbsp;</option>
       </select> <?php
       if($camper->id >= 1000) {
          echo "<input type='hidden' name='camper-id-$camperid' value='$camperid' />";

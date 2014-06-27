@@ -93,14 +93,17 @@
             to<br /> MUUSA, Inc.<br />616 W. Fulton #705<br />Chicago,
             IL 60661<br /> <br />
          </div></td>
-      <td align="center" style="border-left: 2px dashed black"><div>
+      <td align="center" style="border-left: 2px dashed black"><?php if(date("Ymd") < date("Ymd", strtotime("-7 days"))) {?>
+         <div>
             <img src="images/muusa/secure-paypal-logo.png"
                alt="PayPal - The safer, easier way to pay online!" />
          </div> <input type="text" id="paypalAmt"
          class="inputtexttiny onlymoney ui-corner-left"
          name="paypal-amount"
          value="<?php echo number_format(max($total, 0.0), 2, '.', '');?>" />
-         <button id="finishPaypal">Pay Now via PayPal</button>
+         <button id="finishPaypal">Pay Now via PayPal</button> <?php } else {?>
+         We will be accepting<br />Visa or Mastercard payments<br />on
+         the first day of camp. <?php }?>
       </td>
       <td align="right">
          <button id="finishWorkshop">
