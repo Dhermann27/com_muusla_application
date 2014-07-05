@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<metadata>
-        <layout title="T-Shirt Order Form">
-                <message>
-                        <![CDATA[COM_MUUSA_APPLICATION_TSHIRT_VIEW_DEFAULT_DESC]]>
-                </message>
-        </layout>
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+        <layout title="T-Shirt Order Form">
+                <message>
+                        <![CDATA[COM_MUUSA_APPLICATION_TSHIRT_VIEW_DEFAULT_DESC]]>
+                </message>
+        </layout>
 </metadata>

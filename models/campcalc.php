@@ -17,7 +17,7 @@ jimport( 'joomla.application.component.model' );
  * @package    muusla_application
  * @subpackage Components
  */
-class muusla_applicationModeltshirt extends JModel
+class muusla_applicationModelcampcalc extends JModel
 {
 	
 }

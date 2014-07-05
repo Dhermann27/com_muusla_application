@@ -24,14 +24,14 @@ class muusla_applicationModelpaypal extends JModel
       $user =& JFactory::getUser();
       $obj = new stdClass();
       $obj->camperid = $camperid;
-      $obj->chargetypeid = 1005;
+      $obj->chargetypeid = 1022; // 1005;
       $obj->amount = $amount;
       $obj->timestamp = date("Y-m-d");
       $obj->memo = $txn;
       $obj->year = "&&(SELECT year FROM muusa_year WHERE is_current=1)";
       $obj->created_by = "paypal";
       $obj->created_at = date("Y-m-d H:i:s");
-      $query = "SELECT id FROM muusa_charge WHERE chargetypeid=1005 AND timestamp='$obj->timestamp' AND camperid=$camperid";
+      $query = "SELECT id FROM muusa_charge WHERE chargetypeid=1022 AND timestamp='$obj->timestamp' AND camperid=$camperid";
       $db->setQuery($query);
       $chargeid = $db->loadResult();
       if($chargeid > 0) {

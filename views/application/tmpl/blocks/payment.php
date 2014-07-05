@@ -93,7 +93,7 @@
             to<br /> MUUSA, Inc.<br />616 W. Fulton #705<br />Chicago,
             IL 60661<br /> <br />
          </div></td>
-      <td align="center" style="border-left: 2px dashed black"><?php if(date("Ymd") < date("Ymd", strtotime("-7 days"))) {?>
+      <td align="center" style="border-left: 2px dashed black"><?php if($this->year["date"]) {?>
          <div>
             <img src="images/muusa/secure-paypal-logo.png"
                alt="PayPal - The safer, easier way to pay online!" />

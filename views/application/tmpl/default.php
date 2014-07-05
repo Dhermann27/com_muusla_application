@@ -16,10 +16,10 @@ $user =& JFactory::getUser();
       <p style="margin-top: 1em;">
          <span class="ui-icon ui-icon-info"
             style="float: left; margin: 1em;"></span> You have
-         successfully registered for camp! Be sure to pay your balance
+         successfully preregistered for camp! <!-- Be sure to pay your balance
          to be assigned housing and register for your workshops by
-         clicking here. <br />
-         <button id="nextWorkshop">Proceed to Workshop Selection</button>
+         clicking here. br />
+         button id="nextWorkshop">Proceed to Workshop Selection/button> -->
       </p>
    </div>
    <?php }?>

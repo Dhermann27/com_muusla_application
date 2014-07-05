@@ -37,10 +37,10 @@
                         ! MUUSA received your payment for $
                         <?php echo number_format($this->amount,2)?>
                         . That payment will be reflected on your bill.
-                        Be sure to register for your workshops by
-                        clicking here. <br />
-                        <button id="nextWorkshop">Proceed to Workshop
-                           Selection</button>
+                        <!-- Be sure to register for your workshops by
+                        clicking here. br />
+                        button id="nextWorkshop">Proceed to Workshop
+                           Selection/button> -->
                      </p>
                   </div>
                   <?php }?>
