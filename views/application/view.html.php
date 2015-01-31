@@ -74,7 +74,6 @@ class muusla_applicationViewapplication extends JViewLegacy
                   }
                   if($days != "-1") {
                      $yearattendingid = $model->upsertYearattending($newcamperid, $days);
-                     $sendmail = 1;
                      $model->deleteRoommatepreferences($yearattendingid, $camper->attending);
                      if(count($calls["roommatepreference"][$oldcamperid]->names) > 0) {
                         foreach(explode(",", $calls["roommatepreference"][$oldcamperid]->names) as $choicenbr => $name) {
@@ -82,9 +81,9 @@ class muusla_applicationViewapplication extends JViewLegacy
                         }
                      }
                   } else {
-                     $sendmail = 1;
                      $model->deleteYearattending($newcamperid);
                   }
+                  $sendmail = 1;
                }
             }
             if(count($calls["charge"]) > 0) {
@@ -128,13 +127,8 @@ class muusla_applicationViewapplication extends JViewLegacy
          $mailer->setSender(array($config->get( 'config.mailfrom' ), $config->get( 'config.fromname' ) ));
          $mailer->addRecipient($emails);
          $mailer->setSubject("MUUSA Online Registration");
-         $mailer->setBody("Camper, Thanks for registering at muusa.org. We look forward to seeing you this summer.\n\nYou can find the latest information about your registration in your confirmation letter, available online.\n\nhttp://muusa.org/index.php/component/muusla_tools/?view=letters&format=pdf&tmpl=component&Itemid=320\n(You may be required to login first.)\n\nThanks,\n\nDan Hermann\nMUUSA Webmaster");
+         $mailer->setBody("Dear camper,\nThank you for registering at muusa.org. We look forward to seeing you this summer.\n\nYou can find the latest information about your registration in your confirmation letter, always available online.\n\nhttp://muusa.org/index.php/component/muusla_tools/?view=letters&format=pdf&tmpl=component&Itemid=320\n(You may be required to login first.)\n\nSee you \"next week\",\n\nDan Hermann\nMUUSA Webmaster");
          $send = $mailer->Send();
-         if ( $send !== true ) {
-            echo 'Error sending email: ' . $send->__toString();
-         } else {
-            echo 'Mail sent';
-         }
       }
 
       // DATA SAVED, GET NEW DATA
