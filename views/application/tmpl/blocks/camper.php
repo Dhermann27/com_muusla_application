@@ -9,8 +9,7 @@
 $camperid = $camper->id >= 1000 ? $camper->id : "";
 $user = JFactory::getUser();
 ?>
-<tbody
-   id="<?php echo $camperid;?>" class="camperBody">
+<tbody id="<?php echo $camperid;?>" class="camperBody">
    <tr valign="bottom">
       <td width="25%"><select
          name="camper-sexcd-<?php echo $camperid;?>"
@@ -29,7 +28,8 @@ $user = JFactory::getUser();
       ?>
       </td>
       <td colspan="3" width="75%" align="right">
-         <button class="myhelp myinfo">Show Attending Help</button> <select
+         <button class="btn fa fa-info info right"
+            title="Show Attending Help"></button> <select
          name="camper-attending-<?php echo $camperid;?>"
          class="attending ui-corner-all">
             <?php if($this->editcamper) {?>
@@ -82,8 +82,9 @@ $user = JFactory::getUser();
       ?>
    <tr>
       <td>
-         <button class="myhelp myinfo right">Show E-mail Address Help</button>
-         Email Address
+         <button class="btn fa fa-info info right"
+            title="Show E-mail
+            Address Help"></button> Email Address
       </td>
       <?php 
       echo "								<td colspan='3'>$user->email\n";
@@ -186,8 +187,9 @@ $user = JFactory::getUser();
    </tr>
    <tr>
       <td>
-         <button class="myhelp myinfo right">Show Sponsor Help</button>
-         Sponsor (if applicable)
+         <button class="btn fa fa-info info right"
+            title="Show Sponsor
+            Help"></button> Sponsor (if applicable)
       </td>
       <td colspan="3"><input type="text" maxlength="30"
          name="camper-sponsor-<?php echo $camperid;?>"

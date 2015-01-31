@@ -9,12 +9,7 @@ jQuery(document)
 						heightStyle : "content",
 						header : "h5"
 					});
-					$(".link").button({
-						icons : {
-							primary : "ui-icon-image"
-						},
-						text : false
-					}).click(function() {
+					$(".link").click(function() {
 						openLink($, $(this));
 						return false;
 					});
@@ -22,7 +17,7 @@ jQuery(document)
 						placeholder : "ui-state-highlight",
 						connectWith : ".connectedWorkshop"
 					}).disableSelection();
-					$("#submitWorkshops").button().click(function() {
+					$("#submitWorkshops").click(function() {
 						submit($);
 						return false;
 					});

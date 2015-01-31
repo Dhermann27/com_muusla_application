@@ -31,8 +31,8 @@ $nbrid = $phonenumber->id > 0 ? $phonenumber->id : "";
    </td>
    <td>
       <button
-         class="<?php echo $nbrindex == 0 ? "add" :"delete";?> myhelp">
-         <?php echo $nbrindex == 0 ? "Add Phone Number" : "Delete Phone Number";?>
+         class="<?php echo $nbrindex == 0 ? "add fa fa-plus" :"delete fa fa-minus";?> btn"
+         title="<?php echo $nbrindex == 0 ? "Add Phone Number" : "Delete Phone Number";?>">
       </button>
    </td>
 </tr>

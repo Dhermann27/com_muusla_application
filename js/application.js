@@ -20,12 +20,7 @@ jQuery(document).ready(function($) {
 		heightStyle : "content",
 		header : "h4"
 	});
-	$(".link").button({
-		icons : {
-			primary : "ui-icon-image"
-		},
-		text : false
-	}).click(function() {
+	$(".link").click(function() {
 		openLink($(this));
 		return false;
 	});
@@ -40,23 +35,23 @@ jQuery(document).ready(function($) {
 			}
 		} ]
 	});
-	$("#nextCamper").button().click(function() {
+	$("#nextCamper").click(function() {
 		$("#muusaApp").tabs({
 			active : 1
 		});
 		return false;
 	});
-	$("#addCamper").button().click(function() {
+	$("#addCamper").click(function() {
 		addRow($("tbody.camperBody :first"), "tbody", false);
 		return false;
 	});
-	$("#removeCamper").button().click(function() {
+	$("#removeCamper").click(function() {
 		var tbody = $("tbody.camperBody");
 		if (tbody.length > 1 && !tbody.last().attr("id"))
 			tbody.last().remove();
 		return false;
 	});
-	$("#nextPayment").button().click(function() {
+	$("#nextPayment").click(function() {
 		$("#muusaApp").tabs({
 			active : 2
 		});
@@ -65,15 +60,11 @@ jQuery(document).ready(function($) {
 	$(".recalc").blur(function() {
 		donationCalc($);
 	});
-	$("#nextWorkshop").button().click(function() {
+	$("#nextWorkshop").click(function() {
 		window.location.href = "http://muusa.org/registration/workshops";
 		return false;
 	});
-	$("#forwardWorkshop").button({
-		icons : {
-			primary : "ui-icon-triangle-1-e"
-		}
-	}).click(function() {
+	$("#forwardWorkshop").click(function() {
 		window.location.href = "http://muusa.org/registration/workshops";
 		return false;
 	});
@@ -90,16 +81,16 @@ jQuery(document).ready(function($) {
 			
 		}).autocomplete("search", "");
 	});
-	$("#finishPaypal").button().removeClass("ui-corner-all").addClass("ui-corner-right").click(function() {
+	$("#finishPaypal").removeClass("ui-corner-all").addClass("ui-corner-right").click(function() {
 		submit($);
 		return false;
 	});
-	$("#finishWorkshop").button().click(function() {
+	$("#finishWorkshop").click(function() {
 		$("#paypalAmt").val("0");
 		submit($);
 		return false;
 	});
-	$("#registerAll").button().click(function() {
+	$("#registerAll").click(function() {
 		$("#paypalAmt").val("0");
 		$("#appCamper tbody.camperBody .attending").val("6");
 		submit($);

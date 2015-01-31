@@ -5,7 +5,7 @@
 <script>
    jQuery(document).ready(
 			function($) {
-				$("#nextWorkshop").button().click(function() {
+				$("#nextWorkshop").click(function() {
 					window.location.href = "http://muusa.org/index.php/registration/workshops";
 					return false;
 				});

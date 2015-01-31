@@ -18,8 +18,8 @@
    </td>
    <td>
       <button
-         class="<?php echo $mateindex == 0 ? "add" :"delete";?> myhelp">
-         <?php echo $mateindex == 0 ? "Add Roommate" : "Delete Roommate";?>
+         class="<?php echo $mateindex == 0 ? "add fa fa-plus" :"delete fa fa-minus";?> btn"
+         title="<?php echo $mateindex == 0 ? "Add Roommate" : "Delete Roommate";?>">
       </button>
    </td>
 </tr>

@@ -214,35 +214,6 @@ class muusla_applicationModelapplication extends JModelItem
       }
    }
 
-   //    function getRoomtypepreferences($fiscalyearid) {
-   //       $db = JFactory::getDBO();
-   //       $query = "SELECT buildingid FROM muusa_roomtype_preferences WHERE fiscalyearid=$fiscalyearid ORDER BY choicenbr";
-   //       $db->setQuery($query);
-   //       return $db->loadColumn(0);
-   //    }
-
-   //    function deleteRoomtypepreferences($fiscalyearid) {
-   //       $db = JFactory::getDBO();
-   //       $query = "DELETE FROM muusa_roomtype_preferences WHERE fiscalyearid=$fiscalyearid";
-   //       $db->setQuery($query);
-   //       $db->query();
-   //       if($db->getErrorNum()) {
-   //          JError::raiseError(500, $db->stderr());
-   //       }
-   //    }
-
-   //    function insertRoomtypepreferences($fiscalyearid, $choicenbr, $buildingid) {
-   //       $db = JFactory::getDBO();
-   //       $user = JFactory::getUser();
-   //       $obj = new stdClass;
-   //       $obj->fiscalyearid = $fiscalyearid;
-   //       $obj->choicenbr = $choicenbr;
-   //       $obj->buildingid = $buildingid;
-   //       $obj->created_by = $user->username;
-   //       $obj->created_at = "&&CURRENT_TIMESTAMP";
-   //       $db->insertObject("muusa_roomtype_preference", $obj);
-   //    }
-
    function getRoommatepreferences($yearattendingid) {
       $db = JFactory::getDBO();
       $query = "SELECT name FROM muusa_roommatepreference WHERE yearattendingid=$yearattendingid ORDER BY choicenbr";

@@ -14,13 +14,11 @@ $user = JFactory::getUser();
    <?php } else {?>
    <div class="ui-state-highlight ui-corner-all">
       <p style="margin-top: 1em;">
-         <span class="ui-icon ui-icon-info"
-            style="float: left; margin: 1em;"></span> You have
-         successfully preregistered for camp!
-         <!-- Be sure to pay your balance
-         to be assigned housing and register for your workshops by
-         clicking here. br />
-         button id="nextWorkshop">Proceed to Workshop Selection/button> -->
+         <i class="fa fa-check-square-o fa-3x"></i> You have successfully
+         registered for camp! Be sure to pay your balance to be assigned
+         housing and register for your workshops by clicking here.
+         <button id="nextWorkshop" class="btn">Proceed to Workshop
+            Selection</button>
       </p>
    </div>
    <?php }?>
@@ -55,8 +53,8 @@ $user = JFactory::getUser();
    <form id="muusaApp" method="post">
       <?php if($this->editcamper) {
          echo "<input type='hidden' id='editcamper' name='editcamper' value='$this->editcamper' />\n";
-         echo "<div style='float: right;'><button id='toWorkshop'>Do not Save<br />Proceed to Workshop Selection</button></div>\n";
-         echo "<div><button id='toSelection'>Return<br />to Camper Selection</button></div>\n";
+         echo "<div style='float: right;'><button id='toWorkshop' class='btn-danger'>Do not Save<br />Proceed to Workshop Selection</button></div>\n";
+         echo "<div><button id='toSelection' class='btn'>Return<br />to Camper Selection</button></div>\n";
       }
       $familyid = $this->family->id ? $this->family->id : 0;?>
       <ul>
@@ -74,8 +72,9 @@ $user = JFactory::getUser();
          <table>
             <tr>
                <td width="25%">
-                  <button class="myhelp myinfo right">Show Family Name Help</button>
-                  Family Name <input type="hidden"
+                  <button class="btn fa fa-info info right"
+                     title="Show Family Name Help"></button> Family Name
+                  <input type="hidden"
                   name="family-id-<?php echo $familyid?>"
                   value="<?php echo $familyid?>" />
                </td>
@@ -167,8 +166,8 @@ $user = JFactory::getUser();
             </tr>
             <tr>
                <td>&nbsp;</td>
-               <td colspan="2" align="right"><a id="nextCamper">Next
-                     Page</a>
+               <td colspan="2" align="right"><a id="nextCamper"
+                  class="btn">Next Page</a>
                </td>
             </tr>
          </table>
@@ -192,11 +191,13 @@ $user = JFactory::getUser();
             <tfoot>
                <tr>
                   <td colspan="2">
-                     <button id="addCamper">Add Another Camper</button>
-                     <button id="removeCamper">Remove Last Camper</button>
+                     <button id="addCamper" class="btn">Add Another
+                        Camper</button>
+                     <button id="removeCamper" class="btn">Remove Last
+                        Camper</button>
                   </td>
                   <td colspan="2" align="right">
-                     <button id="nextPayment">Next Page</button>
+                     <button id="nextPayment" class="btn">Next Page</button>
                   </td>
                </tr>
             </tfoot>
@@ -256,12 +257,12 @@ $user = JFactory::getUser();
          if($this->editcamper) {?>
          <br />
          <div class="right">
-            <button id="finishWorkshop">
+            <button id="finishWorkshop" class="btn">
                <?php echo $this->sumdays > 0 ? "Save Changes" : "Finish Registration";?>
             </button>
          </div>
          <div align="center">
-            <button id="registerAll">
+            <button id="registerAll" class="btn">
                Register Entire Family for
                <?php echo $this->year["year"]?>
             </button>

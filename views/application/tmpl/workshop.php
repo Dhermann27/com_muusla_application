@@ -8,8 +8,8 @@
    <form id="muusaApp" method="post">
       <?php if($this->editcamper) {
          echo "<input type='hidden' id='editcamper' name='editcamper' value='$this->editcamper' />\n";
-         echo "<div style='float: right;'><button id='toAssignRoom'>Do not Save<br />Proceed to Assign Room</button></div>\n";
-         echo "<div><button id='toSelection'>Return<br />to Camper Selection</button></div>\n";
+         echo "<div style='float: right;'><button id='toAssignRoom' class='btn-danger'>Do not Save<br />Proceed to Assign Room</button></div>\n";
+         echo "<div><button id='toSelection' class='btn'>Return<br />to Camper Selection</button></div>\n";
       }?>
       <table class="blog">
          <tr>
@@ -50,14 +50,14 @@
                   <?php } else {?>
                   <div class="ui-state-highlight ui-corner-all">
                      <p style="margin: 1em;">
-                        <span class="ui-icon ui-icon-info"
-                           style="float: left; margin: 1em;"></span> You
+                        <i class="fa fa-check-square-o 3x"></i> You
                         have successfully signed up for workshops! If
                         your balance is paid, proceed to the Room
-                        Selection tool.<br /> <i>Note: only possible
-                           during the Priority Registration period to
-                           those that preregistered.</i><br />
-                        <button id="toHousing">Proceed to Room Selection</button>
+                        Selection tool. <i>Note: only possible during
+                           the Priority Registration period to those
+                           that preregistered.</i>
+                        <button id="toHousing" class="btn">Proceed to
+                           Room Selection</button>
                      </p>
                   </div>
                   <p>&nbsp;</p>

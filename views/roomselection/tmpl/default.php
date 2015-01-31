@@ -167,7 +167,7 @@ $setByAdmin = !(in_array("8", $user->groups) || in_array("10", $user->groups)) &
          <?php }?>
          <script lang="text/javascript">
          jQuery(document).ready(function ($) {
-             $("#muusaApp .save").button().click(function (event) {
+             $("#muusaApp .save").click(function (event) {
                  $("#muusaApp").submit();
                  event.preventDefault();
                  return false;

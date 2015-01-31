@@ -42,7 +42,7 @@ $user = JFactory::getUser();
 
                   if(!$this->editcamper) {
                      if($time["shops"][$attendee->workshopid]["introtext"]) {
-                        echo "                     <button class='myhelp link right'>Show " . $time["shops"][$attendee->workshopid]["name"] . " Information</button>\n";
+                        echo "                     <button class='btn fa fa-info-circle link right' title='Show " . $time["shops"][$attendee->workshopid]["name"] . " Information'></button>\n";
                      }
                   } else {
                      $checked = $attendee->is_leader == 1 ? " checked" : "";
@@ -68,7 +68,7 @@ $user = JFactory::getUser();
                }
                echo "                              <li value='$eventid' class='ui-state-default' title='Check'$style>\n";
                if($shop["introtext"]) {
-                  echo "                     <button class='myhelp link right'>Show " . $shop["name"] . " Information</button>\n";
+                  echo "                     <button class='btn fa fa-info-circle link link right' title='Show " . $shop["name"] . " Information'></button>\n";
                }
                echo "                                 " . $shop["name"] . " (" . $shop["days"] . ")\n";
                echo "                              </li>\n";

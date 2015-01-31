@@ -101,12 +101,12 @@
          class="inputtexttiny onlymoney ui-corner-left"
          name="paypal-amount"
          value="<?php echo number_format(max($total, 0.0), 2, '.', '');?>" />
-         <button id="finishPaypal">Pay Now via PayPal</button> <?php } else {?>
+         <button id="finishPaypal" class="btn">Pay Now via PayPal</button> <?php } else {?>
          We will be accepting<br />Visa or Mastercard payments<br />on
          the first day of camp. <?php }?>
       </td>
       <td align="right">
-         <button id="finishWorkshop">
+         <button id="finishWorkshop" class="btn">
             <?php echo $this->sumdays > 0 ? "Save Changes" : "Finish Registration";?>
          </button>
       </td>

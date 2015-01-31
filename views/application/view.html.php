@@ -19,6 +19,8 @@ class muusla_applicationViewapplication extends JViewLegacy
       $user = JFactory::getUser();
       $editcamper = $this->getSafe(JRequest::getVar("editcamper"));
       $admin = $editcamper && (in_array("8", $user->groups) || in_array("10", $user->groups));
+
+      $sendmail = 0;
       $calls[][] = array();
       foreach(JRequest::get() as $key=>$value) {
          if(preg_match('/^(\w+)-(\w+)-(\d+)$/', $key, $objects)) {
@@ -49,11 +51,15 @@ class muusla_applicationViewapplication extends JViewLegacy
             }
          }
          if(isset($calls["camper"])) {
+            $emails = array();
             foreach($calls["camper"] as $oldcamperid => $camper) {
                if($camper->firstname != "" && $camper->lastname != "") {
                   $camper->familyid = $familyid;
                   $days = $camper->attending;
                   $newcamperid = $model->upsertCamper($camper);
+                  if($camper->email != "") {
+                     array_push($emails, $camper->email);
+                  }
                   if(count($calls["phonenumber"]) > 0) {
                      foreach($calls["phonenumber"] as $phonenumber) {
                         if($phonenumber->camperid == $oldcamperid) {
@@ -68,6 +74,7 @@ class muusla_applicationViewapplication extends JViewLegacy
                   }
                   if($days != "-1") {
                      $yearattendingid = $model->upsertYearattending($newcamperid, $days);
+                     $sendmail = 1;
                      $model->deleteRoommatepreferences($yearattendingid, $camper->attending);
                      if(count($calls["roommatepreference"][$oldcamperid]->names) > 0) {
                         foreach(explode(",", $calls["roommatepreference"][$oldcamperid]->names) as $choicenbr => $name) {
@@ -75,6 +82,7 @@ class muusla_applicationViewapplication extends JViewLegacy
                         }
                      }
                   } else {
+                     $sendmail = 1;
                      $model->deleteYearattending($newcamperid);
                   }
                }
@@ -114,6 +122,21 @@ class muusla_applicationViewapplication extends JViewLegacy
          echo "<h2>Invalid Permissions to Update</h2>\n";
       }
 
+      if($sendmail == 1 && count($emails) > 0) {
+         $mailer = JFactory::getMailer();
+         $config = JFactory::getConfig();
+         $mailer->setSender(array($config->get( 'config.mailfrom' ), $config->get( 'config.fromname' ) ));
+         $mailer->addRecipient($emails);
+         $mailer->setSubject("MUUSA Online Registration");
+         $mailer->setBody("Camper, Thanks for registering at muusa.org. We look forward to seeing you this summer.\n\nYou can find the latest information about your registration in your confirmation letter, available online.\n\nhttp://muusa.org/index.php/component/muusla_tools/?view=letters&format=pdf&tmpl=component&Itemid=320\n(You may be required to login first.)\n\nThanks,\n\nDan Hermann\nMUUSA Webmaster");
+         $send = $mailer->Send();
+         if ( $send !== true ) {
+            echo 'Error sending email: ' . $send->__toString();
+         } else {
+            echo 'Mail sent';
+         }
+      }
+
       // DATA SAVED, GET NEW DATA
 
       $sumdays = 0;
@@ -135,6 +158,7 @@ class muusla_applicationViewapplication extends JViewLegacy
             }
             $sumdays += $camper->days;
          }
+         $charges = array();
          foreach($model->getCharges($family->id, $admin && preg_match('/^\d+$/', $editcamper) ? "byyear" : "thisyear") as $charge) {
             if($charges[$charge->year] == null) {
                $charges[$charge->year] = array($charge);
