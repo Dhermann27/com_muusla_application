@@ -1,10 +1,10 @@
 <?php
 /**
- * muusla_application Model for muusla Component
- *
- * @package    muusla_application
- * @subpackage Components
- */
+* muusla_application Model for muusla Component
+*
+* @package    muusla_application
+* @subpackage Components
+*/
 
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die();
@@ -12,12 +12,12 @@ defined('_JEXEC') or die();
 jimport( 'joomla.application.component.model' );
 
 /**
- * muusla_application Model
- *
- * @package    muusla_application
- * @subpackage Components
- */
-class muusla_applicationModeltshirt extends JModel
+* muusla_application Model
+*
+* @package    muusla_application
+* @subpackage Components
+*/
+class muusla_applicationModeltshirt extends JModelItem
 {
-	
+
 }

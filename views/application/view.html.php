@@ -11,12 +11,12 @@ jimport( 'joomla.application.component.view');
  *
  * @package		muusla_application
  */
-class muusla_applicationViewapplication extends JView
+class muusla_applicationViewapplication extends JViewLegacy
 {
 
    function display($tpl = null) {
-      $model =& $this->getModel();
-      $user =& JFactory::getUser();
+      $model = $this->getModel();
+      $user = JFactory::getUser();
       $editcamper = $this->getSafe(JRequest::getVar("editcamper"));
       $admin = $editcamper && (in_array("8", $user->groups) || in_array("10", $user->groups));
       $calls[][] = array();
@@ -34,13 +34,13 @@ class muusla_applicationViewapplication extends JView
          }
       }
       $valideditor = false;
-      if(count($calls["camper"]) > 0) {
+      if(isset($calls["camper"])) {
          foreach($calls["camper"] as $oldcamperid => $camper) {
             $valideditor = $valideditor || strcasecmp($camper->email, $user->email) == 0;
          }
       }
-      if($admin || $valideditor || count($calls["family"]) == 0) {
-         if(count($calls["family"]) > 0) {
+      if($admin || $valideditor || !isset($calls["family"])) {
+         if(isset($calls["family"])) {
             foreach($calls["family"] as $id => $family) {
                $familyid = $model->upsertFamily($family);
                if($editcamper == "1") {
@@ -48,7 +48,7 @@ class muusla_applicationViewapplication extends JView
                }
             }
          }
-         if(count($calls["camper"]) > 0) {
+         if(isset($calls["camper"])) {
             foreach($calls["camper"] as $oldcamperid => $camper) {
                if($camper->firstname != "" && $camper->lastname != "") {
                   $camper->familyid = $familyid;
@@ -96,7 +96,7 @@ class muusla_applicationViewapplication extends JView
 
             }
          }
-         if(count($calls["phonenumber"]) > 0) {
+         if(isset($calls["phonenumber"])) {
             $phonenbrs = array();
             foreach($calls["phonenumber"] as $key => $phonenumber) {
                if($key>= 1000 && $phonenumber->phonenbr != "") {
@@ -125,7 +125,7 @@ class muusla_applicationViewapplication extends JView
          $family = $model->getFamily("c.email='" . $user->email . "'");
       }
       $this->assignRef('family', $family);
-      if($family->id) {
+      if($family) {
          $campers = $model->getCampers($family->id);
          foreach($campers as $camper) {
             $camper->phonenbrs = $model->getPhonenumbers($camper->id);

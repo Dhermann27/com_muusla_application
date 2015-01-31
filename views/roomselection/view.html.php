@@ -11,12 +11,12 @@ jimport( 'joomla.application.component.view');
  *
  * @package		muusla_application
  */
-class muusla_applicationViewroomselection extends JView
+class muusla_applicationViewroomselection extends JViewLegacy
 {
 
    function display($tpl = null) {
-      $model =& $this->getModel();
-      $user =& JFactory::getUser();
+      $model = $this->getModel();
+      $user = JFactory::getUser();
 
       $roomid = $this->getSafe(JRequest::getVar("yearattending-roomid-0"));
       if($roomid != "") {

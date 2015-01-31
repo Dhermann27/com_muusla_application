@@ -7,7 +7,7 @@
  *
  */
 $camperid = $camper->id >= 1000 ? $camper->id : "";
-$user =& JFactory::getUser();
+$user = JFactory::getUser();
 ?>
 <tbody
    id="<?php echo $camperid;?>" class="camperBody">
@@ -29,7 +29,7 @@ $user =& JFactory::getUser();
       ?>
       </td>
       <td colspan="3" width="75%" align="right">
-         <button class="help info">Show Attending Help</button> <select
+         <button class="myhelp myinfo">Show Attending Help</button> <select
          name="camper-attending-<?php echo $camperid;?>"
          class="attending ui-corner-all">
             <?php if($this->editcamper) {?>
@@ -50,7 +50,7 @@ $user =& JFactory::getUser();
       </select>
       </td>
    </tr>
-   <tr class="hidden" valign="top">
+   <tr class="myhidden" valign="top">
       <td><h4>What does "Attending" mean?</h4></td>
       <td colspan="3">
          <p>Use this option if you have a person who is in your family,
@@ -82,7 +82,7 @@ $user =& JFactory::getUser();
       ?>
    <tr>
       <td>
-         <button class="help info right">Show E-mail Address Help</button>
+         <button class="myhelp myinfo right">Show E-mail Address Help</button>
          Email Address
       </td>
       <?php 
@@ -91,7 +91,7 @@ $user =& JFactory::getUser();
       echo "                              </td>\n";
       ?>
    </tr>
-   <tr class="hidden" valign="top">
+   <tr class="myhidden" valign="top">
       <td><h4>Why can't I change my email address?</h4></td>
       <td colspan="3">
          <p>We need the same email as your http://muusa.org account.
@@ -145,54 +145,6 @@ $user =& JFactory::getUser();
       </select>
       </td>
    </tr>
-   <!--    <tr> -->
-   <!--       <td>Room Type Preferences</td> -->
-   <!--       <td colspan="3"> -->
-   <!--          <div class="roomtypes"> -->
-   <!--             <h4>Click here, then drag in order of preference from right -->
-   <!--                to left.</h4> -->
-   <!--             <div> -->
-   <!--                <div class="right"> -->
-   <!--                   <h5>Unselected Room Type</h5> -->
-   <!--                   <ul class="connected connectedRoomtype roomtype-no"> -->
-   <?php 
-   //                      foreach($this->buildings as $buildingid => $building) {
-   //                         if(!$camper->roomtypes || !in_array($buildingid, $camper->roomtypes)) {
-   //                            echo "                  <li value='$buildingid' class='ui-state-default'>\n";
-   //                            if(!$this->editcamper && $building["introtext"]) {
-   //                               echo "                     <button class='help link right'>Show $building->name Information</button>\n";
-   //                            }
-   //                            echo "                     " . $building["name"] . "\n";
-   //                            echo "                  </li>\n";
-   //                         }
-   //                      }
-   //                      ?>
-   <!--                   </ul> -->
-   <!--                </div> -->
-   <!--                <div> -->
-   <!--                   <h5>Preferred Room Type</h5> -->
-   <!--                   <ul class="connected connectedRoomtype roomtype-yes"> -->
-   <?php
-   //                      if($camper->roomtypes) {
-   //                         foreach($camper->roomtypes as $roomtype) {
-   //                            echo "                  <li value='$roomtype' class='ui-state-default'>\n";
-   //                            if(!$this->editcamper && $this->buildings[$roomtype]["introtext"]) {
-   //                               echo "                     <button class='help link right'>Show " . $this->buildings[$roomtype]->name . " Information</button>\n";
-   //                            }
-   //                            echo "                     " . $this->buildings[$roomtype]["name"] . "\n";
-   //                            echo "                  </li>\n";
-   //                         }
-   //                      }
-   //                      ?>
-   <!--                      <li class="ui-state-default">No Preference</li> -->
-   <!--                   </ul> -->
-   <!--                </div> -->
-   <!--                <button class="roomtypeSave clearboth right">Close -->
-   <!--                   Preferences</button> -->
-   <!--             </div> -->
-   <!--          </div> -->
-   <!--       </td> -->
-   <!--    </tr> -->
    <?php
    if(count($camper->roommates) == 0) {
       $mateindex = 0;
@@ -234,7 +186,7 @@ $user =& JFactory::getUser();
    </tr>
    <tr>
       <td>
-         <button class="help info right">Show Sponsor Help</button>
+         <button class="myhelp myinfo right">Show Sponsor Help</button>
          Sponsor (if applicable)
       </td>
       <td colspan="3"><input type="text" maxlength="30"
@@ -243,7 +195,7 @@ $user =& JFactory::getUser();
          value="<?php echo $camper->sponsor;?>" />
       </td>
    </tr>
-   <tr class="hidden" valign="top">
+   <tr class="myhidden" valign="top">
       <td><h4>When is a sponsor required?</h4></td>
       <td colspan="3">
          <p>A sponsor is required if the camper will be under the age of

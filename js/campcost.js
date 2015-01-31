@@ -1,5 +1,6 @@
 jQuery(document).ready(function($) {
 	$(".spinner").spinner({
+		min: 0,
 		stop : function() {
 			muusaCalc($);
 		}
@@ -14,25 +15,25 @@ function muusaCalc($) {
 	var burt_num = $("#muusa_burt_num").spinner("value");
 	var children_num = $("#muusa_child_num").spinner("value");
 	var infants_num = $("#muusa_infant_num").spinner("value");
-	duereg += adults_num * 140;
-	$("#muusa_adults_feereg").html("$" + (adults_num * 140).toFixed(2));
+	duereg += adults_num * 150;
+	$("#muusa_adults_feereg").html("$" + (adults_num * 150).toFixed(2));
 	switch (parseInt($("#muusa_adults_hou").val(), 10)) {
 	case 0:
 		$("#muusa_adults_feehouse").html("$0.00");
 		$("#muusa_child_feehouse").html("$0.00");
 		break;
 	case 1:
-		var rate = adults_num * 540.0;
+		var rate = adults_num * 550.0;
 		switch (parseInt(adults_num, 10)) {
 		case 1:
-			rate = adults_num * 885.0;
+			rate = adults_num * 900.0;
 			break;
 		case 2:
-			rate = adults_num * 590.0;
+			rate = adults_num * 600.0;
 			break;
 		}
 		if (children_num > 0 || infants_num > 0) {
-			rate = adults_num * 540.0;
+			rate = adults_num * 550.0;
 		}
 		duearr += rate + (children_num * 264);
 		$("#muusa_adults_feehouse").html("$" + rate.toFixed(2));
@@ -56,7 +57,7 @@ function muusaCalc($) {
 		$("#muusa_ya_feehouse").html("$0.00");
 		break;
 	case 1:
-		duearr += ya_num * 370;
+		duearr += ya_num * 380;
 		$("#muusa_ya_feehouse").html("$" + (ya_num * 370).toFixed(2));
 		break;
 	case 2:
@@ -65,7 +66,7 @@ function muusaCalc($) {
 		break;
 	}
 	duereg += burt_num * 110;
-	duearr += burt_num * 350;
+	duearr += burt_num * 380;
 	$("#muusa_burt_feereg").html("$" + (burt_num * 110).toFixed(2));
 	$("#muusa_burt_feehouse").html("$" + (burt_num * 350).toFixed(2));
 	duereg += children_num * 80;

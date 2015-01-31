@@ -1,5 +1,5 @@
 <?php defined('_JEXEC') or die('Restricted access');
-$user =& JFactory::getUser();
+$user = JFactory::getUser();
 ?>
 <div id="ja-content">
    <link type="text/css"
@@ -16,7 +16,8 @@ $user =& JFactory::getUser();
       <p style="margin-top: 1em;">
          <span class="ui-icon ui-icon-info"
             style="float: left; margin: 1em;"></span> You have
-         successfully preregistered for camp! <!-- Be sure to pay your balance
+         successfully preregistered for camp!
+         <!-- Be sure to pay your balance
          to be assigned housing and register for your workshops by
          clicking here. br />
          button id="nextWorkshop">Proceed to Workshop Selection/button> -->
@@ -73,7 +74,7 @@ $user =& JFactory::getUser();
          <table>
             <tr>
                <td width="25%">
-                  <button class="help info right">Show Family Name Help</button>
+                  <button class="myhelp myinfo right">Show Family Name Help</button>
                   Family Name <input type="hidden"
                   name="family-id-<?php echo $familyid?>"
                   value="<?php echo $familyid?>" />
@@ -85,7 +86,7 @@ $user =& JFactory::getUser();
                   value="<?php echo $this->family->name;?>" />
                </td>
             </tr>
-            <tr class="hidden" valign="top">
+            <tr class="myhidden" valign="top">
                <td><h4>What is a Family Name?</h4></td>
                <td>
                   <p>Family Name is the display name for your family as

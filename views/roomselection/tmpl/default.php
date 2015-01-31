@@ -1,5 +1,5 @@
 <?php defined('_JEXEC') or die('Restricted access');
-$user =& JFactory::getUser();
+$user = JFactory::getUser();
 $setByAdmin = !(in_array("8", $user->groups) || in_array("10", $user->groups)) && (in_array("8", explode(",", $this->reg[6])) || in_array("10", explode(",", $this->reg[6])));?>
 <div id="ja-content">
    <link type="text/css"

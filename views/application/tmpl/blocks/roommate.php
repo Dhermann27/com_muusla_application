@@ -12,13 +12,13 @@
    <td><?php echo $mateindex == 0 ? "Roommate Preferences" : "";?>
    </td>
    <td colspan="2"><input type="text" maxlength="50"
-      class="inputtext roommates ui-corner-all tooltip"
+      class="inputtext roommates ui-corner-all mytooltip"
       value="<?php echo $name?>"
       title="You do not need to add family members to this list." />
    </td>
    <td>
       <button
-         class="<?php echo $mateindex == 0 ? "add" :"delete";?> help">
+         class="<?php echo $mateindex == 0 ? "add" :"delete";?> myhelp">
          <?php echo $mateindex == 0 ? "Add Roommate" : "Delete Roommate";?>
       </button>
    </td>

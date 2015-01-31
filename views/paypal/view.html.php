@@ -1,20 +1,20 @@
 <?php
 /**
- * @package		muusla_application
- * @license		GNU/GPL, see LICENSE.php
- */
+* @package		muusla_application
+* @license		GNU/GPL, see LICENSE.php
+*/
 
 jimport( 'joomla.application.component.view');
 
 /**
- * HTML View class for the muusla_application buildings Component
- *
- * @package		muusla_application
- */
-class muusla_applicationViewpaypal extends JView
+* HTML View class for the muusla_application buildings Component
+*
+* @package		muusla_application
+*/
+class muusla_applicationViewpaypal extends JViewLegacy
 {
    function display($tpl = null) {
-      $model =& $this->getModel();
+      $model = $this->getModel();
 
       if(JRequest::getVar('tx') == "") {
          echo "FAILURE";
@@ -80,4 +80,4 @@ class muusla_applicationViewpaypal extends JView
    }
 
 }
-?>
+?>

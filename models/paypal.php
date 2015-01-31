@@ -17,11 +17,11 @@ jimport( 'joomla.application.component.model' );
  * @package    muusla_application
  * @subpackage Components
  */
-class muusla_applicationModelpaypal extends JModel
+class muusla_applicationModelpaypal extends JModelItem
 {
    function insertCharge($amount, $camperid, $txn) {
-      $db =& JFactory::getDBO();
-      $user =& JFactory::getUser();
+      $db = JFactory::getDBO();
+      $user = JFactory::getUser();
       $obj = new stdClass();
       $obj->camperid = $camperid;
       $obj->chargetypeid = 1022; // 1005;

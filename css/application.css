@@ -1,4 +1,4 @@
-#muusaApp table, table#muusaApp, .blog {
+#muusaApp table,table#muusaApp,.blog {
 	width: 95%;
 	align: center;
 }
@@ -11,7 +11,7 @@
 	padding-bottom: 1.25em;
 }
 
-#muusaApp p, #muusaApp ul {
+#muusaApp p,#muusaApp ul {
 	margin-bottom: 1em;
 }
 
@@ -27,13 +27,13 @@
 	clear: both;
 }
 
-#muusaApp button.help {
+#muusaApp button.myhelp {
 	width: 1.75em;
 	height: 1.75em;
 	vertical-align: middle;
 }
 
-#muusaApp .hidden {
+#muusaApp .myhidden {
 	display: none;
 }
 
@@ -54,27 +54,27 @@
 }
 
 #muusaApp input,#muusaApp select {
-	height: 1.75em;
+	height: 2.7em;
 	padding-left: .25em;
 }
 
 #muusaApp .inputtext {
 	width: 25em;
-    height: 1em;
-    padding: 0.5em;
+	height: 3em;
+	padding: 0.5em;
 }
 
 #muusaApp .inputtextshort {
 	width: 15em;
-    height: 1em;
-    padding: 0.5em;
+	height: 3em;
+	padding: 0.5em;
 }
 
 #muusaApp .inputtexttiny {
 	width: 5em;
 	text-align: right;
-    height: 1em;
-    padding: 0.5em;
+	height: 3em;
+	padding: 0.5em;
 }
 
 #muusaApp .ui-button .ui-button-text {
@@ -85,8 +85,8 @@
 	margin-left: 0px;
 	border-left: 0px;
 	line-height: 0.8em;
-    height: 2.4em;
-    margin-top:-0.2em;
+	height: 2.4em;
+	margin-top: -0.2em;
 }
 
 #muusaApp .connected {
@@ -106,7 +106,7 @@
 }
 
 #muusaApp .connected li.ui-state-highlight {
-	height: 1.5em;
+	height: 2.5em;
 	line-height: 1.7em;
 }
 

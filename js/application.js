@@ -40,7 +40,6 @@ jQuery(document).ready(function($) {
 			}
 		} ]
 	});
-	$(".radios").buttonset();
 	$("#nextCamper").button().click(function() {
 		$("#muusaApp").tabs({
 			active : 1

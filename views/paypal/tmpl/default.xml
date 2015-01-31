@@ -1,8 +1,15 @@
-<?xml version="1.0" encoding="utf-8"?>
-<metadata>
-        <layout title="PayPal Payment Consumer">
-                <message>
-                        <![CDATA[COM_MUUSA_APPLICATION_PAYPAL_VIEW_DEFAULT_DESC]]>
-                </message>
-        </layout>
+<?xml version="1.0" encoding="utf-8"?>
+
+<metadata>
+
+	<layout title="PayPal Payment Consumer">
+
+		<message>
+
+                        <![CDATA[COM_MUUSA_APPLICATION_PAYPAL_VIEW_DEFAULT_DESC]]>
+
+		</message>
+
+	</layout>
+
 </metadata>
