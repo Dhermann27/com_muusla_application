@@ -117,18 +117,19 @@ class muusla_applicationViewapplication extends JViewLegacy
                }
             }
          }
+
+         if($sendmail == 1 && count($emails) > 0) {
+            $mailer = JFactory::getMailer();
+            $config = JFactory::getConfig();
+            $mailer->setSender(array($config->get( 'config.mailfrom' ), $config->get( 'config.fromname' ) ));
+            $mailer->addRecipient($emails);
+            $mailer->setSubject("MUUSA Online Registration");
+            $mailer->setBody("Dear camper,\n\nThank you for registering at muusa.org. We look forward to seeing you this summer.\n\nYou can find the latest information about your registration in your confirmation letter, always available online.\n\nhttp://muusa.org/index.php/component/muusla_tools/?view=letters&format=pdf&tmpl=component&Itemid=320\n(You may be required to login first.)\n\nSee you \"next week\",\n\nDan Hermann\nMUUSA Webmaster");
+            $send = $mailer->Send();
+            $model->refresh();
+         }
       } else {
          echo "<h2>Invalid Permissions to Update</h2>\n";
-      }
-
-      if($sendmail == 1 && count($emails) > 0) {
-         $mailer = JFactory::getMailer();
-         $config = JFactory::getConfig();
-         $mailer->setSender(array($config->get( 'config.mailfrom' ), $config->get( 'config.fromname' ) ));
-         $mailer->addRecipient($emails);
-         $mailer->setSubject("MUUSA Online Registration");
-         $mailer->setBody("Dear camper,\nThank you for registering at muusa.org. We look forward to seeing you this summer.\n\nYou can find the latest information about your registration in your confirmation letter, always available online.\n\nhttp://muusa.org/index.php/component/muusla_tools/?view=letters&format=pdf&tmpl=component&Itemid=320\n(You may be required to login first.)\n\nSee you \"next week\",\n\nDan Hermann\nMUUSA Webmaster");
-         $send = $mailer->Send();
       }
 
       // DATA SAVED, GET NEW DATA
@@ -147,7 +148,6 @@ class muusla_applicationViewapplication extends JViewLegacy
          foreach($campers as $camper) {
             $camper->phonenbrs = $model->getPhonenumbers($camper->id);
             if($camper->yearattendingid) {
-               //                $camper->roomtypes = $model->getRoomtypepreferences($camper->fiscalyearid);
                $camper->roommates = $model->getRoommatepreferences($camper->yearattendingid);
             }
             $sumdays += $camper->days;

@@ -87,7 +87,7 @@ class muusla_applicationModelapplication extends JModelItem
 
    function getWorkshops() {
       $db = JFactory::getDBO();
-      $query = "SELECT w.timeslotid, CONCAT(IF(w.su,'S',''),IF(w.m,'M',''),IF(w.t,'Tu',''),IF(w.w,'W',''),IF(w.th,'Th',''),IF(w.f,'F',''),IF(w.sa,'S','')) days, w.id, w.name, w.subname, jc.introtext, IFNULL(w.enrolled/w.capacity,0) enrollment FROM muusa_workshop w LEFT JOIN jml_content jc ON REPLACE(jc.title, '&', '') LIKE CONCAT('%', REPLACE(w.name, '&', ''), '%') AND jc.state=1 ORDER BY w.name";
+      $query = "SELECT w.timeslotid, CONCAT(IF(w.su,'S',''),IF(w.m,'M',''),IF(w.t,'Tu',''),IF(w.w,'W',''),IF(w.th,'Th',''),IF(w.f,'F',''),IF(w.sa,'S','')) days, w.id, w.name, w.subname, jc.introtext, IFNULL(w.enrolled/w.capacity,0) enrollment FROM muusa_workshop w LEFT JOIN jml_content jc ON REPLACE(jc.title, '&', '') LIKE CONCAT('%', SUBSTRING(REPLACE(w.name, '&', ''), 6), '%') AND jc.state=1 ORDER BY w.name";
       $db->setQuery($query);
       return $db->loadAssocList("id");
    }
@@ -371,6 +371,13 @@ class muusla_applicationModelapplication extends JModelItem
    function callTrigger($familyid) {
       $db = JFactory::getDBO();
       $query = "UPDATE (muusa_charge h, muusa_camper c) SET h.created_at=CURRENT_TIMESTAMP WHERE h.camperid=c.id AND c.familyid=$familyid AND h.chargetypeid IN (1001,1016)";
+      $db->setQuery($query);
+      $db->query();
+   }
+
+   function refresh() {
+      $db = JFactory::getDBO();
+      $query = "CALL muusa_generate_charges";
       $db->setQuery($query);
       $db->query();
    }

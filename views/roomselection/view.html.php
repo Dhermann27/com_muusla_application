@@ -32,6 +32,8 @@ class muusla_applicationViewroomselection extends JViewLegacy
             $mailer->setBody("Dear camper,\nJust an update on your MUUSA registration: your room assignment has recently changed.\n\nPlease keep in mind that if you have recently vacated another room, it will be open to other campers and this process can be impossible to reverse.\n\nhttp://muusa.org/index.php/registration/room-selection\n(You may be required to login first.)\n\nSee you \"next week\",\n\nDan Hermann\nMUUSA Webmaster");
             $send = $mailer->Send();
          }
+         
+         $model->refresh();
       }
 
       $year = $model->getYear();

@@ -50,7 +50,7 @@
                   <?php } else {?>
                   <div class="ui-state-highlight ui-corner-all">
                      <p style="margin: 1em;">
-                        <i class="fa fa-check-square-o 3x"></i> You
+                        <i class="fa fa-check-square-o fa-3x"></i> You
                         have successfully signed up for workshops! If
                         your balance is paid, proceed to the Room
                         Selection tool. <i>Note: only possible during

@@ -58,4 +58,11 @@ class muusla_applicationModelroomselection extends JModelItem
       return $results[0];
    }
 
+   function refresh() {
+      $db = JFactory::getDBO();
+      $query = "CALL muusa_generate_charges";
+      $db->setQuery($query);
+      $db->query();
+   }
+
 }
