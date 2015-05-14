@@ -57,9 +57,6 @@ class muusla_applicationViewapplication extends JViewLegacy
                   $camper->familyid = $familyid;
                   $days = $camper->attending;
                   $newcamperid = $model->upsertCamper($camper);
-                  if($camper->email != "") {
-                     array_push($emails, $camper->email);
-                  }
                   if(count($calls["phonenumber"]) > 0) {
                      foreach($calls["phonenumber"] as $phonenumber) {
                         if($phonenumber->camperid == $oldcamperid) {
@@ -73,6 +70,9 @@ class muusla_applicationViewapplication extends JViewLegacy
                      }
                   }
                   if($days != "-1") {
+                     if($camper->email != "") {
+                        array_push($emails, $camper->email);
+                     }
                      $yearattendingid = $model->upsertYearattending($newcamperid, $days);
                      $model->deleteRoommatepreferences($yearattendingid, $camper->attending);
                      if(count($calls["roommatepreference"][$oldcamperid]->names) > 0) {
@@ -80,10 +80,10 @@ class muusla_applicationViewapplication extends JViewLegacy
                            $model->insertRoommatepreferences($yearattendingid, $choicenbr+1, $this->getSafe(urldecode($name)));
                         }
                      }
+                     $sendmail = 1;
                   } else {
                      $model->deleteYearattending($newcamperid);
                   }
-                  $sendmail = 1;
                }
             }
             if(count($calls["charge"]) > 0) {

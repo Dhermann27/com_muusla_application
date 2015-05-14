@@ -149,7 +149,7 @@ class muusla_applicationModelapplication extends JModelItem
    function upsertCamper($obj) {
       $db = JFactory::getDBO();
       unset($obj->attending);
-      $obj->gradeoffset = $obj->grade != "13" ? "&&" . $obj->grade . "-muusa_getage(STR_TO_DATE('$obj->birthdate', '%m/%d/%Y'), (SELECT year FROM muusa_year WHERE is_current=1))" : "-5";
+      $obj->gradeoffset = $obj->grade != "13" ? "&&" . $obj->grade . "-muusa_getage(STR_TO_DATE('$obj->birthdate', '%m/%d/%Y'), (SELECT year FROM muusa_year WHERE is_current=1))" : "-4";
       unset($obj->grade);
       $obj->birthdate = "&&STR_TO_DATE('$obj->birthdate', '%m/%d/%Y')";
       if($obj->id < 1000) {
@@ -328,7 +328,7 @@ class muusla_applicationModelapplication extends JModelItem
 
    function getCharges($familyid, $table) {
       $db = JFactory::getDBO();
-      $query = "SELECT h.id, h.year, h.chargetypeid, h.chargetypename, FORMAT(h.amount,2) amount, DATE_FORMAT(h.timestamp, '%m/%d/%Y') timestamp, h.memo FROM muusa_" . $table . "_charge h WHERE h.familyid=$familyid ORDER BY h.year DESC, h.timestamp, h.chargetypeid, h.camperid";
+      $query = "SELECT IF(h.chargetypeid IN (1001,1016,1022),0,h.id) id, h.year, h.chargetypeid, h.chargetypename, FORMAT(h.amount,2) amount, DATE_FORMAT(h.timestamp, '%m/%d/%Y') timestamp, h.memo FROM muusa_" . $table . "_charge h WHERE h.familyid=$familyid ORDER BY h.year DESC, h.timestamp, h.chargetypeid, h.camperid";
       $db->setQuery($query);
       return $db->loadObjectList();
    }
@@ -370,7 +370,7 @@ class muusla_applicationModelapplication extends JModelItem
 
    function callTrigger($familyid) {
       $db = JFactory::getDBO();
-      $query = "UPDATE (muusa_charge h, muusa_camper c) SET h.created_at=CURRENT_TIMESTAMP WHERE h.camperid=c.id AND c.familyid=$familyid AND h.chargetypeid IN (1001,1016)";
+      $query = "UPDATE (muusa_charge h, muusa_camper c) SET h.created_at=CURRENT_TIMESTAMP WHERE h.camperid=c.id AND c.familyid=$familyid AND h.chargetypeid IN (1001,1016,1022)";
       $db->setQuery($query);
       $db->query();
    }

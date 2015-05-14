@@ -46,7 +46,7 @@ class muusla_applicationModelroomselection extends JModelItem
    function updateYearattending($roomid, $isprivate) {
       $db = JFactory::getDBO();
       $user = JFactory::getUser();
-      $query = "SELECT GROUP_CONCAT(tc.email), GROUP_CONCAT(tc.yearattendingid) FROM muusa_thisyear_camper tc, muusa_camper c WHERE c.email='$user->email' AND c.familyid=tc.familyid AND tc.programid IN (1000,1002,1005,1007)";
+      $query = "SELECT GROUP_CONCAT(tc.email), GROUP_CONCAT(tc.yearattendingid) FROM muusa_thisyear_camper tc, muusa_camper c, muusa_program p WHERE c.email='$user->email' AND c.familyid=tc.familyid AND tc.programid=p.id AND p.is_assign=1";
       $db->setQuery($query);
       $results = $db->loadRow();
       $query = "UPDATE muusa_yearattending ya SET ya.roomid=$roomid, ya.is_private=$isprivate WHERE ya.id IN (" . $results[1] . ")";

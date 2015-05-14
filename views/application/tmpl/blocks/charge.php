@@ -8,7 +8,7 @@
  */
 ?>
 <tr>
-   <td><select name="charge-chargetypeid-<? echo $charge->id;?>"
+   <td><select name="charge-chargetypeid-<?php echo $charge->id;?>"
       class="ui-corner-all">
          <option value="0">Charge Type</option>
          <?php if($charge->id > 0) {
@@ -22,15 +22,15 @@
       name="charge-id-<?php echo $charge->id;?>"
       value="<?php echo $charge->id;?>" /></td>
    <td align="right"><input type="text"
-      name="charge-amount-<? echo $charge->id;?>"
+      name="charge-amount-<?php echo $charge->id;?>"
       class="inputtexttiny onlymoney recalc ui-corner-all"
       value="<?php echo $charge->amount;?>" /></td>
    <td align="center"><input type="text"
-      name="charge-timestamp-<? echo $charge->id;?>"
+      name="charge-timestamp-<?php echo $charge->id;?>"
       class="inputtexttiny birthday ui-corner-all"
       value="<?php echo $charge->timestamp != "" ? $charge->timestamp : date(" m/d/Y");?>" />
    </td>
-   <td><input type="text" name="charge-memo-<? echo $charge->id;?>"
+   <td><input type="text" name="charge-memo-<?php echo $charge->id;?>"
       class="inputtext ui-corner-all"
       value="<?php echo $charge->memo;?>" /></td>
 </tr>
