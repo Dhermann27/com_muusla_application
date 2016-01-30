@@ -165,6 +165,28 @@ $user = JFactory::getUser();
                </td>
             </tr>
             <tr>
+               <td valign="middle">I prefer to receive electronic communication instead of mailed correspondence.</td>
+               <td><select name="family-is_ecomm-<?php echo $familyid;?>"
+			class="ui-corner-all">
+				<option value="1"
+					<?php echo $camper->is_ecomm == "1" ? " selected" : "";?>>Yes</option>
+				<option value="0"
+					<?php echo $camper->is_ecomm == "1" ? "" : " selected";?>>No</option>
+		</select>
+               </td>
+            </tr>
+            <tr>
+               <td>It is my intention to apply for a scholarship from MUUSA and YMCA of the Ozarks this year.</td>
+               <td><select name="family-is_scholar-<?php echo $familyid;?>"
+			class="ui-corner-all">
+				<option value="0"
+					<?php echo $camper->is_ecomm == "1" ? "" : " selected";?>>No</option>
+				<option value="1"
+					<?php echo $camper->is_ecomm == "1" ? " selected" : "";?>>Yes</option>
+		</select>
+               </td>
+            </tr>
+            <tr>
                <td>&nbsp;</td>
                <td colspan="2" align="right"><a id="nextCamper"
                   class="btn">Next Page</a>

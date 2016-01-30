@@ -96,7 +96,7 @@ class muusla_applicationModelapplication extends JModelItem
 
    function getFamily($where) {
       $db = JFactory::getDBO();
-      $query = "SELECT f.id, f.name, f.address1, f.address2, f.city, f.statecd, f.zipcd, f.country FROM muusa_family f, muusa_camper c WHERE f.id=c.familyid AND $where";
+      $query = "SELECT f.id, f.name, f.address1, f.address2, f.city, f.statecd, f.zipcd, f.country, f.is_ecomm, f.is_scholar FROM muusa_family f, muusa_camper c WHERE f.id=c.familyid AND $where";
       $db->setQuery($query);
       return $db->loadObject();
    }

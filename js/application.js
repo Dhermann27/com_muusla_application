@@ -1,102 +1,121 @@
-jQuery(document).ready(function($) {
-	$("#muusaApp").tabs({
-		active : 0,
-		beforeActivate : function(event, ui) {
-			trap($, event, ui);
-			recalc($, event, ui);
-			return true;
-		},
-		activate : function() {
-			$("html, body").animate({
-				scrollTop : 0
-			}, "slow");
-		}
-	}).tooltip({
-		position : {
-			at : "right center"
-		}
-	});
-	$(".paymentYears").accordion({
-		heightStyle : "content",
-		header : "h4"
-	});
-	$(".link").click(function() {
-		openLink($(this));
-		return false;
-	});
-	$("#paypalRedirect").dialog({
-		modal : true,
-		minWidth : 800,
-		buttons : [ {
-			text : "Proceed to PayPal.com",
-			click : function() {
-				jQuery("#paypalForm").submit();
-				return false;
-			}
-		} ]
-	});
-	$("#nextCamper").click(function() {
-		$("#muusaApp").tabs({
-			active : 1
-		});
-		return false;
-	});
-	$("#addCamper").click(function() {
-		addRow($("tbody.camperBody :first"), "tbody", false);
-		return false;
-	});
-	$("#removeCamper").click(function() {
-		var tbody = $("tbody.camperBody");
-		if (tbody.length > 1 && !tbody.last().attr("id"))
-			tbody.last().remove();
-		return false;
-	});
-	$("#nextPayment").click(function() {
-		$("#muusaApp").tabs({
-			active : 2
-		});
-		return false;
-	});
-	$(".recalc").blur(function() {
-		donationCalc($);
-	});
-	$("#nextWorkshop").click(function() {
-		window.location.href = "http://muusa.org/registration/workshops";
-		return false;
-	});
-	$("#forwardWorkshop").click(function() {
-		window.location.href = "http://muusa.org/registration/workshops";
-		return false;
-	});
-	$("#paypalAmt").css("border-right", "0px").css("margin-right", "0px").focus(function() {
-		$(this).val("");
-		var arr = [ "$0.00 (Pay Another Amount)", "$" + Math.max(pFloat($("#amountNow").text()), 0).toFixed(2) + " (Amount Due Now)" ];
-		var arrival = $("#amountArrival"); 
-		if(arrival.length > 0) {
-			arr.push("$" + Math.max(pFloat(arrival.text()), 0).toFixed(2) + " (Total Amount Due)");	
-		}
-		$(this).autocomplete({
-			minLength: 0,
-			source : arr
-			
-		}).autocomplete("search", "");
-	});
-	$("#finishPaypal").removeClass("ui-corner-all").addClass("ui-corner-right").click(function() {
-		submit($);
-		return false;
-	});
-	$("#finishWorkshop").click(function() {
-		$("#paypalAmt").val("0");
-		submit($);
-		return false;
-	});
-	$("#registerAll").click(function() {
-		$("#paypalAmt").val("0");
-		$("#appCamper tbody.camperBody .attending").val("6");
-		submit($);
-		return false;
-	});
-});
+jQuery(document)
+		.ready(
+				function($) {
+					$("#muusaApp").tabs({
+						active : 0,
+						beforeActivate : function(event, ui) {
+							trap($, event, ui);
+							recalc($, event, ui);
+							return true;
+						},
+						activate : function() {
+							$("html, body").animate({
+								scrollTop : 0
+							}, "slow");
+						}
+					}).tooltip({
+						position : {
+							at : "right center"
+						}
+					});
+					$(".paymentYears").accordion({
+						heightStyle : "content",
+						header : "h4"
+					});
+					$(".link").click(function() {
+						openLink($(this));
+						return false;
+					});
+					$("#paypalRedirect").dialog({
+						modal : true,
+						minWidth : 800,
+						buttons : [ {
+							text : "Proceed to PayPal.com",
+							click : function() {
+								jQuery("#paypalForm").submit();
+								return false;
+							}
+						} ]
+					});
+					$("#nextCamper").click(function() {
+						$("#muusaApp").tabs({
+							active : 1
+						});
+						return false;
+					});
+					$("#addCamper").click(function() {
+						addRow($("tbody.camperBody :first"), "tbody", false);
+						return false;
+					});
+					$("#removeCamper").click(function() {
+						var tbody = $("tbody.camperBody");
+						if (tbody.length > 1 && !tbody.last().attr("id"))
+							tbody.last().remove();
+						return false;
+					});
+					$("#nextPayment").click(function() {
+						$("#muusaApp").tabs({
+							active : 2
+						});
+						return false;
+					});
+					$(".recalc").blur(function() {
+						donationCalc($);
+					});
+					$("#nextWorkshop")
+							.click(
+									function() {
+										window.location.href = "http://muusa.org/registration/workshops";
+										return false;
+									});
+					$("#forwardWorkshop")
+							.click(
+									function() {
+										window.location.href = "http://muusa.org/registration/workshops";
+										return false;
+									});
+					$("#paypalAmt").css("border-right", "0px").css(
+							"margin-right", "0px").focus(
+							function() {
+								$(this).val("");
+								var arr = [
+										"$0.00 (Pay Another Amount)",
+										"$"
+												+ Math.max(
+														pFloat($("#amountNow")
+																.text()), 0)
+														.toFixed(2)
+												+ " (Amount Due Now)" ];
+								var arrival = $("#amountArrival");
+								if (arrival.length > 0) {
+									arr.push("$"
+											+ Math.max(pFloat(arrival.text()),
+													0).toFixed(2)
+											+ " (Total Amount Due)");
+								}
+								$(this).autocomplete({
+									minLength : 0,
+									source : arr
+
+								}).autocomplete("search", "");
+							});
+					$("#finishPaypal").removeClass("ui-corner-all").addClass(
+							"ui-corner-right").click(function() {
+						submit($);
+						return false;
+					});
+					$("#finishWorkshop").click(function() {
+						$("#paypalAmt").val("0");
+						submit($);
+						return false;
+					});
+					$("#registerAll").click(function() {
+						$("#paypalAmt").val("0");
+						$("#appCamper tbody.camperBody .attending").val("6");
+						submit($);
+						return false;
+					});
+				});
 
 function switchNextRow(obj) {
 	obj.parents("tr").next().toggle();
@@ -153,11 +172,9 @@ function recalc($, event, ui) {
 		$("#payments" + thisyear + " tr.pending").remove();
 		$("#noattending").hide();
 		var registered = new Array();
-		$("#payments" + thisyear + " tr").filter(
-				function() {
-					return $("td.chargetype:contains('Registration Fee')",
-							$(this)).size() > 0;
-				}).each(function() {
+		$("#payments" + thisyear + " tr").filter(function() {
+			return $("td.chargetype:contains('MUUSA')", $(this)).size() > 0;
+		}).each(function() {
 			registered.push($("td.memo", $(this)).text());
 		});
 		$("#appCamper tbody.camperBody")
@@ -174,8 +191,7 @@ function recalc($, event, ui) {
 							var grade = pInt($(".grade", $(this)).val());
 							if ($.inArray(campername, registered) == -1) {
 								var newrow = $("<tr class='pending'><td class='chargetype'></td><td class='amount' align='right'></td><td class='date' align='center'></td><td class='memo'></td></tr>");
-								$(".chargetype", newrow).text(
-										"Registration Fee");
+								$(".chargetype", newrow).text("MUUSA Deposit");
 								var fee = Math.min(findFee($(".birthday",
 										$(this)).val(), grade), 30 * days);
 								$(".amount", newrow).text("$" + fee.toFixed(2));
@@ -187,7 +203,10 @@ function recalc($, event, ui) {
 								var fee = Math.min(findFee($(".birthday",
 										$(this)).val(), grade), 30 * days);
 								$("td.memo:contains('" + campername + "')")
-										.parent().find(".amount").text(
+										.parent()
+										.filter(
+												"td.chargetype:contains('Fees')")
+										.find(".amount").text(
 												"$" + fee.toFixed(2));
 							}
 							registered = jQuery.grep(registered,
@@ -196,13 +215,14 @@ function recalc($, event, ui) {
 									});
 						});
 
-		$("#payments" + thisyear + " tr").filter(
-				function() {
-					return $("td.chargetype:contains('Registration Fee')",
-							$(this)).size() > 0
-							&& $.inArray($("td.memo", $(this)).text(),
-									registered) != -1;
-				}).remove();
+		$("#payments" + thisyear + " tr")
+				.filter(
+						function() {
+							return $("td.chargetype:contains('MUUSA Deposit')",
+									$(this)).size() > 0
+									&& $.inArray($("td.memo", $(this)).text(),
+											registered) != -1;
+						}).remove();
 		donationCalc($);
 	}
 }
@@ -289,7 +309,7 @@ function addHidden($, fieldname, selector) {
 
 function findFee(birthday, grade) {
 	var age = getAge(birthday);
-	for ( var i = 0; i < feeTable.fees.length; i++) {
+	for (var i = 0; i < feeTable.fees.length; i++) {
 		if (age <= feeTable.fees[i].agemax && age >= feeTable.fees[i].agemin
 				&& grade <= feeTable.fees[i].grademax
 				&& grade >= feeTable.fees[i].grademin) {
